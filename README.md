@@ -4,4 +4,5 @@ This will be (in indefinite future) a ground-breaking, cutting-edge, vanguard, p
 # Credits
 
 Wojciech Kośnik-Kowalczuk
-xxx
+Marta Stankiewicz
+Laura Nowak
