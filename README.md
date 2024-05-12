@@ -6,4 +6,4 @@ This will be (in the indefinite future) a ground-breaking, cutting-edge, vanguar
 Wojciech Kośnik-Kowalczuk\
 Marta Stankiewicz\
 Laura Nowak\
-Mateusz Rurzyński\
+Mateusz Rurzyński
