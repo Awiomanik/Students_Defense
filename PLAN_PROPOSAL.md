@@ -27,3 +27,4 @@ We aim to develop a playable prototype within the deadline imposed by the lectur
 # Team Roles and Management
 
 Currently, roles are not strictly defined, allowing team members to explore various aspects of the project. This approach is intended to identify individual strengths and interests, which will guide the more detailed division of labor in later stages. Team management strategies and conflict resolution methods will be discussed in team meetings to ensure a cooperative and productive environment.
+As part of the initial team organization, **Wojciech Kośnik-Kowalczuk** has been chosen, possibly temporarily, as the project lead. This decision was made to facilitate the early stages of project planning and to ensure a smooth division of labor among team members.
