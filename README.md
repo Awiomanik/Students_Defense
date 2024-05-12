@@ -6,3 +6,4 @@ This will be (in indefinite future) a ground-breaking, cutting-edge, vanguard, p
 Wojciech Kośnik-Kowalczuk
 Marta Stankiewicz
 Laura Nowak
+Mateusz Rurzyński
