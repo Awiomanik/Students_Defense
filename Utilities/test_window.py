@@ -1,32 +1,29 @@
-# Testing pygame functionlities
+"""Testing pygame functionlities."""
 
 
 # IMPORTS
 import pygame
+import random
 import sys
 import os
 from test_level.test_enemy import Enemy
-from test_level.test_map import Map
+from test_level.test_map import Map as Board
 
 
 # CONSTANTS
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.abspath(__file__)) # get the current directory path
-GRAPHICS_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\" # path to graphic files
+MAP_IMAGE_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\maps\\Kampus_Pwr_edit.png"
+#MAP_IMAGE_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\maps\\Kampus_Pwr.png"
+#MAP_IMAGE_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\maps\\test_background_gpt.jpg.png"
+#MAP_IMAGE_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\maps\\test_background_simple.png"
+ENEMY_IMAGE_PATH = CURRENT_DIRECTORY_PATH + "\\test_level\\graphics\\enemies\\chicken.png"
 FPS = 60 # framerate
 RESOLUTION = 1920, 1080
-
-
-# IMAGES
-background_image = GRAPHICS_PATH + 'Kampus_Pwr_edit.png'
-#background_image = GRAPHICS_PATH + 'Kampus_Pwr.png'
-#background_image = GRAPHICS_PATH + 'test_background_gpt.jpg'
-#background_image = GRAPHICS_PATH + 'test_background_simple.png'
-
-enemy_image = GRAPHICS_PATH + "chicken.png"
-#enemy_size = (40, 40)
+#enemy_size = 40
 #enemy_speed = 5
-enemy_size = (30, 30)
-enemy_speed = 2
+enemy_size = 30
+enemy_speed = 5
+enemy_local_speed = 5
 
 # SET UP WONDOW AND PYGAME
 # initialize Pygame
@@ -38,7 +35,7 @@ pygame.display.set_caption('STUDENTS DEFENSE')
 
 
 # INITIALIZE SUPPORTING CLASSES
-map = Map(background_image, RESOLUTION)
+board = Board(MAP_IMAGE_PATH, RESOLUTION)
 
 
 # INITIALIZE UTILITY VARIABLES
@@ -61,7 +58,11 @@ while running:
                 running = False
             # drop chicken
             if event.key == pygame.K_SPACE:
-                enemies.append(Enemy(enemy_image, map.enemies_path, map.enemies_path_widths, enemy_size, enemy_speed))
+                enemies.append(Enemy(ENEMY_IMAGE_PATH, 
+                                     board.enemies_path, 
+                                     board.enemies_path_widths, 
+                                     enemy_size, enemy_speed, 
+                                     random.randint(0, enemy_local_speed)))
 
     
     # DRAW WINDOW CONTENTS
@@ -70,7 +71,8 @@ while running:
     # background
     map.draw(screen)
     # enemies
-    for enemy in enemies: enemy.draw(screen)#, True)
+    for enemy in enemies: 
+        enemy.draw(screen, True)
     
 
     # UPDATE STUFF
@@ -78,7 +80,10 @@ while running:
     pygame.display.flip() # update the display
     clock.tick(FPS) # ensure up to 60 fps
     # move chickens
-    for enemy in enemies: enemy.update()
+    for enemy in enemies[:]: # shallow copy of list enables to remove from list in for loop
+        # if enemy reached the endpoint, remove it from the list
+        if enemy.update():
+            enemies.remove(enemy)
 
 # quit Pygame and program
 pygame.quit()
