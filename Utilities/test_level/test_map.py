@@ -2,6 +2,7 @@
 
 # IMPORTS
 import pygame
+import os
 
 
 # MAP CLASS
@@ -32,6 +33,7 @@ class Map():
 
     def __init__(self,
                  graphic_path : str,
+                 towers_path : str,
                  resolution : tuple[int, int],
                  ) -> None:
         """
@@ -41,10 +43,13 @@ class Map():
         graphic_path (str): Path to the graphic file of the map. This image is scaled to match the game screen resolution.
         resolution (tuple[int, int]): The resolution to which the map image will be scaled. This typically matches the game window size.
         """
-        # load image and scale it to screen size
+        # Load image and scale it to screen size
         self.image = pygame.transform.scale(pygame.image.load(graphic_path), resolution)  
 
-        # get enemies paths
+        # Load towers
+        self.load_towers(towers_path)
+
+        # Load enemies paths
         self.load_enemies_paths(graphic_path.rsplit('.', 1)[0] + '.dat')
 
     def load_enemies_paths(self, path : str) -> None:
@@ -70,6 +75,32 @@ class Map():
         # Extract the path widths from the processed data, excluding the last data point (they are empty, there is no segment)
         self.enemies_path_widths = [int(line[2]) for line in path_raw[:-1]]
     
+    ###############################################
+    def load_towers(self, path : str) -> None:
+        # List all files in the given directory
+        files = os.listdir(path)
+        
+        # Filter out PNG and TXT files
+        png_files = [file for file in files if file.endswith('.png')]
+        txt_files = [file for file in files if file.endswith('.txt')]
+        
+        # Check if the number of png files matches the number of txt files
+        if len(png_files) != len(txt_files):
+            print("The number of PNG and TXT files does not match.")
+            return [], []
+
+        # Load contents of each file type into lists
+        graphics = []
+        for png_file in png_files:
+            graphics.append(pygame.transform.scale(pygame.image.load(os.path.join(path, png_file)), (150, 225)))
+
+        descriptions = []
+        for txt_file in txt_files:
+            with open(os.path.join(path, txt_file), 'r') as file:
+                descriptions.append(file.readline().split(': ')[1])  # Read the entire contents of the file
+
+        self.towers = list(zip(graphics, descriptions))
+
     def draw(self, screen : pygame.Surface) -> None:
         """
         Draws the map image onto the specified screen.
