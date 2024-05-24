@@ -28,8 +28,9 @@
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [ ] Game
 - [ ] Map
-- [ ] Documentation for teammembers (Scrum_Board.md, SPECS.md, etc...)
-- [ ] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
+- [x] Documentation for teammembers (Scrum_Board.md)
+- [ ] Documentation for teammembers (SPECS.md, etc...)
+- [x] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
 
 ### Tasks Assigned to Olaf Masłowski
 - [ ] Tower
