@@ -1,17 +1,20 @@
 Classes to code:
 
-Tower Meanager/ +
-Enemy Menager/ 
-Player/
-Map/ +
-Level/
-Tower/ +
-Enemy/ +
-Game/ +
+Tower Manager + \
+Enemy Manager \
+Player \
+Map + \
+Level\
+Tower + \
+Enemy + \
+Game + 
 
+Other tasks:
+- Documentation (Laura ?)\
+- SPECS.MD and Allocation_of_tasks.md + \
 
 Developers:/
-Wojciech Kośnik-Kowalczuk - Map, Game
+Wojciech Kośnik-Kowalczuk - Map, Game, Specs.md...
 Marta Stankiewicz - Enemy
 Olaf Masłowski - Tower, Tower Menageer
 Mateusz Rurzyński - ?
