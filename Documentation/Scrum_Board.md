@@ -1,6 +1,6 @@
 # Students Defense Game - Sprint Planning
 
-## Sprint 1 (24.05 - 29.05)
+## [ ] Sprint 1 (24.05 - 29.05)
 
 ### Sprint Goals
 - [Get to now eachothers strengths and weaknesses to better allocate work tasks between members]
