@@ -54,4 +54,10 @@
 - [Goal description here]
 
 
+### Overall Sprint Tasks
+
+- [ ] Write proper README.md file
+- [ ] Parse and polish .gitignore file
+
+
 
