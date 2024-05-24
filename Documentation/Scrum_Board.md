@@ -23,11 +23,13 @@
 - [ ] Documentation for dr. Giniewicz (https://prac.im.pwr.edu.pl/~giniew/doku.php?id=rok2324:letni:prog:proj) (Laura ?)
 - [x] Documentation for teammembers (Scrum_Board.md, SPECS.md, etc...)
 - [x] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
+- [ ] Map-generator
  
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [ ] Game
 - [ ] Map
+- [ ] Map-generator
 - [x] Documentation for teammembers (Scrum_Board.md)
 - [ ] Documentation for teammembers (SPECS.md, etc...)
 - [x] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
