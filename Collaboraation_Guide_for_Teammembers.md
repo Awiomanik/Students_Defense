@@ -15,6 +15,9 @@ Our project repository is organized into several key folders:
 - **Playground_for_ideas_and_testing**: Use this space to experiment with new code, test features, or try out ideas without affecting the main project code. When you start a new test, create a folder for it to avoid interference with others when merging.
 
 All files used by given class (like graphics, audio, text files with level data, etc..) should be within the class folder. In the future we might change repository structure and so it will be best practice to not hard code any dependencies and to describe them in the docstring at the begginning of a file.
+We will build UI renderer separately from remaining classes, so in principle other classes should not need any media dependencies, but in case of some kind of testing or any unpredicted yet event, pack it all within the folder.
+
+Additionally **Classes** folder will contain **Utilities.py** file for functions, classes and data type definitions that might be usefull in many different places around the project (eg. Coord - Data type for storing coordinates with defined operations like addition, created to standardize the data type in which classes exchange information about placement of objects on the map.). Feel free to add there any functionality (class, function, method, constant, etc...) that you think might be usefull.
 
 
 
