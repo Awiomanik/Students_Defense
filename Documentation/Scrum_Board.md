@@ -20,6 +20,7 @@
 - [x] Tower Manager
 - [ ] Enemy Manager
 - [x] UI
+- [x] Coords (one of "Utility classes" that will be usefull around the whole peoject)
 ### Other Tasks:
 - [ ] Documentation for dr. Giniewicz (https://prac.im.pwr.edu.pl/~giniew/doku.php?id=rok2324:letni:prog:proj) (Laura ?)
 - [x] Documentation for teammembers (Scrum_Board.md, SPECS.md, etc...)
@@ -29,6 +30,7 @@
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [ ] UI
+- [ ] Coords
 - [ ] Map
 - [ ] Map-generator
 - [x] Documentation for teammembers (Scrum_Board.md)
