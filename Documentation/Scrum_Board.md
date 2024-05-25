@@ -14,7 +14,7 @@
 - [ ] Game
 - [ ] Player
 - [x] Map
-- [ ] Level
+- [x] Level
 - [x] Tower
 - [x] Enemy
 - [x] Tower Manager
