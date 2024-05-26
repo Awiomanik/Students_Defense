@@ -12,7 +12,7 @@
 
 ### Classes to code:
 - [ ] Game
-- [ ] Player
+- [x] Player
 - [x] Map
 - [x] Level
 - [x] Tower
@@ -49,6 +49,7 @@
 
 ### Tasks Assigned to Mateusz Rurzyński
 - [ ] Level
+- [ ] Player
 
 
 
