@@ -45,7 +45,7 @@ class Coord:
     x: int
     y: int
 
-    def __add__(self, other : typing.Union['Coord'|int|float]) -> 'Coord':
+    def __add__(self, other : typing.Union['Coord', int, float]) -> 'Coord':
         """Add another Coord instance or a numeric value to this coordinate.
         
         Parameters:
@@ -64,7 +64,7 @@ class Coord:
         else:
             raise NotImplementedError()
 
-    def __sub__(self, other : typing.Union['Coord'|int|float]) -> 'Coord':
+    def __sub__(self, other : typing.Union['Coord', int, float]) -> 'Coord':
         """Subtract another Coord instance or a numeric value from this coordinate.
         
         Parameters:
