@@ -62,7 +62,7 @@ def browse_graphic():
 
     pygame.quit()
 
-def slice_image():
+def slice_image(size : int = 120):
 
     image_path = "tiles\\tiles.png"
     tile_width = 32  # Set your tile width
@@ -91,7 +91,7 @@ def slice_image():
             
             # Crop the tile and resize
             tile = img.crop((left, upper, right, lower))
-            tile = tile.resize((60, 60))
+            tile = tile.resize((size, size))
             
             # Save the tile
             tile_filename = f"tile_{y-1}_{x}.png"
@@ -134,15 +134,15 @@ def overlay_images(input_paths : list[str], output_path : str, display : bool = 
         background.show()
 
 def prepare_graphics():
-    """
+    
     # get tiles
     slice_image()
 
     # grass
     os.system("copy tiles\\tile_1_1.png tiles\\grass.png")
     # paths straight
-    overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_7_7.png"], "tiles\\path_hor.png")
-    overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_9_5.png"], "tiles\\path_ver.png")
+    overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_7_7.png"], "tiles\\path_ver.png")
+    overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_9_5.png"], "tiles\\path_hor.png")
     # paths corners
     overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_6_4.png"], "tiles\\path_cor_b_r.png")
     overlay_images(["tiles\\tile_1_5.png", "tiles\\tile_6_6.png"], "tiles\\path_cor_b_l.png")
@@ -183,7 +183,7 @@ def prepare_graphics():
     overlay_images(["tiles\\grass.png", "tiles\\tile_17_13.png"], "tiles\\plant15.png")
     overlay_images(["tiles\\grass.png", "tiles\\tile_17_14.png"], "tiles\\plant16.png")
     overlay_images(["tiles\\grass.png", "tiles\\tile_17_15.png"], "tiles\\plant17.png")
-    #"""
+    
 
 browse_graphic()
 prepare_graphics()
