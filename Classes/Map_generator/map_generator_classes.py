@@ -78,6 +78,7 @@ class Map:
         # initialize grid content
         self.grid = {key : None for key in [Coord(x, y) for x in range(self.grid_size.x) for y in range(self.grid_size.y)]} # set[Coord : str]
         self.paths = [[]] # list[list[Coord,.. ],.. ]
+        self.obsticles = {}
 
         # initialize variable for storing information if the path is finnished
         self.valid = False
@@ -135,13 +136,19 @@ class Map:
         board.paths[0] = [first, secound, last]
 
         # Add 2 obsticles around the start
-        board.tiles[Coord(0, 3)] = board.tileset["plant 0"]
-        board.tiles[Coord(0, 5)] = board.tileset["plant 1"]
-        board.grid[Coord(0, 3)] = 'x'
-        board.grid[Coord(0, 5)] = 'x'
+        top, bot = Coord(0, 3), Coord(0, 5)
+        board.tiles[top] = board.tileset["plant 0"]
+        board.tiles[bot] = board.tileset["plant 1"]
+        board.grid[top] = 'x'
+        board.grid[bot] = 'x'
+        board.obsticles[top] = 0
+        board.obsticles[bot] = 1
         
         # return class object with grass tiles
         return board
+    
+    def res2tile(self, coords : tuple[int, int]) -> Coord:
+        return Coord(coords[0] // self.tile_size, coords[1] // self.tile_size)
     
     def select_path_type(self, index : int, coords : Coord, path_number : int = 0) -> pygame.Surface:
         # Unpack path segment
@@ -210,7 +217,7 @@ class Map:
 
     def tile_accessibility(self, pos : tuple[int, int], draw_rect : bool = True) -> bool:
         # Get pos in tile coordinates
-        pos = Coord(pos[0] // self.tile_size, pos[1] // self.tile_size)    
+        pos = self.res2tile(pos)   
         
         # Check for end tile
         end_tile = pos == self.paths[0][-1]
@@ -252,7 +259,7 @@ class Map:
 
     def add_path(self, pos : tuple[int, int]) -> bool:
         # Get pos in tile coordinates
-        curr_pos = Coord(pos[0] // self.tile_size, pos[1] // self.tile_size)
+        curr_pos = self.res2tile(pos)
 
         # Check if reached end tile
         end = curr_pos == self.paths[0][-1]
@@ -361,7 +368,7 @@ class Map:
             # No crossing
             else:
                 self.tiles[previous_tile] = path_end
-
+ 
     def clear_paths(self) -> None:
         for path in self.paths:
             for segment in path:
@@ -378,6 +385,59 @@ class Map:
         
         self.valid = False
 
+    def add_obsticle(self, pos : tuple[int, int]) -> None:
+        if pos[1] < 840:
+            pos = self.res2tile(pos)
+
+            if self.grid[pos] == ' ':
+                self.grid[pos] = 'x'
+                self.tiles[pos] = self.tileset["plant 0"]
+                self.obsticles[pos] = 0
+
+            elif self.grid[pos] == 'x':
+                new = (self.obsticles[pos] + 1) % 18
+                self.tiles[pos] = self.tileset[f"plant {new}"]
+                self.obsticles[pos] = new
+
+    def remove_obsticle(self, pos : tuple[int, int]) -> None:
+        pos = self.res2tile(pos)
+
+        if self.grid[pos] == 'x':
+            self.grid[pos] = ' '
+            self.tiles[pos] = self.tileset["grass"]
+            self.obsticles.pop(pos)
+
+    def save(self) -> bool:
+        if self.valid:
+            clock = pygame.time.Clock()
+
+            input_box1 = InputBox(50, 100, 140, 32)
+            input_box2 = InputBox(50, 150, 140, 32)
+            input_boxes = [input_box1, input_box2]
+
+            done = False
+            while not done:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        done = True
+                    for box in input_boxes:
+                        box.handle_event(event)
+
+                for box in input_boxes:
+                    box.update()
+
+                self.screen.fill((0, 0, 0))
+                for box in input_boxes:
+                    box.draw(self.screen)
+
+                pygame.display.flip()
+                clock.tick(30)
+                
+            return True
+        
+        else:
+            return False
+
     def __str__(self):
         # Create a bordered grid presentation
         top_border = '+-' + '-' * (2 * self.grid_size.x) + '+'
@@ -393,6 +453,49 @@ class Map:
         return f"Grid:\n{grid_str}\n\nTile Size:\n{tile_size}\nGrid Size:\n{grid_size}\n\nPaths:\n{paths_str}\n"
 
 
+# INUT BOX FOR SAVE WINDOW WITHIN WINDOW
+class InputBox:
+
+    def __init__(self, x, y, w, h, text=''):
+        self.font = pygame.font.Font(None, 32)
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color = ()
+        self.text = text
+        self.txt_surface = self.font.render(text, True, self.color)
+        self.active = False
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = (255, 255, 255) if self.active else (200, 200, 200)
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_RETURN:
+                    print(self.text)
+                    self.text = ''  # Reset text after submission
+                elif event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = self.font.render(self.text, True, (0, 0, 0))
+
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(200, self.txt_surface.get_width()+10)
+        self.rect.w = width
+
+    def draw(self, screen):
+        # Blit the text.
+        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        # Blit the rect.
+        pygame.draw.rect(screen, self.color, self.rect, 2)
 
 
 

@@ -31,7 +31,8 @@ state = "idle"
 # possible states:
 # idle
 # path 
-# obsticle
+# obsticles
+show_grid = False
 pos = pygame.mouse.get_pos()
 board = MAP.Map.grass_map(TILES_PATH, screen)
 print("Initialized board:\n")
@@ -43,7 +44,29 @@ button = pygame.image.load(CURRENT_DIRECTORY_PATH + "\\UI_assets\\BLANK_BUTTON.p
 font_buttons = pygame.font.SysFont('Impact', 30)
 font_instructions = pygame.font.SysFont('Consolas', 24)
 path_button_txt = font_buttons.render("PATH BUILDER", True, (0, 0, 0))
+path_button_pressed_txt = font_buttons.render("PATH BUILDER", True, (0, 255, 0))
+obsticle_button_txt = font_buttons.render("SET OBSTICLES", True, (0, 0, 0))
+obsticle_button_pressed_txt = font_buttons.render("SET OBSTICLES", True, (0, 255, 0))
+grid_button_txt = font_buttons.render("SHOW GRID", True, (0, 0, 0))
+grid_button_pressed_txt = font_buttons.render("SHOW GRID", True, (0, 255, 0))
 path_instruction = font_instructions.render("PATH BUILDER: Place a path segment with a left mouse button, remove last path segment with right mouse button.", True, (0, 0, 0))
+
+# HELPER FUNCTIONS
+def draw_grid():
+    # Set the color for the grid lines
+    grid_color = (0, 0, 0)  # White
+    col_len = RESOLUTION[1] - 240
+    row_len = RESOLUTION[0] 
+
+    # Draw vertical lines
+    for col in range(16):
+        x = col * 120
+        pygame.draw.line(screen, grid_color, (x, 0), (x, col_len), 2)
+
+    # Draw horizontal lines
+    for row in range(7):
+        y = row * 120
+        pygame.draw.line(screen, grid_color, (0, y), (row_len, y), 2)
 
 
 # MAIN LOOP
@@ -66,6 +89,7 @@ while running:
 
         # mouse press (relise)
         elif event.type == pygame.MOUSEBUTTONUP:
+            print("mouse click at position:", pos)
             if event.button == 1:
                 mouse_click_left = True
             if event.button == 3:
@@ -89,8 +113,17 @@ while running:
     screen.blit(button, (1200, 860))
     screen.blit(button, (1500, 860))
     # Print text on buttons
-    screen.blit(path_button_txt, (220, 895))
-
+    if state != "path":
+        screen.blit(path_button_txt, (220, 895))
+    if show_grid:
+        screen.blit(grid_button_pressed_txt, (530, 895))
+        draw_grid()
+    else:
+        screen.blit(grid_button_txt, (530, 895))
+    if state != "obsticles":
+        screen.blit(obsticle_button_txt, (1234, 895))
+    else:
+        screen.blit(obsticle_button_pressed_txt, (1234, 895))
 
 
     # ACTIONS
@@ -98,14 +131,23 @@ while running:
     if state == "idle":
         if mouse_click_left:
             x, y = pos
-            # path
-            if 180 < x < 300 and 860 < 980:
-                state = 'path'
-            # obsticles
-            # grid
-            # save
+            if 860 < y < 980:
+                mouse_click_left = False
+                # path
+                if 180 < x < 420:
+                    state = "path"
+                # grid
+                elif 480 < x < 620:
+                    show_grid = not show_grid
+                # obsticles
+                elif 1200 < x < 1320:
+                    state = "obsticles"
+                # save
+                elif 1500 < x < 1620:
+                    print(board.save())
     # path builder
     if state == "path":
+        screen.blit(path_button_pressed_txt, (220, 895))
         if board.valid:
             board.clear_paths()
 
@@ -122,6 +164,16 @@ while running:
             mouse_click_right = False
             board.remove_path()
             print(board)    
+    # obsticle builder
+    if state == "obsticles":
+        if mouse_click_left:
+            board.add_obsticle(pos)
+        elif mouse_click_right:
+            board.remove_obsticle(pos)
+
+        if mouse_click_left and 860 < pos[1] < 980 and 1200 < pos[0] < 1320:
+            state = "idle"
+
 
     # UPDATE STUFF
     # Window updates
@@ -129,6 +181,7 @@ while running:
     clock.tick(FPS) # ensure up to 60 fps
     # Get mouse podition in pixels
     pos = pygame.mouse.get_pos()
+    mouse_click_left = mouse_click_right = False
     
 # quit Pygame and program
 pygame.quit()
