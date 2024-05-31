@@ -1,11 +1,12 @@
 from typing import List, Dict, Tuple
+import Classes.Enemy as enm
 
 class Level:
     def __init__(self, level_number: int):
         self.level_number = level_number
         self.enemy_waves: List[Dict[str, Tuple[int, int]]] = []
 
-    def add_wave(self, enemy_type: Enemy, quantity: int, interval: int):
+    def add_wave(self, enemy_type: enm.Enemy, quantity: int, interval: int):
         self.enemy_waves.append({"enemy": enemy_type, "quantity": quantity, "interval": interval})
 
     def get_waves(self) -> List[Dict[str, Tuple[int, int]]]:
