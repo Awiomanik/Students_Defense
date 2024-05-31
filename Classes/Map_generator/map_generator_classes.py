@@ -407,19 +407,34 @@ class Map:
             self.tiles[pos] = self.tileset["grass"]
             self.obsticles.pop(pos)
 
-    def save(self) -> bool:
+    def save_window(self, directory : str, map : pygame.Surface) -> bool:
         if self.valid:
             clock = pygame.time.Clock()
 
-            input_box1 = InputBox(50, 100, 140, 32)
-            input_box2 = InputBox(50, 150, 140, 32)
-            input_boxes = [input_box1, input_box2]
+            input_box_name = InputBox(50, 100, 140, 32, "Title")
+            input_box_author = InputBox(50, 150, 140, 32, "Author")
+            input_boxes = [input_box_name, input_box_author]
 
             done = False
             while not done:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         done = True
+                    # key press
+                    elif event.type == pygame.KEYDOWN:
+
+                        # exit back to map-generator (escape key)
+                        if event.key == pygame.K_ESCAPE:
+                            done = True
+                    
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        x, y = pygame.mouse.get_pos()
+                        if 200 < x < 700 and 500 < y < 600:
+                            map_name = input_box_name.text.replace(" ", "_")
+                            author_name = input_box_author.text.replace(" ", "_")
+                            self.save(directory, map, map_name, author_name)
+                            done = True
+
                     for box in input_boxes:
                         box.handle_event(event)
 
@@ -429,6 +444,9 @@ class Map:
                 self.screen.fill((0, 0, 0))
                 for box in input_boxes:
                     box.draw(self.screen)
+                
+                # Blit save button
+                pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(200, 500, 500, 100), 4)
 
                 pygame.display.flip()
                 clock.tick(30)
@@ -437,6 +455,27 @@ class Map:
         
         else:
             return False
+
+    def save(self, directory : str, map : str, name : str, author : str) -> None:
+
+        from datetime import datetime as dt
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Set the filename for the image and text based on map title and author
+        image_filename = f"{directory}/{name}_map.png"
+        text_filename = f"{directory}/{name}_map.dat"
+
+        # save image
+        pygame.image.save(pygame.image.fromstring(map, (1920, 1080), "RGBA"), os.path.join(directory, image_filename))
+
+        # Save the map data to a text file
+        with open(text_filename, 'w') as f:
+            f.write("Name: " + name + '\n')
+            f.write("Author: " + name + '\n')
+            f.write("Date and time: " + str(dt.now()) + '\n')
+            f.write(str(self))
 
     def __str__(self):
         # Create a bordered grid presentation
@@ -459,7 +498,7 @@ class InputBox:
     def __init__(self, x, y, w, h, text=''):
         self.font = pygame.font.Font(None, 32)
         self.rect = pygame.Rect(x, y, w, h)
-        self.color = ()
+        self.color = (255, 255, 255)
         self.text = text
         self.txt_surface = self.font.render(text, True, self.color)
         self.active = False
@@ -470,21 +509,27 @@ class InputBox:
             if self.rect.collidepoint(event.pos):
                 # Toggle the active variable.
                 self.active = not self.active
+        
             else:
                 self.active = False
-            # Change the current color of the input box.
-            self.color = (255, 255, 255) if self.active else (200, 200, 200)
+
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ''  # Reset text after submission
+                    if self.active: 
+                        self.active = False
+
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
+
                 else:
                     self.text += event.unicode
+
                 # Re-render the text.
-                self.txt_surface = self.font.render(self.text, True, (0, 0, 0))
+                self.txt_surface = self.font.render(self.text, True, (255, 255, 255))
+        
+        # Change the current color of the input box.
+        self.color = (255, 255, 255) if self.active else (150, 150, 150)
 
     def update(self):
         # Resize the box if the text is too long.
@@ -496,6 +541,7 @@ class InputBox:
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # Blit the rect.
         pygame.draw.rect(screen, self.color, self.rect, 2)
+
 
 
 

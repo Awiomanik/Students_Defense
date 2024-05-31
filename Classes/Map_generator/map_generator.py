@@ -11,6 +11,7 @@ from . import map_generator_classes as MAP
 # CONSTANTS
 CURRENT_DIRECTORY_PATH = os.path.dirname(os.path.abspath(__file__)) # get the current directory path
 TILES_PATH = CURRENT_DIRECTORY_PATH + "\\tiles"
+MAPS_PATH = CURRENT_DIRECTORY_PATH + "\\maps"
 FPS = 60 # framerate
 RESOLUTION = 1920, 1080
 
@@ -144,7 +145,11 @@ while running:
                     state = "obsticles"
                 # save
                 elif 1500 < x < 1620:
-                    print(board.save())
+                    temp_grid = show_grid
+                    show_grid = False
+                    current_map_surface_as_str = pygame.image.tostring(screen, 'RGBA')
+                    board.save_window(MAPS_PATH, current_map_surface_as_str)
+                    show_grid = temp_grid
     # path builder
     if state == "path":
         screen.blit(path_button_pressed_txt, (220, 895))
