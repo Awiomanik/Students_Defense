@@ -11,7 +11,7 @@
 ### Overall Sprint Tasks
 
 ### Classes to code:
-- [ ] Game
+- [x] Game
 - [x] Player
 - [x] Map
 - [x] Level
@@ -38,8 +38,9 @@
 - [x] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
 
 ### Tasks Assigned to Olaf Masłowski
-- [ ] Tower
-- [ ] Tower Manager
+- [x] Tower
+- [x] Tower Manager
+- [x] Game
 
 ### Tasks Assigned to Marta Stankiewicz
 - [ ] Enemy
