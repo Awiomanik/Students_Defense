@@ -66,13 +66,13 @@
 - [x] UI Class
 - [x] Map Class
 - [x] Game Class and integration of all classes into a working prototype (2 people)
+- [x] Help with integration of your classes into Game class (everyone)
 - [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
-- [ ] Help with integration of your classes into Game class (everyone)
 
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
-- [ ] UI
 - [ ] Map
+- [ ] UI
 - [ ] Game Class and integration of all classes into a working prototype
 
 ### Tasks Assigned to Olaf Masłowski

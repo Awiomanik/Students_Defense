@@ -1,5 +1,4 @@
-Connstants:
-
+## Connstants:
 - 60 fps
 - resolution: 1920, 1080
 - full-screen
@@ -9,10 +8,15 @@ Connstants:
 - Start is on the left of the screen at x=-1, y=4 (enemies are sapwning out of the map range) (end is on the right at x=16, y=4)
 - coordinates used in every class (except enemies) are: x (from left to right 0-15), y (from top to bottom 0-8). Possibpe expantion later.
 
-Prototype:
+## Prototype:
  - 1 map
  - 3 waves
  - 1 type of tower
  - 1 type of enemy
  - 1 tower upgreade
  - enemies follow straight parallel paths within the cellular path. They need to have position atribute in resolution coordinates, not only tile coordinates (still following the rule: from left to right, from top to bottom)
+
+
+## Classes:
+
+### Map:

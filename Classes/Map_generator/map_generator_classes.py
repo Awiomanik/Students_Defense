@@ -473,7 +473,7 @@ class Map:
         # Save the map data to a text file
         with open(text_filename, 'w') as f:
             f.write("Name: " + name + '\n')
-            f.write("Author: " + name + '\n')
+            f.write("Author: " + author + '\n')
             f.write("Date and time: " + str(dt.now()) + '\n')
             f.write(str(self))
 
