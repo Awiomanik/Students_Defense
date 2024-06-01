@@ -11,7 +11,6 @@
 ### Overall Sprint Tasks
 
 ### Classes to code:
-- [x] Game
 - [x] Player
 - [x] Map
 - [x] Level
@@ -30,17 +29,16 @@
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [ ] UI
-- [ ] Coords
+- [x] Coords
 - [ ] Map
-- [ ] Map-generator
+- [x] Map-generator
 - [x] Documentation for teammembers (Scrum_Board.md)
-- [ ] Documentation for teammembers (SPECS.md, etc...)
+- [x] Documentation for teammembers (SPECS.md, etc...)
 - [x] Maintainance of repository structure (Configuration of repository architecture ie. Folders, files, etc...)
 
 ### Tasks Assigned to Olaf Masłowski
 - [x] Tower
 - [x] Tower Manager
-- [x] Game
 
 ### Tasks Assigned to Marta Stankiewicz
 - [ ] Enemy
@@ -55,17 +53,59 @@
 
 
 
-
-## Sprint 2 (Start Date - End Date)
+*************************************************************************************************************************************
+## Sprint 2 (30.05 - 05.06)
 
 ### Sprint Goals
-- [Goal description here]
+- [Integrade existing classes to develop working prototype]
+- [Prepare proper documaentation in form of, among others, class diagrams representing whole interoperability and architucture of the project]
 
 
 ### Overall Sprint Tasks
+- [x] Documentation
+- [x] UI Class
+- [x] Map Class
+- [x] Game Class and integration of all classes into a working prototype (2 people)
+- [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
+- [ ] Help with integration of your classes into Game class (everyone)
 
+
+### Tasks Assigned to Wojciech Kośnik-Kowalczuk
+- [ ] UI
+- [ ] Map
+- [ ] Game Class and integration of all classes into a working prototype
+
+### Tasks Assigned to Olaf Masłowski
+- [ ] Game Class and integration of all classes into a working prototype
+- [ ] Help with integration of Tower
+- [ ] Help with integration of Tower Menager
+
+### Tasks Assigned to Marta Stankiewicz
+- [ ] Help with integration of Enemy
+
+### Tasks Assigned to Laura Nowak
+- [ ] Documentation for dr. Giniewicz
+
+### Tasks Assigned to Mateusz Rurzyński
+- [ ] Help with integration of Level
+- [ ] Help with integration of Player
+
+
+
+
+
+
+*************************************************************************************************************************************
+## Sprint 3 ( - )
+
+### Sprint Goals
+- [ ]
+
+
+### Overall Sprint Tasks
 - [ ] Write proper README.md file
 - [ ] Parse and polish .gitignore file
+- [ ] Polish map-generator
 
 
 
