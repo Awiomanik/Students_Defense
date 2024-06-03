@@ -1,4 +1,4 @@
-"""Map class for storing map information"""
+"""Module providing the Map class for reading form file, storing and manipulating map data."""
 
 # IMPORTS
 from ..Utilities import Coord
@@ -6,10 +6,52 @@ import os
 
 class Map():
     """
+    A class to manage and interact with map data. This class allows for 
+    the loading, parsing, and representation of map data which includes grid-based accessibility of tiles, 
+    paths for entities within the game and map name.
+
+    Attributes:
+        name (str): The name of the map.
+        paths (tuple): Immutable tuple of tuples, where each inner tuple represents a path
+                       as a sequence of Coord instances indicating the path through the tile grid.
+        grid (list): A list of lists where each sublist represents a row in the grid.
+                     Each element in the sublist is a boolean indicating the tile's accessibility.
+
+    Args:
+        name (str): The default name of the map if not specified otherwise and base of the map data file nmae. 
+                    Defaults to "TEST_1".
+        map_data_directory (str, optional): The directory where the map data files are stored.
+                                            Defaults to the 'maps' subdirectory relative to this module's location.
+
+    Methods:
+        __init__(self, name: str = "TEST_1", map_data_directory: str = None):
+            Initializes a Map instance with a specified name and data directory. Loads the map data from the
+            corresponding file within the provided or default directory.
+
+        load_map_data(self, path: str):
+            Loads and parses map data from a specified file path. This method updates the map's attributes
+            based on the contents of the file including the name, grid configuration, and paths.
     """
 
     def __init__(self, name : str = "TEST_1", map_data_directory : str = None) -> None:
         """
+        Initializes a new instance of the Map class, loading map data from a specified file within a directory.
+
+        This constructor sets up the map with a default or specified name and attempts to load its configuration
+        from a data file that matches the map name in the provided or default directory. If the directory is not specified,
+        it defaults to a 'maps' subdirectory located relative to this module's path. The initialization process involves
+        parsing the map's metadata, grid data for accessibility, and paths if available.
+
+        Args:
+            name (str): The default name of the map if not specified otherwise, used to locate the corresponding map data file.
+                        Defaults to "TEST_1", implying that the file "TEST_1_map.dat" should exist in the specified directory.
+            map_data_directory (str, optional): The directory where the map data files are expected to be stored.
+                                                If not provided, it defaults to a 'maps' directory relative to the location of this module's file.
+
+        Raises:
+            FileNotFoundError:  If the specified map data file does not exist in the provided directory, this will
+                                inform the user about the missing file but does not stop the execution; instead,
+                                it initializes the map with default or empty configurations.
         """
         # Set directory if not given
         if map_data_directory is None:
@@ -27,54 +69,76 @@ class Map():
         self.load_map_data(file_path)
 
     def load_map_data(self, path : str) -> None:
+        """
+        Load and parse the map data from a file.
+
+        Args:
+            path (str): The file path from which to load the map data.
+        
+        This method parses the map data file, updating the attributes of the map object
+        based on the contents of the file. It reads the map's name, grid configuration, and enemies paths.
+        """
+        # Open file
         try:
             with open(path, 'r') as file:
                 data = file.readlines()
-
-            # Parse each line
-            for i, line in enumerate(data):
-                line = line.strip()
-
-                if line.startswith("Name:"):
-                    self.name = line.split("Name:", 1)[1].strip()
-
-                elif line.startswith("Grid:"):
-                    for line in data[i + 2:]:
-                        if line[0] == '+':
-                            break
-                        row = []
-                        for character in line[1:]:
-                            if character == '|':
-                                break
-                            row.append(character == ' ')
-                        self.grid.append(row)
-
-                elif line.startswith("Paths:"):
-                    temp_paths = []
-                    for j, line in enumerate(data[i + 1:], i + 2):
-                        if line.startswith("Path"):
-                            temp_path = []
-                            line = data[j].split(" > ")
-                            for element in line:
-                                x, y = element.split(", ")
-                                temp_path.append(Coord(x, y))
-                            temp_paths.append(tuple(temp_path))
-                    self.paths = tuple(temp_paths)
-
-            print(self.name)
-            for g in self.grid:
-                for h in g:
-                    print('x' if h else ' ', end='')
-                print()
-            print(self.paths)
-                            
-
-
-
         except FileNotFoundError:
             print(f"Map data file not found: {path}")
+            
+        # Parse each line
+        for i, line in enumerate(data):
+            line = line.strip()
 
+            # Get name
+            if line.startswith("Name:"):
+                self.name = line.split("Name:", 1)[1].strip()
 
+            # Get grid accesibility (whaether a tile is taken or accessible)
+            elif line.startswith("Grid:"):
+                # Parse through tiles starting 2 rows below (skipping "Grid:" row and "+--...--+" row)
+                for line in data[i + 2:]:
+                    # Stop reading grid at "+--..." row
+                    if line[0] == '+':
+                        break
+                    row = [] # Temporary list for storing boolian representation of the row
+                    # Iterate over characters in a row skipping spaces and initial "| "
+                    for character in line[2::2]:
+                        # Stop at vertical borer
+                        if character == '|':
+                            break
+                        # Append True if the row is not taken
+                        row.append(character == ' ')
+                    # Append read row 
+                    self.grid.append(row)
 
-if __name__ == "__main__":
-    Map()
+            # Get enemies paths
+            elif line.startswith("Paths:"):
+                temp_paths = [] # Temporary list for paths
+                # Iterate over lines below "Paths:" every other line to skip path numeration
+                for j, line in enumerate(data[i + 1:], i + 2):
+                    # If current line is a path numerating one parse line below to read and convert the data within it
+                    if line.startswith("Path"):
+                        temp_path = []# Temporary list for currently read path
+                        line = data[j].split(" > ") # split path into tile segments
+                        # Append coordinates of each tile to the temp_path list
+                        for element in line:
+                            x, y = element.split(", ")
+                            temp_path.append(Coord(x, y))
+                        # Append temp_path into temp_paths and convert it into inmutable type (tuple)
+                        temp_paths.append(tuple(temp_path))
+                # Convert list of paths into inmutable type (tuple)
+                self.paths = tuple(temp_paths)
+
+    def __str__(self) -> str:
+        """Return a formatted string representation of the map data."""
+        # Create a bordered grid presentation
+        top_border = '+-' + '-' * (2 * len(self.grid[0])) + '+'
+        bottom_border = top_border
+        rows = ['| ' + ' '.join(' ' if tile else 'x' for tile in row) + ' |' for row in self.grid]
+        
+        # Convert the grid and path lists into strings
+        grid_str = '\n'.join([top_border] + rows + [bottom_border])
+        paths_str = '\n'.join([f"Path {i}:\n{' > '.join(map(str, path))}" for i, path in enumerate(self.paths) if path])
+
+        return f"\nName: {self.name}\n\nGrid:\n{grid_str}\n\nPaths:\n{paths_str}\n"
+
