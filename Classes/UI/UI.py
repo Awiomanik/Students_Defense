@@ -1,15 +1,22 @@
-"""This module contains UI class for drawing game on the screen (and possibly audio)"""
+"""
+This module contains UI class for menaging interactions with user 
+(inout from keyboard and mouse and drawing graphics (potentialy also sounds))
+"""
 
 # IMPORTS
 import pygame, os, sys
+from ..Game import Game
+from ..Tower import Tower_Classes
+from ..Utilities import Coord
 
 class UI():
     """
     """
+    state = "idle"
     FPS : int = 60 # framerate
     RESOLUTION : tuple[int, int] = 1920, 1080
 
-    def __init__(self) -> None:
+    def __init__(self, player_name : str) -> None:
         # SET UP WONDOW AND PYGAME
         # initialize Pygame
         pygame.init()
@@ -25,10 +32,52 @@ class UI():
         self.mouse_click = False 
         self.pos = pygame.mouse.get_pos()
 
-        # SET ASSETS PATHS
+        # SET ASSETS PATHS and 
         self.gfx_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Assets", "gfx")
         # audio path (in the future)
+
+        # SET AND LOAD HUD ELEMENTS
+        self.font = pygame.font.SysFont("Consolas", 50)
+        player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
+        self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
+        self.button_gfx = pygame.image.load(os.path.join(self.gfx_path, "HUD", "BLANK_BUTTON.png"))
         
+    def get_input(self) -> None:
+        """This will pass input to other classses"""
+        # HANDLE EVENTS (eg. key press)
+        for event in pygame.event.get():
+            
+            # quit game if is being window closed
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # Handle key press
+            elif event.type == pygame.KEYDOWN:
+
+                # temporary exit way (escape key)
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+            # mouse press (relise)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.mouse_click = True
+                self.pos = pygame.mouse.get_pos()
+
+        # Process mouse press
+        if self.mouse_click:
+            # Unpack mouse position
+            x, y = self.pos
+            # buy tower
+            if UI.state == "idle":
+                if 1680 < x < 1800:
+                    if 960 < y < 1080:
+                        UI.state = "buy tower"
+            elif UI.state == "buy tower":
+                # Temporary predefined tower placement
+                Game.Tower_Classes.Tower_Manager("test_tower", Coord(2, 3))
+
     def intro(self) -> None:
         # Write down title character by character on the center of the screen
         font = pygame.font.SysFont('Consolas', 200)
@@ -93,20 +142,62 @@ class UI():
     def load_lvl(self, 
                  map_name : str = "TEST_1", 
                  towers_names : dict = {"test_tower" : "tower_placeholder.png"},
-                 bullets_names : dict = {"test_bullet" : "bullet_placeholder.png"}) -> None:
+                 bullets_names : dict = {"test_bullet" : "bullet_placeholder.png"},
+                 number_of_waves : int = 3) -> None:
         # Load graphics
         self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", map_name + "_map.png"))
         self.towers_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
                            for name, file in towers_names.items()}
         self.bullets_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
-                            for name, file in bullets_names.items()}        
+                            for name, file in bullets_names.items()}  
+        self.number_of_waves = number_of_waves
+        self.current_wave = 1
+    
+    def new_wave(self) -> None:
+        self.current_wave += 1
 
-    def update(self) -> None:
+    def update(self, gold : int, lives : int) -> None:
         # DRAW ELEMENTS
+        # background
         self.screen.blit(self.map_gfx, (0, 0))
+        # towers
+        for tower in Tower_Classes.Tower_Manager.towers:
+            pass
+        # HUD
+        self.hud(gold, lives)
 
         # UPDATE SCREEN
         pygame.display.flip()
         self.clock.tick(self.FPS)
 
+    def hud(self, gold : int, lives : int) -> None:
+        # player name
+        self.screen.blit(self.player_name_gfx, (20, 845))
+        # player money
+        self.screen.blit(self.font.render(f"Gold:    {gold}", False, (0, 0, 0)), (20, 905))
+        # lives
+        self.screen.blit(self.font.render(f"Lives:   {lives}", False, (0, 0, 0)), (20, 965))
+        # Wave number
+        self.screen.blit(self.font.render(f"Wave:    {self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (20, 1025))
+        # buttons
+        buttons_font = pygame.font.SysFont("Consolas", 40)
+        # button 1
+        self.screen.blit(self.button_gfx, (960, 840))
+        # button 2
+        self.screen.blit(self.button_gfx, (960, 960))
+        # button 3
+        self.screen.blit(self.button_gfx, (1200, 840))
+        # button 4
+        self.screen.blit(self.button_gfx, (1200, 960))
+        # button 5
+        self.screen.blit(self.button_gfx, (1440, 840))
+        # button 6
+        self.screen.blit(self.button_gfx, (1440, 960))
+        # button 7
+        self.screen.blit(self.button_gfx, (1680, 840))
+        # button 8
+        self.screen.blit(self.button_gfx, (1680, 960))
+        buy_tower_txt = buttons_font.render("Buy Tower", False, (0, 0, 0))
+        self.screen.blit(buy_tower_txt, (1700, 995))
 
+        

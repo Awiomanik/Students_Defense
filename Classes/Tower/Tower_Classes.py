@@ -1,28 +1,61 @@
-#### import coord#### ## required integration with coord class
-import pygame ####assusmes window called display########
+"""Tower meneger module"""
+
+from ..Utilities import Coord
+from ..Level import Test_Level
 
 class Tower: #defining properties of towers
-    def __init__(self,range : int,damage : int,atk_speed : int,shot_count : int,targeting : bool,bouncing : bool,own_asset,shot_asset): #
-        self.range = range #range in pixels
-        self.dmg = damage
-        self.atk = atk_speed #speed will in fact be delay between other attacks
-        self.shot_count = shot_count #number of projectiles fired
-        self.targeting = targeting #some towers will fire projectiles in predefined directions (at some point)
-        self.bouncing = bouncing #some towers will have projectiles bouncing between enemies
-        self.o_asset = own_asset 
-        self.s_asset = shot_asset
+    def __init__(self, tower_type : str = "test_tower",
+                 tower_types : dict[str : tuple[int, int, int, int, bool, bool]] = None) -> None:
+        """
+        Initializes tower of type tower_type
 
-class Tower_Manager: #This class is responsible for storing information about towers and attacking enemies
+        tower_types content:
+            - range in pixels
+            - demage
+            - atk_speed will in fact be delay between other attacks
+            - number of projectiles fired
+            - some towers will fire projectiles in predefined directions (at some point)
+            - some towers will fire projectiles in predefined directions (at some point)
+        """
+        # Set tower_types dict if not given
+        if tower_types is None:
+            tower_types = {"test_tower" : (10, 10, 10, 10, False, False)}
+
+        # Initialize tower
+        self.range, \
+        self.dmg, \
+        self.atk, \
+        self.shot_count, \
+        self.targeting, \
+        self.bouncing \
+            = tower_types[tower_type]
+
+class Tower_Manager:
+    """This class is responsible for storing information about towers and attacking enemies"""
     towers = []
+
+    def __init__(self,
+                 level : Test_Level.Level,
+                 tower_type : str = "test_tower", 
+                 pos : Coord = Coord(0, 0), 
+                 enemies : list = None) -> None:
+        "Place tower"
+        Tower_Manager.towers.append(Tower(tower_type))
+        level.map.grid[pos] = True
+
+
+    """
     def __init__(self,tower_type : Tower,coord,enemies):############requires integration with coord class
         self.tower_type = tower_type
         self.coord = coord ############## coord
         self.grid_loc = [((coord[0]//16)*120)+60,((coord[1]//9)*120)+60] ###### placement on the grid ######### currently unutilised for simplicity in test text game ##############!!############ coord class required
         self.enemies = enemies #assuming all enemies coords can be accesed through list ## not needed when enemies will be accessible through level entity attribute ###############!!
         Tower_Manager.towers.append((tower_type,coord)) #list of all placed towers
+    """
     @classmethod
     def reset(cls):
         cls.towers = [] #clearing list
+
     def attack(self):
         inrange = []
         for enemy in self.enemies:

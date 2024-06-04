@@ -1,20 +1,21 @@
 import Classes.Tower.Tower_Classes as tw
 
 class Player: # Defines the player entity
-    def __init__(self, name: str, gold: int, tower_manager: tw.Tower_Manager):
+    def __init__(self, name : str, gold : int, lives : int) -> None:
         self.name = name
         self.gold = gold
-        self.tower_manager = tower_manager
+        self.lives = lives
         self.placed_towers = []
 
     def can_afford_tower(self, tower: tw.Tower) -> bool:
         return self.gold >= tower.cost
 
-    def place_tower(self, tower: tw.Tower, x: int, y: int) -> bool:
+    def place_tower(self, tower: tw.Tower, x: int, y: int, ) -> bool:
         if not self.can_afford_tower(tower):
             print(f"{self.name} cannot afford the {tower.name} tower.")
             return False
-        if not self.tower_manager.place_tower(tower, x, y):
+    
+        if not self.tower_manager():
             print(f"Cannot place {tower.name} at position ({x}, {y}).")
             return False
         self.gold -= tower.cost

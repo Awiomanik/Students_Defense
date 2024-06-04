@@ -3,11 +3,9 @@
 #at the moment enemy can only move forward
 
 class Enemy():
-    def __init__(self, life: int, speed: int, image, position):
+    def __init__(self, life: int, speed: int, position):
         self.life = life
         self.speed = speed
-        self.image = image
-        self.rect = self.image.get_rect()
         self.rect.center = position
 
     def move(self):

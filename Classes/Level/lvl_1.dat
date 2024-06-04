@@ -1,0 +1,9 @@
+Map: TEST_1
+Gold: 1000
+Lives: 20
+Wave 1: 3-test_enemy
+Wave 2: 10-test_enemy
+Wave 3: 20-test_enemy
+
+standard for writing waves:
+num-type, num-type,...
