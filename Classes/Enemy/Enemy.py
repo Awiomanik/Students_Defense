@@ -24,6 +24,13 @@ class Enemy():
         if (self.x, self.y) != self.destination:
             self.x += self.direction[0] * self.speed #adding to x, normalized vector[0]*speed (which is scalar here)
             self.y += self.direction[1] * self.speed
+
+            #for enemy to stop in the right place, not to fly too far
+            if (self.direction[0] > 0 and self.x >= self.destination[0]) or (self.direction[0] < 0 and self.x <= self.destination[0]):
+                self.x = self.destination[0]
+            if (self.direction[1] > 0 and self.y >= self.destination[1]) or (self.direction[1] < 0 and self.y <= self.destination[1]):
+                self.y = self.destination[1]
+
             self.position = (self.x, self.y)
 
     def update(self):
