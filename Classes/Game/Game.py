@@ -5,8 +5,6 @@
 from ..UI import UI
 from ..Level import Test_Level
 from ..Player import Player
-from ..Tower import Tower_Classes
-from ..Utilities import Coord
 
 
 class Game():

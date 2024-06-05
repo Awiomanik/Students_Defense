@@ -73,13 +73,18 @@ class UI():
             print(self.state)
             # Unpack mouse position
             x, y = self.pos
-            # buy tower
             if 1680 < x < 1800:
+                # buy tower
                 if 960 < y < 1080:
                     if UI.state == "buy tower":
                         UI.state = "idle"
                     else:
                         UI.state = "buy tower"
+                # exit
+                if 840 < y < 960:
+                    print("Programm terminated with a button")
+                    pygame.quit()
+                    sys.exit()
 
             elif UI.state == "buy tower":
                 tile : Coord = Coord.res2tile(self.pos) 
@@ -90,6 +95,7 @@ class UI():
                         map.grid[tile.y][tile.x] = False
                         Tower_Manager(chosen_tower, Coord(x, y))
                         player.gold -= Tower.tower_types[chosen_tower][-1]
+
                         
         self.mouse_click = False
 
@@ -208,8 +214,10 @@ class UI():
         self.screen.blit(self.button_gfx, (1440, 840))
         # button 6
         self.screen.blit(self.button_gfx, (1440, 960))
-        # button 7
+        # button 7 (exit)
         self.screen.blit(self.button_gfx, (1680, 840))
+        exit_txt = buttons_font.render("EXIT", False, (255, 0, 0))
+        self.screen.blit(exit_txt, (1755, 880))
         # button 8 (buy tower)
         self.screen.blit(self.button_gfx, (1680, 960))
         colour = (0, 255, 0) if self.state == "buy tower" else (0, 0, 0)
