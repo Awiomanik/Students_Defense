@@ -1,3 +1,4 @@
+
 #they should have they life, speed, image and position
 #they can move and take damage 
 #at the moment enemy can only move forward
@@ -25,5 +26,12 @@ class Enemy():
     def __str__(self):
         return f"Enemy(life={self.life}, speed={self.speed})"
     
-
+#class Enemy_Manager:
+#    present = []
+#    def __init__(self,enemy : Enemy):
+#        Enemy_Manager.present.append(enemy)
+#    @classmethod
+#    def remove_enemy(cls):
+#        for enemy in Enemy_Manager.present:
+#            if enemy.life == 0
 

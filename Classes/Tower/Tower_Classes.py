@@ -3,11 +3,11 @@
 from ..Utilities import Coord
 from ..Level import Test_Level
 from ..Enemy import Enemy
-from ..Enemy_Manager import Enemy_Manager
 
 class Tower: #defining properties of towers
-    def __init__(self, tower_type : str = "test_tower",
-                 tower_types : dict[str : tuple[int, int, int, int, bool, int]] = None) -> None:
+    tower_types = {"test_tower_1" : (300, 1, 120, 1, True, 0, 1),
+                   "test_tower_2" : (180, 1, 120, 2, True, 0, 1)}
+    def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes tower of type tower_type.
         Types of towers are to be defined in dictionary located in another file. This dictionary is called tower_types. 
@@ -20,11 +20,9 @@ class Tower: #defining properties of towers
         shot_count - number of projectiles fired
         targeting - defines if tower attacks defined enemy, or fires projectiles in defined directions. The latter are to be detailed in later stages of development.
         bouncing - defines if after first attack projectiles will bounce towards other nearby enemies.
+        cost - cost of tower
 
         """
-        # Set tower_types dict if not given
-        if tower_types is None:
-            tower_types = {"test_tower" : (300, 1, 120, 1, True, 0)}
 
         # Initialize tower
         self.range, \
@@ -32,9 +30,10 @@ class Tower: #defining properties of towers
         self.atk, \
         self.shot_count, \
         self.targeting, \
-        self.bouncing \
-            = tower_types[tower_type]
-        self.base_cooldown = tower_types[tower_type][2]
+        self.bouncing, \
+        self.cost \
+            = Tower.tower_types[tower_type]
+        self.base_cooldown = Tower.tower_types[tower_type][2]
     def cooldown(self):
         self.atk -=1
     def setbasecooldown(self):
@@ -46,12 +45,12 @@ class Tower_Manager:
 
     def __init__(self,
                  level : Test_Level.Level,
-                 tower_type : str = "test_tower", 
+                 tower_type_str : str = "test_tower", 
                  pos : Coord = Coord(0, 0),
-                 enemies : list = Enemy_Manager.present) -> None:
+                 enemies : list = None): #Enemy_Manager.present) -> None:
         "Place tower"
-        level.map.grid[pos] = True
-        self.tower_type = Tower(tower_type)
+        level.map.grid[pos] = False
+        self.tower_type = Tower(tower_type_str)
         self.pos = pos
         self.enemies = enemies
         Tower_Manager.towers.append(self)
@@ -80,7 +79,7 @@ class Tower_Manager:
                         #display.blit(atk_png,self.coo) ################################## display !!!####
                         #proj_coord.add(attack_vector20)
                         #distance_traveled = ((proj_coord.x - self.coord.x)**2 + (proj_coord.y - self.coord.y)**2)**0.5
-                    self.enemies[enemy].take_damage(self.tower_type.dmg)
+                    #self.enemies[enemy].take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
 
     @classmethod
