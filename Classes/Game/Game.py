@@ -41,13 +41,16 @@ class Game():
         # LOAD LEVEL
         self.ui.load_lvl()
         self.level = Test_Level.Level(1)
-        self.player = Player.Player(player_name, self.level.gold, self.level.lives, self.level.available_towers)
+        self.player = Player.Player(player_name, 
+                                    self.level.gold, 
+                                    self.level.lives, 
+                                    self.level.available_towers)
 
 
         # MAIN GAMEPLAY LOOP
         running = True
         while running:
-            self.ui.get_input()
+            self.ui.get_input(self.level.map, self.player)
             self.ui.update(self.player.gold, self.player.lives)
 
 

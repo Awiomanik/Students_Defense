@@ -44,12 +44,10 @@ class Tower_Manager:
     towers = []
 
     def __init__(self,
-                 level : Test_Level.Level,
                  tower_type_str : str = "test_tower", 
                  pos : Coord = Coord(0, 0),
                  enemies : list = None): #Enemy_Manager.present) -> None:
         "Place tower"
-        level.map.grid[pos] = False
         self.tower_type = Tower(tower_type_str)
         self.pos = pos
         self.enemies = enemies

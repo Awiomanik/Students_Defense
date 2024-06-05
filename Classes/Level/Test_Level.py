@@ -45,7 +45,8 @@ class Level:
                 self.map = Map_Class.Map(map_name)
             # Available_towers
             elif line.startswith("Available_towers:"):
-                self.available_towers : list[str] = [tower.strip() for tower in line.split(',')]
+                self.available_towers : list[str] = \
+                    [tower.strip() for tower in line.split("Available_towers:")[1].split(',')]
                 
         # Set new waves if waves data found in file
         if temp_waves:

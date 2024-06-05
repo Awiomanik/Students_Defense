@@ -6,8 +6,10 @@ This module contains UI class for menaging interactions with user
 # IMPORTS
 import pygame, os, sys
 from ..Game import Game
-from ..Tower import Tower_Classes
+from ..Tower.Tower_Classes import Tower_Manager, Tower
 from ..Utilities import Coord
+from ..Player.Player import Player
+from ..Map.Map_Class import Map as mp
 
 class UI():
     """
@@ -32,7 +34,7 @@ class UI():
         self.mouse_click = False 
         self.pos = pygame.mouse.get_pos()
 
-        # SET ASSETS PATHS and 
+        # SET ASSETS PATHS
         self.gfx_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Assets", "gfx")
         # audio path (in the future)
 
@@ -41,8 +43,8 @@ class UI():
         player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
         self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
         self.button_gfx = pygame.image.load(os.path.join(self.gfx_path, "HUD", "BLANK_BUTTON.png"))
-        
-    def get_input(self) -> None:
+
+    def get_input(self, map : mp, player : Player) -> None:
         """This will pass input to other classses"""
         # HANDLE EVENTS (eg. key press)
         for event in pygame.event.get():
@@ -67,16 +69,29 @@ class UI():
 
         # Process mouse press
         if self.mouse_click:
+            # debugging print
+            print(self.state)
             # Unpack mouse position
             x, y = self.pos
             # buy tower
-            if UI.state == "idle":
-                if 1680 < x < 1800:
-                    if 960 < y < 1080:
+            if 1680 < x < 1800:
+                if 960 < y < 1080:
+                    if UI.state == "buy tower":
+                        UI.state = "idle"
+                    else:
                         UI.state = "buy tower"
+
             elif UI.state == "buy tower":
-                # Temporary predefined tower placement
-                Game.Tower_Classes.Tower_Manager("test_tower", Coord(2, 3))
+                tile : Coord = Coord.res2tile(self.pos) 
+                # temporary choosen tower
+                chosen_tower = "test_tower_1"
+                if map.grid[tile.y][tile.x]:
+                    if chosen_tower in player.affordable_towers():
+                        map.grid[tile.y][tile.x] = False
+                        Tower_Manager(chosen_tower, Coord(x, y))
+                        player.gold -= Tower.tower_types[chosen_tower][-1]
+                        
+        self.mouse_click = False
 
     def intro(self) -> None:
         # Write down title character by character on the center of the screen
@@ -161,8 +176,8 @@ class UI():
         # background
         self.screen.blit(self.map_gfx, (0, 0))
         # towers
-        for tower in Tower_Classes.Tower_Manager.towers:
-            pass
+        for tower in Tower_Manager.towers:
+            self.screen.blit(self.towers_gfx["test_tower"], tower.display_pos)
         # HUD
         self.hud(gold, lives)
 
@@ -195,9 +210,10 @@ class UI():
         self.screen.blit(self.button_gfx, (1440, 960))
         # button 7
         self.screen.blit(self.button_gfx, (1680, 840))
-        # button 8
+        # button 8 (buy tower)
         self.screen.blit(self.button_gfx, (1680, 960))
-        buy_tower_txt = buttons_font.render("Buy Tower", False, (0, 0, 0))
+        colour = (0, 255, 0) if self.state == "buy tower" else (0, 0, 0)
+        buy_tower_txt = buttons_font.render("Buy Tower", False, colour)
         self.screen.blit(buy_tower_txt, (1700, 995))
 
         
