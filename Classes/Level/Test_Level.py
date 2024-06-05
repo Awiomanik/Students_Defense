@@ -55,6 +55,9 @@ class Level:
         # Set number of waves
         self.waves_num = len(self.waves)
 
+    def start_wave():
+        pass
+
 # Use example:
 if __name__ == "__main__":
 

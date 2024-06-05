@@ -81,16 +81,19 @@ class UI():
                     else:
                         UI.state = "buy tower"
                 # exit
-                if 840 < y < 960:
+                elif 840 < y < 960:
                     print("Programm terminated with a button")
                     pygame.quit()
                     sys.exit()
 
-            elif UI.state == "buy tower":
+            if UI.state == "buy tower":
+                print(map)
                 tile : Coord = Coord.res2tile(self.pos) 
                 # temporary choosen tower
                 chosen_tower = "test_tower_1"
+                print(tile)
                 if map.grid[tile.y][tile.x]:
+                    print("HELOO", tile)
                     if chosen_tower in player.affordable_towers():
                         map.grid[tile.y][tile.x] = False
                         Tower_Manager(chosen_tower, Coord(x, y))
