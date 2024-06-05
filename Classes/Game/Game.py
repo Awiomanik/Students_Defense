@@ -41,7 +41,7 @@ class Game():
         # LOAD LEVEL
         self.ui.load_lvl()
         self.level = Test_Level.Level(1)
-        self.player = Player.Player(player_name, self.level.gold, self.level.lives)
+        self.player = Player.Player(player_name, self.level.gold, self.level.lives, self.level.available_towers)
 
 
         # MAIN GAMEPLAY LOOP

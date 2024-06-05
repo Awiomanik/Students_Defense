@@ -16,6 +16,7 @@ class Map():
                        as a sequence of Coord instances indicating the path through the tile grid.
         grid (list): A list of lists where each sublist represents a row in the grid.
                      Each element in the sublist is a boolean indicating the tile's accessibility.
+                     True-accessible False-blocked
 
     Args:
         name (str): The default name of the map if not specified otherwise and base of the map data file nmae. 

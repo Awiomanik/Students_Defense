@@ -43,7 +43,10 @@ class Level:
             elif line.startswith("Map"):
                 map_name = line.split("Map:", 1)[1].strip()
                 self.map = Map_Class.Map(map_name)
-
+            # Available_towers
+            elif line.startswith("Available_towers:"):
+                self.available_towers : list[str] = [tower.strip() for tower in line.split(',')]
+                
         # Set new waves if waves data found in file
         if temp_waves:
             self.waves = tuple(temp_waves)

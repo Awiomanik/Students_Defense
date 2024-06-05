@@ -4,6 +4,7 @@ Lives: 20
 Wave 1: 3-test_enemy
 Wave 2: 10-test_enemy
 Wave 3: 20-test_enemy
+Available_towers: test_tower_1, test_tower_2
 
 standard for writing waves:
 num-type, num-type,...
