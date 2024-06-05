@@ -76,7 +76,7 @@ class Tower_Manager:
                     self.tower_type.setbasecooldown()
 
     @classmethod
-    def frame(cls):
+    def update(cls):
         """Method intended to be executed every frame in order to execute all towers' attacks"""
         cls.enemies = Enemy_Manager.present #update enemy list
         for tower in cls.towers:
