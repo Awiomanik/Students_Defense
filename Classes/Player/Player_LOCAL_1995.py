@@ -1,4 +1,4 @@
-from Classes.Tower.Tower_Classes import Tower
+import Classes.Tower.Tower_Classes as tw
 
 class Player: # Defines the player entity
 
@@ -12,8 +12,18 @@ class Player: # Defines the player entity
         """Returns which of the towers available on the level are affordable"""
         affordable=[]
         for tower in self.avialable_towers:
-            if Tower.tower_types[tower][-1] <= self.gold:
+            if tw.Tower.tower_types[tower][-1] <= self.gold:
                affordable.append(tower) 
         return affordable
-    def deduct_lives(self):
-        self.lives -=1
+
+    def place_tower(self, tower: tw.Tower, x: int, y: int) -> bool:
+        if  tower in self.affordable_towers():
+            print("You cannot afford this tower.")
+            return False
+    
+        if not self.tower_manager():
+            print("You can't place a tower here")
+            return False
+        self.gold -= tw.Tower.tower_types[tower][-1]
+
+        return True

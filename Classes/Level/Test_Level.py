@@ -1,9 +1,10 @@
 from typing import List, Dict, Tuple
-import Classes.Enemy as enm
+from ..Enemy.Enemy import Enemy_Manager
 import os
 from ..Map import Map_Class
 
 class Level:
+    enemies : list[Enemy_Manager] = Enemy_Manager.present
     def __init__(self, level_number : int, level_data_directory : str = None) -> None:
         """Loads level data from file"""
         # Set level data directory if no directory given
@@ -25,6 +26,8 @@ class Level:
         self.waves : list[dict[str, int]]= ({"test_enemy" : 1})
         temp_waves = []
         self.map = None
+        self.current_wave = 0
+        self.spawn_cooldown = 0
 
         # Parse level data to set atributes
         for line in level_data:
@@ -45,7 +48,8 @@ class Level:
                 self.map = Map_Class.Map(map_name)
             # Available_towers
             elif line.startswith("Available_towers:"):
-                self.available_towers : list[str] = [tower.strip() for tower in line.split(',')]
+                self.available_towers : list[str] = \
+                    [tower.strip() for tower in line.split("Available_towers:")[1].split(',')]
                 
         # Set new waves if waves data found in file
         if temp_waves:
@@ -53,11 +57,67 @@ class Level:
 
         # Set number of waves
         self.waves_num = len(self.waves)
+        self.current_wave_def = self.waves[self.current_wave]
+        self.current_enemy = list(self.current_wave_def.keys())[0]
+        self.remaining_enemies = sum(self.current_wave_def.values())
+    def spawn_enemy(self):
+        if not self.remaining_enemies:
+            pass
+        elif self.spawn_cooldown == 0:
+            spawned_enemy = Enemy_Manager(self.current_enemy,self.map) #despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            self.current_wave_def[self.current_enemy] -= 1
+            self.spawn_cooldown = 60
+            self.remaining_enemies = sum(self.current_wave_def.values())
+            if self.current_wave_def[self.current_enemy] == 0:
+                del self.waves[self.current_wave][self.current_enemy]
+            return spawned_enemy
+        else:
+            self.spawn_cooldown -= 1
+    def update(self):
+        self.spawn_enemy()
+        Enemy_Manager.update()
+        for enemy in self.enemies:
+            if enemy.damaged_player:
+                self.lives -=1
+                enemy.damaged_player = "done"
+    def new_wave(self):
+        self.current_wave += 1
+        self.current_wave_def = self.waves[self.current_wave]
+        self.current_enemy = list(self.current_wave_def.keys())[0]
+        self.remaining_enemies = sum(self.current_wave_def.values())
+
+
+
+        
 
 # Use example:
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-    level1 = Level(level_number=1)
-    level1.add_wave(enemy_type=student, quantity=10, interval=5)
-    level1.start_level()
+    #level1 = Level(level_number=1)
+    #level1.add_wave(enemy_type=student, quantity=10, interval=5)
+    #level1.start_level()
+#
 
+#A = Level(1)
+#x = 0
+#print('cooldown',A.spawn_cooldown)
+#while A.remaining_enemies:
+#    if x == 0:
+#        print('remaining enemies',A.current_wave_def)
+#        print('current enemy:',A.current_enemy)
+#        print('cooldown',A.spawn_cooldown)
+#        print('number of remaining enemies:',A.remaining_enemies)
+#    if A.remaining_enemies:
+#        A.spawn_enemy()
+#        Enemy_Manager.update()
+#        #print(A.spawn_cooldown)
+#        print(Enemy_Manager.present)
+#    if not A.spawn_cooldown or x == 0 or not A.remaining_enemies:
+#        print('remaining enemies',A.current_wave_def)
+#        print('current enemy:',A.current_enemy)
+#        print('cooldown',A.spawn_cooldown)
+#        print('number of remaining enemies:',A.remaining_enemies)
+#    x += 1
+#    if x == 20000:
+#        print('cos nie tak')
+#        break

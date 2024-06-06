@@ -1,12 +1,13 @@
+
 """Tower meneger module"""
 
 from ..Utilities import Coord
-from ..Level import Test_Level
-from ..Enemy import Enemy
+from ..Enemy.Enemy import Enemy, Enemy_Manager
+from ..Level.Test_Level import Level
 
 class Tower: #defining properties of towers
-    tower_types = {"test_tower_1" : (300, 1, 120, 1, True, 0, 1),
-                   "test_tower_2" : (180, 1, 120, 2, True, 0, 1)}
+    tower_types = {"test_tower_1" : (300, 1, 30, 1, True, 0, 1),
+                   "test_tower_2" : (180, 2, 45, 1, True, 0, 1)}
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes tower of type tower_type.
@@ -41,53 +42,58 @@ class Tower: #defining properties of towers
 
 class Tower_Manager:
     """This class is responsible for storing information about towers and attacking enemies"""
-    towers = []
-
+    towers : list['Tower_Manager'] = []
+    enemies : list['Enemy'] = Enemy_Manager.present
     def __init__(self,
-                 level : Test_Level.Level,
                  tower_type_str : str = "test_tower", 
-                 pos : Coord = Coord(0, 0),
-                 enemies : list = None): #Enemy_Manager.present) -> None:
+                 pos : Coord = Coord(0, 0)) -> None:
         "Place tower"
-        level.map.grid[pos] = False
         self.tower_type = Tower(tower_type_str)
-        self.pos = pos
-        self.enemies = enemies
+        self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
+        self.display_pos = (self.pos.x - 60,self.pos.y-60)
         Tower_Manager.towers.append(self)
+    #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
+    #    attack_vector : Coord = enemy_position - self.pos
+    #    attack_vector20 = Coord(20*attack_vector.x/((attack_vector.x**2 + attack_vector.y**2)**0.5),20*attack_vector.y/((attack_vector.x**2 + attack_vector.y**2)**0.5))
+    #    proj_pos : Coord = self.pos 
+    #    return proj_pos
+
 
     def attack(self):
         """Method takes care of everything related to attacks - manages cooldowns and attacks weakest enemy if any is in range"""
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
         else:#if tower is ready to fire, it will look for enemies in range
-            inrange = {}#this dict will contain enemies in range as keys and their hp as values
-            for enemy in self.enemies:
-                distance = ((enemy.pos.x-self.pos.x)**2 + (enemy.pos.x-self.pos.y)**2)**0.5#calculates distance between tower and enemy
+            inrange : dict[Enemy,Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
+            self.inrange = inrange
+            for enemy in Tower_Manager.enemies:
+                distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.x - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
                     inrange[enemy] = distance
-            if len(inrange):#returns false when list length is 0
+            if not len(inrange):#returns when list length is 0
                 return
-            for enemy in inrange.keys:
-                if inrange[enemy] == min(inrange.values): #defaults to attacking weakest enemies, might be choose-able later.$$
-                    #attack_vector = enemy_coord.sub(self.coord)############################################## attack animation in pygame ####################################################################### at the moment doesnt account for enemy movement. it moves fast tho
-                    #attack_vector20 = coord(20*attack_vector.x/((attack_vector.x**2 + attack.vector.y**2)**0.5),20*attack_vector.y/((attack_vector.x**2 + attack.vector.y**2)**0.5)) ### projectile will travel 20 pixels per frame
-                    #proj_coord = self.coord
-                    #distance_traveled = 0
-                    #distance_to_travel = ((proj_coord.x - self.coord.x)**2 + (proj_coord.y - self.coord.y)**2)**0.5
-                    #atk_png = pygame.image.load(self.tower_type.s_asset)
-                    #while distance_traveled<distance_to_travel:
-                        #display.blit(atk_png,self.coo) ################################## display !!!####
-                        #proj_coord.add(attack_vector20)
-                        #distance_traveled = ((proj_coord.x - self.coord.x)**2 + (proj_coord.y - self.coord.y)**2)**0.5
-                    #self.enemies[enemy].take_damage(self.tower_type.dmg)
+            for enemy in inrange.keys():
+                if inrange[enemy] == min(inrange.values()): #defaults to attacking weakest enemies, might be choose-able later.$$
+                    enemy.take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
+                    
 
     @classmethod
-    def frame(cls):
+    def update(cls):
         """Method intended to be executed every frame in order to execute all towers' attacks"""
+        cls.enemies = Enemy_Manager.present #update enemy list
         for tower in cls.towers:
             tower.attack()
     @classmethod
     def reset(cls):
         """Methot needed to clear all towers, supposedly when new game starts"""
         cls.towers = [] #clearing list
+#level = Level(1)
+##tower = Tower_Manager('test_tower_1')
+#level.update()
+#x = 0
+#while level.enemies:
+ #   print(level.enemies)
+##    level.update
+#    if tower.debug:
+#        print(tower.debug)

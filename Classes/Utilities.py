@@ -89,6 +89,19 @@ class Coord:
         """Return a string representation of the coordinate.
 
         Returns:
-            str: The string representation of the coordinate, formatted as 'x, y'.
+            str: The string representation of the coordinate, formatted as '|x,y|'.
         """
-        return f"{self.x}, {self.y}"
+        return f"|{self.x},{self.y}|"
+    
+    def res2tile(coords : tuple[int, int], tile_size : int = 120) -> 'Coord':
+        """
+        Scales coord from screen coordinates to grid coordinates using number of pixels tile_size.
+        
+        Parameters:
+            coord : Coord - Screen coordinates in pixels
+            tile_size : int - Size of a single tile in a grid in pixels (default 120)
+
+        Returns: 
+            Coord - Grid coordinates
+        """
+        return Coord(coords[0] // tile_size, coords[1] // tile_size)
