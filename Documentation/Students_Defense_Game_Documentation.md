@@ -192,8 +192,8 @@ The class diagram illustrates dependencies between classes, as well as their att
 ----------------------------------------
 
 #### 4. Updated Action Plan for Subsequent Weeks of Work
-- Implementing basic game mechanics, including UI drawing, enemy movement, and tower attacks.
-- Adding advanced features such as different enemy and tower types, and more complex pathfinding.
+- Implementing basic game mechanics, including UI drawing, enemy movement, and tower attacks, and creating 2 thematic maps.
+- Adding advanced features such as 3 different types of enemies with different power variants (student, engineer, master), 2 special enemies (bosses), 3 towers with upgrade options and more complex movement paths.
 - Testing and optimizing code to ensure smooth and error-free gameplay.
 
 #### 5. Updated Feature Plan for the Completed Application
