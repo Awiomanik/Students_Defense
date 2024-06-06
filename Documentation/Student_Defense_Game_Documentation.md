@@ -1,66 +1,64 @@
-### Dokumentacja Gry Student Defense
+### Student Defense Game Documentation
 
-#### 1. Instrukcja Uruchomienia Gry
+#### 1. Game Startup Instructions
 
-##### 1.1 Wymagane Biblioteki
-Aby uruchomić gry, należy zainstalować poniższe biblioteki:
+##### 1.1 Required Libraries
+To run the game, the following libraries need to be installed:
 - `pygame`
 - `os`
 
-Komenda instalacji:
+Installation command:
 ```bash
 pip install pygame
 ```
 
-##### 1.2 Uruchomienie Prototypu
-1. Po uruchomieniu gry pojawi się intro, które zostanie wyświetlone na ekranie.
-2. Następnie pojawi się główne menu, w którym gracz może wybrać rozpoczęcie gry lub zakończenie.
-3. Po wyborze rozpoczęcia gry gracz przechodzi do właściwej rozgrywki.
-4. Podczas rozgrywki gracz może kupować oraz budować wieże i bronić swoją pozycję przed nadchodzącymi falami wrogów.
+##### 1.2 Running the Prototype
+1. After launching the game, an intro will appear on the screen.
+2. Next, the main menu will appear, where the player can choose to start the game or exit.
+3. Upon selecting to start the game, the player enters the actual gameplay.
+4. During gameplay, the player can buy and build towers to defend their position against incoming waves of enemies.
 
-#### 2. Instrukcja Użytkowania
+#### 2. User Guide
 
-##### 2.1 Klasa `Level`
-- **Metody:**
-  - `__init__(self, level_number: int)`: Inicjalizuje poziom o podanym numerze.
-  - `add_wave(self, enemy_type: enm.Enemy, quantity: int, interval: int)`: Dodaje falę przeciwników.
-  - `get_waves(self) -> List[Dict[str, Tuple[int, int]]]`: Zwraca listę fal przeciwników.
-  - `start_level(self)`: Rozpoczyna poziom, wyświetlając informacje o falach przeciwników.
+##### 2.1 Class `Level`
+- **Methods:**
+  - `__init__(self, level_number: int)`: Initializes a level with the given number.
+  - `add_wave(self, enemy_type: enm.Enemy, quantity: int, interval: int)`: Adds a wave of enemies.
+  - `get_waves(self) -> List[Dict[str, Tuple[int, int]]]`: Returns a list of enemy waves.
+  - `start_level(self)`: Starts the level, displaying information about enemy waves.
 
-##### 2.2 Klasa `Map`
-- **Metody:**
-  - `__init__(self, name: str = "TEST_1", map_data_directory: str = None)`: Inicjalizuje mapę na podstawie pliku danych mapy.
-  - `load_map_data(self, path: str)`: Ładuje dane mapy z pliku.
+##### 2.2 Class `Map`
+- **Methods:**
+  - `__init__(self, name: str = "TEST_1", map_data_directory: str = None)`: Initializes a map based on map data file.
+  - `load_map_data(self, path: str)`: Loads map data from a file.
 
-##### 2.3 Klasa `Tower`
-- **Metody:**
-  - `__init__(self, range: int, damage: int, atk_speed: int, shot_count: int, targeting: bool, bouncing: bool, own_asset, shot_asset)`: Inicjalizuje wieżę z podanymi parametrami.
+##### 2.3 Class `Tower`
+- **Methods:**
+  - `__init__(self, range: int, damage: int, atk_speed: int, shot_count: int, targeting: bool, bouncing: bool, own_asset, shot_asset)`: Initializes a tower with specified parameters.
 
-##### 2.4 Klasa `Tower_Manager`
-- **Metody:**
-  - `__init__(self, tower_type: Tower, coord, enemies)`: Inicjalizuje menedżera wież dla podanego typu wieży, współrzędnych i przeciwników.
-  - `reset(cls)`: Resetuje listę wież.
-  - `attack(self)`: Wykonuje atak wieży na wrogów w zasięgu.
+##### 2.4 Class `Tower_Manager`
+- **Methods:**
+  - `__init__(self, tower_type: Tower, coord, enemies)`: Initializes tower manager for a given tower type, coordinates, and enemies.
+  - `reset(cls)`: Resets the tower list.
+  - `attack(self)`: Executes tower attack on enemies within range.
 
-#### 2.5 Klasa `Enemy`
-- **Metody:**
- - `__init__(self, life: int, speed: int, image, position: Tuple[int, int], destination: Tuple[int, int])`: Inicjalizuje przeciwnika z określonymi parametrami.
- - `calculate_direction(self) -> Tuple[float, float]`: Oblicza kierunek ruchu przeciwnika na podstawie jego pozycji i celu.
- - `move(self)`: Przesuwa przeciwnika w kierunku celu.
- - `update(self)`: Aktualizuje stan przeciwnika (np. wykonuje ruch).
- - `__str__(self) -> str`: Zwraca reprezentację przeciwnika jako string.
+##### 2.5 Class `Enemy`
+- **Methods:**
+ - `__init__(self, life: int, speed: int, image, position: Tuple[int, int], destination: Tuple[int, int])`: Initializes an enemy with specified parameters.
+ - `calculate_direction(self) -> Tuple[float, float]`: Calculates the enemy's movement direction based on its position and destination.
+ - `move(self)`: Moves the enemy towards its destination.
+ - `update(self)`: Updates the enemy's state (e.g., performs movement).
+ - `__str__(self) -> str`: Returns a string representation of the enemy.
 
-##### 2.6 Klasa `Game`
-- **Metody:**
-  - `__init__(self, display_intro: bool = True) -> None`: Inicjalizuje instancję gry.
-  - `run_game_loop(self) -> None`: Rozpoczyna główną pętlę rozgrywki.
-  - `__main__()`: Funkcja uruchamiająca grę.
+##### 2.6 Class `Game`
+- **Methods:**
+  - `__init__(self, display_intro: bool = True) -> None`: Initializes a game instance.
+  - `run_game_loop(self) -> None`: Starts the main game loop.
+  - `__main__()`: Function to launch the game.
 
+#### 3. Planned UML Class Diagram
 
-
-#### 3. Planowany Diagram Klas UML
-
-Diagram klas przedstawia zależności pomiędzy klasami oraz ich atrybuty i metody:
+The class diagram illustrates dependencies between classes, as well as their attributes and methods:
 
 ----------------------------------------
 |                Game                  |
@@ -92,7 +90,7 @@ Diagram klas przedstawia zależności pomiędzy klasami oraz ich atrybuty i meto
 | + load_lvl(map_name: str,            |
 |            towers_names: Dict[str,   |
 |                         str],        |
-|            bullets_names: Dict[str, |
+|            bullets_names: Dict[str,  |
 |                            str]) ->  |
 |            None                      |
 | + update()                           |
@@ -139,10 +137,10 @@ Diagram klas przedstawia zależności pomiędzy klasami oraz ich atrybuty i meto
 |                Level                 |
 ----------------------------------------
 | - level_number: int                  |
-| - enemy_waves: List[Dict[str,       |
-|                   Tuple[int, int]]] |
+| - enemy_waves: List[Dict[str,        |
+|                   Tuple[int, int]]]  |
 ----------------------------------------
-| + add_wave(enemy_type: Enemy,       |
+| + add_wave(enemy_type: Enemy,        |
 |            quantity: int,            |
 |            interval: int) -> None    |
 | + start_level() -> None              |
@@ -160,9 +158,9 @@ Diagram klas przedstawia zależności pomiędzy klasami oraz ich atrybuty i meto
 | - paths: Tuple[Tuple[Coord]]         |
 | - grid: List[List[bool]]             |
 ----------------------------------------
-| + __init__(name: str,               |
+| + __init__(name: str,                |
 |             map_data_directory: str) |
-| + load_map_data(path: str) -> None  |
+| + load_map_data(path: str) -> None   |
 | + __str__() -> str                   |
 ----------------------------------------
                |
@@ -187,34 +185,32 @@ Diagram klas przedstawia zależności pomiędzy klasami oraz ich atrybuty i meto
 |            speed: int,               |
 |            image,                    |
 |            position,                 |
-|            destination)             |
+|            destination)              |
 | + calculate_direction() -> Tuple[int,|
-|                                int]   |
+|                                int]  |
 | + move() -> None                     |
 | + update() -> None                   |
 | + __str__() -> str                   |
 ----------------------------------------
 
+#### 4. Updated Action Plan for Subsequent Weeks of Work
+- Implementing basic game mechanics, including UI drawing, enemy movement, and tower attacks.
+- Adding advanced features such as different enemy and tower types, and more complex pathfinding.
+- Testing and optimizing code to ensure smooth and error-free gameplay.
 
-#### 4. Zaktualizowany Plan Działania na Kolejne Tygodnie Pracy
-- Implementacja podstawowej mechaniki gry, w tym rysowanie interfejsu użytkownika, ruchu przeciwników i ataków wież.
-- Dodanie zaawansowanych funkcji, takich jak różne typy przeciwników i wież oraz bardziej złożone ścieżki ruchu.
-- Testowanie i optymalizacja kodu, aby upewnić się, że gra działa płynnie i bez błędów.
+#### 5. Updated Feature Plan for the Completed Application
 
+- **Basic Features:**
+  - Adding enemy waves.
+  - Managing towers and attacking enemies.
+  - Loading and displaying maps.
 
-#### 5. Zaktualizowany Plan Funkcjonalności Gotowej Aplikacji
+- **Advanced Features:**
+  - Various types of towers and enemies.
+  - Special tower abilities.
+  - Different difficulty levels and diverse maps.
+  - Integration with scoring and ranking system.
 
-- **Podstawowe Funkcje:**
-  - Dodawanie fal przeciwników.
-  - Zarządzanie wieżami i atakowanie przeciwników.
-  - Ładowanie i wyświetlanie map.
-
-- **Zaawansowane Funkcje:**
-  - Różnorodne typy wież i przeciwników.
-  - Specjalne umiejętności wież 
-  - Różne poziomy trudności i różnorodne mapy.
-  - Integracja z systemem punktacji i rankingów.
-
-- **Interfejs Użytkownika:**
-  - Intuicyjny interfejs do zarządzania grą.
-  - Wskaźniki zdrowia, punktów i zasobów.
+- **User Interface:**
+  - Intuitive interface for managing the game.
+  - Health, point, and resource indicators.
