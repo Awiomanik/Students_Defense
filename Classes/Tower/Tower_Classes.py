@@ -89,6 +89,12 @@ class Tower_Manager:
     def reset(cls):
         """Methot needed to clear all towers, supposedly when new game starts"""
         cls.towers = [] #clearing list
+        
+    def load_lvl():
+        # Clear any old data
+        Tower_Manager.reset()
+
+        
 #level = Level(1)
 ##tower = Tower_Manager('test_tower_1')
 #level.update()

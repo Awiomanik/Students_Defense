@@ -91,7 +91,7 @@ class Coord:
         Returns:
             str: The string representation of the coordinate, formatted as '|x,y|'.
         """
-        return f"|{self.x},{self.y}|"
+        return f"x.{self.x}, y.{self.y}"
     
     def res2tile(coords : tuple[int, int], tile_size : int = 120) -> 'Coord':
         """
