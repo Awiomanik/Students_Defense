@@ -1,7 +1,7 @@
 from ..Utilities import Coord
 from ..Map.Map_Class import Map
 
-class Enemy:
+class Enemy: # Defines properties of enemies
     enemy_types = {'test_enemy':{'hp': 5, 'speed' : 3}}
     def __init__(self, enemy_type : str = 'test_enemy'):
         self.life = Enemy.enemy_types[enemy_type]['hp']
@@ -9,8 +9,12 @@ class Enemy:
     
     def __str__(self):
         return f"Enemy(life={self.life}, speed={self.speed})"
-    
+       
 class Enemy_Manager:
+    """
+    This class take objects of the Enemy class and Map Class and defines how the enemies moves along the created path,
+    stores it's current life and checks if the enemy has died
+    """ 
     present = []
     def __init__(self,enemy_type : str = 'test_enemy', map : Map = Map()):
         self.name = enemy_type
@@ -42,7 +46,7 @@ class Enemy_Manager:
         else:
             self.attacked = False
 
-    def movement(self):
+    def movement(self): # Defines how enemy moves throughout the map
         if self.tile < len(self.path):
             destination : Coord = self.path[self.tile] 
             direction : Coord = destination - self.grid_pos
@@ -50,6 +54,7 @@ class Enemy_Manager:
             self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
             self.display_pos : tuple = (self.pos.x - 30,self.pos.y - 30)
             if (self.grid_pos.x,self.grid_pos.y) == (destination.x,destination.y):
+                #(tile_mid.x-self.speed/2<=self.pos.x<=tile_mid.x+self.speed/2) and (tile_mid.y-self.speed/2<=self.pos.y<=tile_mid.y+self.speed/2)
                 self.tile += 1
         else: #once enemy enters last tile on path, it will only move to right until removed by remove_enemy
             self.pos += Coord(self.speed,0)
@@ -60,14 +65,14 @@ class Enemy_Manager:
                 Enemy_Manager.present.remove(self)
 
                 
-    def remove_enemy(self):
+    def remove_enemy(self): # Removes dead enemies from the map
         if self.life == 0:
             Enemy_Manager.present.remove(self)
     @classmethod
     def endlevel(cls):
         cls.present = []
     @classmethod
-    def update(cls):
+    def update(cls): # Checks if the enemy is dead, moves or is attacked every frame
         for enemy in cls.present:
             enemy.remove_enemy()
             enemy.movement()

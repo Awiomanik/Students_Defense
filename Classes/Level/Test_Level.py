@@ -1,4 +1,3 @@
-from typing import List, Dict, Tuple
 from ..Enemy.Enemy import Enemy_Manager
 import os
 from ..Map import Map_Class
@@ -60,7 +59,8 @@ class Level:
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
-    def spawn_enemy(self):
+
+    def spawn_enemy(self): # Spawn enemies in set types, amounts and intervals
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
@@ -73,14 +73,14 @@ class Level:
             return spawned_enemy
         else:
             self.spawn_cooldown -= 1
-    def update(self):
+    def update(self): # Every frame spawn enemies if possible, makes them move, checks if they are attacked or dead and decreases the player lives if the enemy gets to the end
         self.spawn_enemy()
         Enemy_Manager.update()
         for enemy in self.enemies:
             if enemy.damaged_player:
                 self.lives -=1
                 enemy.damaged_player = "done"
-    def new_wave(self):
+    def new_wave(self): # Adds additional waves
         self.current_wave += 1
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]

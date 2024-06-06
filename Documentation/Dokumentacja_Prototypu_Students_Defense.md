@@ -23,14 +23,17 @@ python <nazwa_skryptu>.py
 ```
 (Jeśli nazwa głównego skryptu jest inna).
 
+##### UWAGA
+Na systemie Windows, jeśli skala ekranu jest ustawiona na większą niż 100% może nie być widać całego okna gry
+
 #### 2. Instrukcja Użytkowania
 
 ##### 2.1 Klasa `Level`
 - **Metody:**
-  - `__init__(self, level_number: int)`: Inicjalizuje poziom o podanym numerze.
-  - `add_wave(self, enemy_type: enm.Enemy, quantity: int, interval: int)`: Dodaje falę przeciwników.
-  - `get_waves(self) -> List[Dict[str, Tuple[int, int]]]`: Zwraca listę fal przeciwników.
-  - `start_level(self)`: Rozpoczyna poziom, wyświetlając informacje o falach przeciwników.
+  - `__init__(self, level_number : int, level_data_directory : str = None)`: Inicjalizuje poziom o podanym numerze.
+  - `new_wave(self)`: Dodaje falę przeciwników.
+  - `spawn_enemy(self)`: Pojawia przeciwników na mapie.
+  - `update(self)`: Zajmuję się pojawianiem i poruszaniem przeciwników po mapie co klaktę.
 
 ##### 2.2 Klasa `Map`
 - **Metody:**
@@ -39,13 +42,35 @@ python <nazwa_skryptu>.py
 
 ##### 2.3 Klasa `Tower`
 - **Metody:**
-  - `__init__(self, range: int, damage: int, atk_speed: int, shot_count: int, targeting: bool, bouncing: bool, own_asset, shot_asset)`: Inicjalizuje wieżę z podanymi parametrami.
+  - `__init__(self, tower_type : str = "test_tower")`: Inicjalizuje wieżę z podanymi parametrami.
+  - `cooldown(self)`: Zajmuję się czasem odnowienia ataku wieży.
+  - `setbasecooldown(self)`: Ustawia bazowy czas odnowienia.
 
 ##### 2.4 Klasa `Tower_Manager`
 - **Metody:**
-  - `__init__(self, tower_type: Tower, coord, enemies)`: Inicjalizuje menedżera wież dla podanego typu wieży, współrzędnych i przeciwników.
+  - `__init__(self, tower_type_str : str = "test_tower", pos : Coord = Coord(0, 0))`: Inicjalizuje menedżera wież dla podanego typu wieży i współrzędnych.
   - `reset(cls)`: Resetuje listę wież.
   - `attack(self)`: Wykonuje atak wieży na wrogów w zasięgu.
+  - `update(cls)`: atakuje przeciwników w zasięgu co klatkę.
+
+##### 2.5 Klasa `Enemy`
+- **Metody:**
+  - `__init__(self, enemy_type : str = 'test_enemy')`: Inicjalizuje przeciwnika z zadaną prędkością i zdrowiem.
+  - `__str__(self)`: Zwraca napis ze wcześniej zadanymi statystykami.
+
+##### 2.6 Klasa `Enemy_Manager`
+- **Metody:**
+  - `__init__(self,enemy_type : str = 'test_enemy', map : Map = Map())`: Inicjalizuje menedżera przeciwników dla danej mapy.
+  - `__repr__(self)`: Zwraca napis z typem, zdrowiem i pozycją przeciwnika.
+  - `take_damage(self, damage)`: Zajmuje się wszystkim związanym z otrzymywaniem przez przeciwników obrażeń.
+  - `movement(self)`: Definiuje jak przeciwnicy poruszają się przez mapę.
+  - `remove_enemy(self)`: Usuwa pokonanych przeciwników.
+
+##### 2.7 Klasa `Player`
+- **Metody:**
+  - `__init__(self, name : str, gold : int, lives : int, avtw : list[str])`: Inicjalizuje gracza.
+  - `affordable_towers(self)`: Sprawdza, na które wieże stać gracza.
+  - `deduct_lives(self)`: Odejmuje życia gracza
 
 #### 3. Planowany Diagram Klas UML
 
