@@ -2,7 +2,7 @@ from ..Utilities import Coord
 from ..Map.Map_Class import Map
 
 class Enemy: # Defines properties of enemies
-    enemy_types = {'test_enemy':{'hp': 5, 'speed' : 3}}
+    enemy_types = {'test_enemy':{'hp': 2, 'speed' : 3}}
     def __init__(self, enemy_type : str = 'test_enemy'):
         self.life = Enemy.enemy_types[enemy_type]['hp']
         self.speed = Enemy.enemy_types[enemy_type]['speed']
@@ -39,7 +39,7 @@ class Enemy_Manager:
         if self.life < 0:
             self.life = 0
         self.attacked = True
-        self.attacked_count = 5
+        self.attacked_count = 10
     def remove_attacked(self):
         if self.attacked_count:
             self.attacked_count -=1
@@ -51,11 +51,12 @@ class Enemy_Manager:
             destination : Coord = self.path[self.tile] 
             direction : Coord = destination - self.grid_pos
             self.pos += Coord(self.speed*direction.x,self.speed*direction.y)
-            self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
             self.display_pos : tuple = (self.pos.x - 30,self.pos.y - 30)
-            if (self.grid_pos.x,self.grid_pos.y) == (destination.x,destination.y):
+            if (destination.grid_middle_point().x - self.speed < self.pos.x < destination.grid_middle_point().x + self.speed)\
+                and (destination.grid_middle_point().y - self.speed < self.pos.y < destination.grid_middle_point().y + self.speed) :
                 #(tile_mid.x-self.speed/2<=self.pos.x<=tile_mid.x+self.speed/2) and (tile_mid.y-self.speed/2<=self.pos.y<=tile_mid.y+self.speed/2)
                 self.tile += 1
+                self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
         else: #once enemy enters last tile on path, it will only move to right until removed by remove_enemy
             self.pos += Coord(self.speed,0)
             self.display_pos : tuple = (self.pos.x - 30,self.pos.y - 30)
