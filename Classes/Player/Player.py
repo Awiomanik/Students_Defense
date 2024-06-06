@@ -15,3 +15,5 @@ class Player: # Defines the player entity
             if Tower.tower_types[tower][-1] <= self.gold:
                affordable.append(tower) 
         return affordable
+    def deduct_lives(self):
+        self.lives -=1

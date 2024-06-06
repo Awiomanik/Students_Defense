@@ -3,10 +3,11 @@
 
 from ..Utilities import Coord
 from ..Enemy.Enemy import Enemy, Enemy_Manager
+from ..Level.Test_Level import Level
 
 class Tower: #defining properties of towers
-    tower_types = {"test_tower_1" : (300, 1, 120, 1, True, 0, 1),
-                   "test_tower_2" : (180, 1, 120, 2, True, 0, 1)}
+    tower_types = {"test_tower_1" : (300, 1, 30, 1, True, 0, 1),
+                   "test_tower_2" : (180, 2, 45, 1, True, 0, 1)}
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes tower of type tower_type.
@@ -64,16 +65,18 @@ class Tower_Manager:
             self.tower_type.cooldown()
         else:#if tower is ready to fire, it will look for enemies in range
             inrange : dict[Enemy,Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
+            self.inrange = inrange
             for enemy in Tower_Manager.enemies:
-                distance = ((enemy.pos.x-self.pos.x)**2 + (enemy.pos.x-self.pos.y)**2)**0.5#calculates distance between tower and enemy
+                distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.x - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
                     inrange[enemy] = distance
-            if len(inrange):#returns false when list length is 0
+            if not len(inrange):#returns when list length is 0
                 return
             for enemy in inrange.keys():
-                if inrange[enemy] == min(inrange.values): #defaults to attacking weakest enemies, might be choose-able later.$$
+                if inrange[enemy] == min(inrange.values()): #defaults to attacking weakest enemies, might be choose-able later.$$
                     enemy.take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
+                    
 
     @classmethod
     def update(cls):
@@ -85,3 +88,12 @@ class Tower_Manager:
     def reset(cls):
         """Methot needed to clear all towers, supposedly when new game starts"""
         cls.towers = [] #clearing list
+#level = Level(1)
+##tower = Tower_Manager('test_tower_1')
+#level.update()
+#x = 0
+#while level.enemies:
+ #   print(level.enemies)
+##    level.update
+#    if tower.debug:
+#        print(tower.debug)

@@ -124,7 +124,7 @@ class Map():
                         # Append coordinates of each tile to the temp_path list
                         for element in line:
                             x, y = element.split(", ")
-                            temp_path.append(Coord(x, y))
+                            temp_path.append(Coord(int(x), int(y)))
                         # Append temp_path into temp_paths and convert it into inmutable type (tuple)
                         temp_paths.append(tuple(temp_path))
                 # Convert list of paths into inmutable type (tuple)
@@ -142,4 +142,3 @@ class Map():
         paths_str = '\n'.join([f"Path {i}:\n{' > '.join(map(str, path))}" for i, path in enumerate(self.paths) if path])
 
         return f"\nName: {self.name}\n\nGrid:\n{grid_str}\n\nPaths:\n{paths_str}\n"
-
