@@ -13,10 +13,8 @@ pip install pygame
 ```
 
 ##### 1.2 Running the Prototype
-1. After launching the game, an intro will appear on the screen.
-2. Next, the main menu will appear, where the player can choose to start the game or exit.
-3. Upon selecting to start the game, the player enters the actual gameplay.
-4. During gameplay, the player can buy and build towers to defend their position against incoming waves of enemies.
+1. cd Students_Defense
+2. Python -m Classes.Game.Game
 
 #### 2. User Guide
 
