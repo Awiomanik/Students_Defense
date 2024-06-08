@@ -1,17 +1,54 @@
+"""
+This module manages level data and enemy spawning for the Students Defense Game project.
+
+Classes:
+    Level - Handles level data, enemy spawning, and wave progression within a game level.
+"""
+
 from ..Enemy.Enemy import Enemy_Manager
 import os
 from ..Map import Map_Class
 
 class Level:
-    enemies : list[Enemy_Manager] = Enemy_Manager.present
-    def __init__(self, level_number : int, level_data_directory : str = None) -> None:
-        """Loads level data from file"""
-        # Set level data directory if no directory given
-        if level_data_directory is None:
-            level_data_directory = os.path.dirname(os.path.abspath(__file__))
+    """
+    Handles level data, enemy spawning, and wave progression within a game level.
 
+    Class attributes:
+        enemies (list[Enemy_Manager]): List of current enemies present in the level.
+    
+    Instance atributes:
+        gold (int): The initial gold amount for the player in that level.
+        lives (int): The number of lives the player starts with.
+        waves_num (int): The number of waves in the level.
+        waves (list[dict[str, int]]): The list of enemy waves, each wave represented by a dictionary of enemy types and their quantities.
+        map (Map_Class.Map): The map object instance representing and menaging map data of the current level.
+        current_wave (int): The index of the current wave.
+        spawn_cooldown (int): The cooldown period between enemy spawns.
+        current_wave_def (dict[str, int]): The current wave definition.
+        current_enemy (str): The type of the current enemy being spawned.
+        remaining_enemies (int): The total number of remaining enemies in the current wave.
+
+    Methods:
+        __init__(level_number: int, root_directory: str): Loads level data from file and initializes level attributes.
+        spawn_enemy(): Spawns enemies based on the wave definitions and spawn cooldown.
+        update(): Updates the level state by spawning enemies and managing enemy behavior.
+        new_wave(): Advances to the next wave and updates wave-related attributes.
+    """
+
+    # Class atributes
+    enemies : list[Enemy_Manager] = Enemy_Manager.present
+
+    # Methods
+    def __init__(self, level_number : int, root_directory : str) -> None:
+        """
+        Loads level data from file and initializes level attributes.
+
+        Args:
+            level_number (int): The number of the level to load.
+            root_directory (str): The root directory of the repository for relative path operations.
+        """
         # Open data file and read it
-        path = os.path.join(level_data_directory, f"lvl_{level_number}.dat")
+        path = os.path.join(root_directory, "Assets", "lvl_data", f"lvl_{level_number}.dat")
         try:
             with open(path, 'r') as level_data:
                 level_data = level_data.readlines()
@@ -44,7 +81,7 @@ class Level:
             # Map
             elif line.startswith("Map"):
                 map_name = line.split("Map:", 1)[1].strip()
-                self.map = Map_Class.Map(map_name)
+                self.map = Map_Class.Map(map_name, root_directory)
             # Available_towers
             elif line.startswith("Available_towers:"):
                 self.available_towers : list[str] = \
@@ -60,7 +97,13 @@ class Level:
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
 
-    def spawn_enemy(self): # Spawn enemies in set types, amounts and intervals
+    def spawn_enemy(self) -> None:
+        """
+        Spawns enemies based on the wave definitions and spawn cooldown.
+
+        Returns:
+            Enemy_Manager: The spawned enemy instance, if an enemy is spawned; otherwise, None.
+        """
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
@@ -73,14 +116,26 @@ class Level:
             return spawned_enemy
         else:
             self.spawn_cooldown -= 1
-    def update(self): # Every frame spawn enemies if possible, makes them move, checks if they are attacked or dead and decreases the player lives if the enemy gets to the end
+    def update(self):
+        """
+        Updates the level state by spawning enemies and managing enemy behavior.
+
+        This method should be called every frame to process enemy spawning, movement, 
+        attacks, and checking and updating player lives.
+        """
         self.spawn_enemy()
         Enemy_Manager.update()
         for enemy in self.enemies:
             if enemy.damaged_player:
                 self.lives -=1
                 enemy.damaged_player = "done"
-    def new_wave(self): # Adds additional waves
+    def new_wave(self) -> None:
+        """
+        Advances to the next wave and updates wave-related attributes.
+
+        This method increments the current wave index, sets the new wave definition,
+        and resets the enemy-related attributes for the new wave.
+        """
         self.current_wave += 1
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]

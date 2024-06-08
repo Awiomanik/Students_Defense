@@ -28,7 +28,7 @@ class Game():
         gameplay(): Manages the main gameplay loop, updates game state, and handles wave progression.
     """
 
-    def __init__(self, display_intro : bool = True, display_outro : bool = True) -> None:
+    def __init__(self, root_directory : str, display_intro : bool = True, display_outro : bool = True) -> None:
         """
         Initializes the Game instance.
 
@@ -36,12 +36,14 @@ class Game():
         shows the main menu, loads the level, and starts the main gameplay loop.
 
         Args:
+            root_directory (str): Path to the main calogue f the repository for relative path operations.
             display_intro (bool): Whether to display the intro screen. Defaults to True.
+            display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
         player_name = "Player_name_placeholder"
 
         # INITIALIZE HELPER CLASSES
-        self.ui = UI.UI(player_name)
+        self.ui = UI.UI(player_name, root_directory)
 
         # DISPLAY INTRO
         if display_intro:
@@ -54,7 +56,7 @@ class Game():
             if self.main_menu():
 
                 # LOAD LEVEL
-                self.load_level(player_name)
+                self.load_level(player_name, root_directory)
 
                 # MAIN GAMEPLAY LOOP
                 self.gameplay()
@@ -85,7 +87,7 @@ class Game():
         
         return True
 
-    def load_level(self, player_name : str) -> None:
+    def load_level(self, player_name : str, root_directory : str) -> None:
         """
         Loads the game level.
 
@@ -94,8 +96,9 @@ class Game():
 
         Args:
             player_name (str): The name of the player.
+            root_directory (str): Path to the main calogue f the repository for relative path operations.
         """
-        self.level = Test_Level.Level(1)
+        self.level = Test_Level.Level(1, root_directory)
         self.ui.load_lvl(self.level.waves_num,self.level.current_wave)
         self.player = Player.Player(player_name, 
                                     self.level.gold, 

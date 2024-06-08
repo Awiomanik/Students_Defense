@@ -71,24 +71,25 @@
 
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
-- [ ] Map
-- [ ] UI
-- [ ] Game Class and integration of all classes into a working prototype
+- [x] Map
+- [x] UI
+- [x] Game Class and integration of all classes into a working prototype
 
 ### Tasks Assigned to Olaf Masłowski
-- [ ] Game Class and integration of all classes into a working prototype
-- [ ] Help with integration of Tower
-- [ ] Help with integration of Tower Menager
+- [x] Game Class and integration of all classes into a working prototype
+- [x] Help with integration of Tower
+- [x] Help with integration of Tower Menager
 
 ### Tasks Assigned to Marta Stankiewicz
-- [ ] Help with integration of Enemy
+- [x] Documentation for dr. Giniewicz
+- [x] Help with integration of Enemy
 
 ### Tasks Assigned to Laura Nowak
-- [ ] Documentation for dr. Giniewicz
 
 ### Tasks Assigned to Mateusz Rurzyński
-- [ ] Help with integration of Level
-- [ ] Help with integration of Player
+- [x] Help with integration of Level
+- [x] Help with integration of Player
+- [x] Assests (music)
 
 
 
@@ -96,16 +97,61 @@
 
 
 *************************************************************************************************************************************
-## Sprint 3 ( - )
+## Sprint 3 (06.06 - 14.06)
 
 ### Sprint Goals
+- [Develop a comprehensive and consistent vision for the final version of the game]
+- [Polish already built functionallyty]
+- [Start implementing new functionallity]
+
+
+# Overall Sprint Tasks
+- [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
 - [ ]
 
+
+### Tasks Assigned to Wojciech Kośnik-Kowalczuk
+
+
+### Tasks Assigned to Olaf Masłowski
+
+
+### Tasks Assigned to Marta Stankiewicz
+
+
+### Tasks Assigned to Laura Nowak
+
+
+### Tasks Assigned to Mateusz Rurzyński
+
+
+
+
+
+*************************************************************************************************************************************
+## Sprint 4 ( - )
+
+### Sprint Goals
 
 ### Overall Sprint Tasks
 - [ ] Write proper README.md file
 - [ ] Parse and polish .gitignore file
 - [ ] Polish map-generator
+
+
+### Tasks Assigned to Wojciech Kośnik-Kowalczuk
+
+
+### Tasks Assigned to Olaf Masłowski
+
+
+### Tasks Assigned to Marta Stankiewicz
+
+
+### Tasks Assigned to Laura Nowak
+
+
+### Tasks Assigned to Mateusz Rurzyński
 
 
 

@@ -63,7 +63,7 @@ class UI():
     RESOLUTION : tuple[int, int] = 1920, 1080
 
     # Constructor
-    def __init__(self, player_name : str) -> None:
+    def __init__(self, player_name : str, root_directory : str) -> None:
         """
         Initializes the UI class.
 
@@ -71,6 +71,7 @@ class UI():
 
         Args:
             player_name (str): The name of the player.
+            root_directory (str): Path to the main calogue f the repository for relative path operations.
         """
         # SET UP WONDOW AND PYGAME
         # initialize Pygame
@@ -88,7 +89,7 @@ class UI():
         self.pos = pygame.mouse.get_pos()
 
         # SET ASSETS PATHS
-        self.gfx_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Assets", "gfx")
+        self.gfx_path = os.path.join(root_directory, "Assets", "gfx")
         # audio path (in the future)
 
         # SET AND LOAD HUD ELEMENTS

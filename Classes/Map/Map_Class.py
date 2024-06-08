@@ -1,4 +1,4 @@
-"""Module providing the Map class for reading form file, storing and manipulating map data."""
+"""This module provides the Map class for reading from a file, storing, and manipulating map data."""
 
 # IMPORTS
 from ..Utilities import Coord
@@ -18,12 +18,6 @@ class Map():
                      Each element in the sublist is a boolean indicating the tile's accessibility.
                      True-accessible False-blocked
 
-    Args:
-        name (str): The default name of the map if not specified otherwise and base of the map data file nmae. 
-                    Defaults to "TEST_1".
-        map_data_directory (str, optional): The directory where the map data files are stored.
-                                            Defaults to the 'maps' subdirectory relative to this module's location.
-
     Methods:
         __init__(self, name: str = "TEST_1", map_data_directory: str = None):
             Initializes a Map instance with a specified name and data directory. Loads the map data from the
@@ -34,7 +28,7 @@ class Map():
             based on the contents of the file including the name, grid configuration, and paths.
     """
 
-    def __init__(self, name : str = "TEST_1", map_data_directory : str = None) -> None:
+    def __init__(self, name : str = "TEST_1", root_directory : str = None) -> None:
         """
         Initializes a new instance of the Map class, loading map data from a specified file within a directory.
 
@@ -46,17 +40,15 @@ class Map():
         Args:
             name (str): The default name of the map if not specified otherwise, used to locate the corresponding map data file.
                         Defaults to "TEST_1", implying that the file "TEST_1_map.dat" should exist in the specified directory.
-            map_data_directory (str, optional): The directory where the map data files are expected to be stored.
-                                                If not provided, it defaults to a 'maps' directory relative to the location of this module's file.
+            root_directory (str, optional): The root directory of the repository for relative path operations.
+                                            If not provided, it defaults to a 'maps' directory relative to the location of this module's file.
 
         Raises:
             FileNotFoundError:  If the specified map data file does not exist in the provided directory, this will
                                 inform the user about the missing file but does not stop the execution; instead,
                                 it initializes the map with default or empty configurations.
         """
-        # Set directory if not given
-        if map_data_directory is None:
-            map_data_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "maps")
+        map_data_directory = os.path.join(root_directory, "Assets", "maps")
 
         # Combain the file path
         file_path = os.path.join(map_data_directory, f"{name}_map.dat")
