@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 This module manages level data and enemy spawning for the Students Defense Game project.
 
@@ -8,11 +9,16 @@ Classes:
 from ..Enemy.Enemy import Enemy_Manager
 import os
 from ..Map import Map_Class
+=======
+from typing import List, Dict, Tuple
+from ..Enemy import Enemy
+>>>>>>> origin/main
 
 class Level:
     """
     Handles level data, enemy spawning, and wave progression within a game level.
 
+<<<<<<< HEAD
     Class attributes:
         enemies (list[Enemy_Manager]): List of current enemies present in the level.
     
@@ -144,6 +150,17 @@ class Level:
 
 
         
+=======
+    def add_wave(self, enemy_type: Enemy, quantity: int, interval: int):
+        self.enemy_waves.append({"enemy": enemy_type, "quantity": quantity, "interval": interval})
+
+    def start_level(self):
+        for wave in self.enemy_waves:
+            enemy = wave["enemy"]
+            quantity = wave["quantity"]
+            interval = wave["interval"]
+            print(f"Spawning {quantity} {enemy.name}(s) every {interval} seconds.")
+>>>>>>> origin/main
 
 # Use example:
 #if __name__ == "__main__":
