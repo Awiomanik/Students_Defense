@@ -106,7 +106,7 @@
 
 
 # Overall Sprint Tasks
-- [ ] Merge prototype to main
+- [x] Merge prototype to main
 - [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
 - [ ] High Scores
 - [ ] Logging player
@@ -115,7 +115,7 @@
 - [ ] Tower upgreades
  
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
-- [ ] Merge
+- [x] Merge
 - [ ] High Scores
 - [ ] Logging Player
 
@@ -144,6 +144,7 @@
 - [ ] Write proper README.md file
 - [ ] Parse and polish .gitignore file
 - [ ] Polish map-generator
+- [ ] Speed-up button (when new UI will be finnished by Olaf)
 
 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
