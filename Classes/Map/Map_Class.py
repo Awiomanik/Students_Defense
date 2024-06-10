@@ -28,7 +28,7 @@ class Map():
             based on the contents of the file including the name, grid configuration, and paths.
     """
 
-    def __init__(self, name : str = "TEST_1", root_directory : str = None) -> None:
+    def __init__(self, root_directory : str, name : str = "TEST_1") -> None:
         """
         Initializes a new instance of the Map class, loading map data from a specified file within a directory.
 

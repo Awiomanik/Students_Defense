@@ -81,7 +81,7 @@ class Level:
             # Map
             elif line.startswith("Map"):
                 map_name = line.split("Map:", 1)[1].strip()
-                self.map = Map_Class.Map(map_name, root_directory)
+                self.map = Map_Class.Map(root_directory, map_name)
             # Available_towers
             elif line.startswith("Available_towers:"):
                 self.available_towers : list[str] = \
@@ -107,7 +107,7 @@ class Level:
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
-            spawned_enemy = Enemy_Manager(self.current_enemy,self.map) #despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            spawned_enemy = Enemy_Manager(self.map, self.current_enemy) #despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
             self.current_wave_def[self.current_enemy] -= 1
             self.spawn_cooldown = 60
             self.remaining_enemies = sum(self.current_wave_def.values())

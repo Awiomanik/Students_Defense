@@ -16,7 +16,7 @@ class Enemy_Manager:
     stores it's current life and checks if the enemy has died
     """ 
     present = []
-    def __init__(self,enemy_type : str = 'test_enemy', map : Map = Map()):
+    def __init__(self, map : Map, enemy_type : str = 'test_enemy'):
         self.name = enemy_type
         self.map : Map = map
         self.path = map.paths[0]
