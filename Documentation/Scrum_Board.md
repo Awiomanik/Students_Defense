@@ -106,24 +106,31 @@
 
 
 # Overall Sprint Tasks
+- [ ] Merge prototype to main
 - [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
-- [ ]
-
-
+- [ ] High Scores
+- [ ] Logging player
+- [ ] Level design
+- [ ] Refactoring and documenting existing code
+- [ ] Tower upgreades
+ 
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
-
+- [ ] Merge
+- [ ] High Scores
+- [ ] Logging Player
 
 ### Tasks Assigned to Olaf Masłowski
-
+- [ ] Assets
+- [ ] Level design
 
 ### Tasks Assigned to Marta Stankiewicz
-
+- [ ] Refactoring and documenting existing code
 
 ### Tasks Assigned to Laura Nowak
 
 
 ### Tasks Assigned to Mateusz Rurzyński
-
+- [ ] Tower upgreades
 
 
 
