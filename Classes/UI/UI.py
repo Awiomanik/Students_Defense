@@ -6,7 +6,7 @@ including input from the keyboard and mouse and drawing graphics (potentially al
 # IMPORTS
 import pygame, os, sys
 from ..Tower.Tower_Classes import Tower_Manager, Tower
-from ..Utilities import Coord
+from ..Utilities import Coord, InputBox
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
 from ..Enemy.Enemy import Enemy_Manager
@@ -95,8 +95,6 @@ class UI():
         # SET AND LOAD HUD ELEMENTS
         self.font = pygame.font.SysFont("Consolas", 50)
         self.hp_font = pygame.font.SysFont("Consolas", 20)
-        player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
-        self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
         self.button_gfx = pygame.image.load(os.path.join(self.gfx_path, "HUD", "BLANK_BUTTON.png"))
 
     # Input
@@ -142,7 +140,7 @@ class UI():
 
             # Unpack mouse position
             x, y = self.pos
-            if 1680 < x < 1800:
+            if 1680 < x < 1920:
                 # buy tower
                 if 960 < y < 1080:
                     if UI.state["buy tower"]:
@@ -212,17 +210,25 @@ class UI():
         # Wait for a secound after writing finnished
         pygame.time.delay(1000)
 
-    def main_menu(self) -> str:
+    def main_menu(self, player : Player) -> str:
         """
         Displays the main menu and handles user input.
 
+        Args:
+            player (Player): Player instance for player name access.
+
         Returns:
             str:    "start" if the start button is pressed, 
-                    "quit" if the quit button is pressed.
+                    "quit" if the quit button is pressed,
+                    "change name" if user wants to trigger changing name.
         """
         # Load and display background graphic
         main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "main_menu.png"))
         self.screen.blit(main_menu_graphic, (0, 0))
+
+        # Display user name
+        self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
+
 
         # Main menu loop
         while True:
@@ -251,6 +257,13 @@ class UI():
                     # Quit button pressed
                     elif 640 < y < 880:
                         return "quit"
+                # Name change
+                elif 1400 < x < 1800:
+                    if 940 < y < 1015:
+                        player.name = self.handle_name_change(player.name, main_menu_graphic)
+                        self.screen.blit(main_menu_graphic, (0, 0))
+                        self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
+                        self.mouse_click = False
 
             # Update pygame and clock every 60'th of a secound
             pygame.display.flip()
@@ -375,6 +388,7 @@ class UI():
 
     # Additional methods
     def load_lvl(self, 
+                 player_name : str = "Guest",
                  number_of_waves : int = 3,
                  current_wave : int = 0 ,
                  map_name : str = "TEST_1", 
@@ -388,6 +402,7 @@ class UI():
         and the current wave number.
 
         Args:
+            player_name (str): Players name to display in HUD.
             number_of_waves (int): Total number of waves in the level. Defaults to 3.
             current_wave (int): The current wave number. Defaults to 0.
             map_name (str): The name of the map. Defaults to "TEST_1".
@@ -405,5 +420,49 @@ class UI():
                             for name, file in enemies_names.items()}
         self.number_of_waves = number_of_waves
         self.current_wave = current_wave + 1
+        player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
+        self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
 
+    def handle_name_change(self, current_player_name : str, background : pygame.image) -> str:
+            """
+            Displays input box for user to input new name and updates it live while user is typing.
+
+            Parameters:
+                current_player_name (str) : Current name of the player to display at the beggining.
+
+            Returns:
+                str - New user name.
+            """
+            input = InputBox(500, 955, 500, 60, 
+                             current_player_name, display_box=True, 
+                             font=self.font, activate=True)
+            clock = pygame.time.Clock()
+
+            typing = True
+            while typing:
+                # Exit via closing the window
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        typing = False
+
+                    # Key press
+                    elif event.type == pygame.KEYDOWN:
+
+                        # Exit via ESCAPE or ENTER key press
+                        if event.key == pygame.K_ESCAPE or \
+                           event.key == pygame.K_RETURN:
+                            typing = False
+
+                    input.handle_event(event)
+                    # Check if box deactivated (via mouse click o carrige return key press)
+                    if not input.active:
+                        typing = False
+
+                self.screen.blit(background, (0, 0))
+                self.screen.blit(self.font.render(f"Player name:", False, (100, 0, 0)), (150, 960))
+                input.draw(self.screen)
+                pygame.display.flip()
+                clock.tick(30)
+            
+            return input.text
         

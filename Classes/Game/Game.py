@@ -9,7 +9,7 @@ Classes:
 # IMPORTS
 from ..UI import UI
 from ..Level import Test_Level
-from ..Player import Player
+from ..Player.Player import Player
 from ..Tower.Tower_Classes import Tower_Manager
 
 class Game():
@@ -20,6 +20,7 @@ class Game():
         ui (UI): An instance of the UI class for managing the user interface.
         player (Player): An instance of the Player class representing the player.
         level (Level): An instance of the Level class representing the game level, including map class instance.
+        root_directory (str): Directory in which the main script was called for easy relative path operations.
 
     Methods:
         __init__(display_intro: bool = True): Initializes the Game instance, sets up UI, displays intro, shows main menu, loads level, and starts the main gameplay loop.
@@ -40,10 +41,14 @@ class Game():
             display_intro (bool): Whether to display the intro screen. Defaults to True.
             display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
-        player_name = "Player_name_placeholder"
+        # Player protoplast with placeholder atributes, player is fully initialized when level start
+        self.player = Player("Guest", 0, 0, None)
+
+        # Set root_directory
+        self.root_directory = root_directory
 
         # INITIALIZE HELPER CLASSES
-        self.ui = UI.UI(player_name, root_directory)
+        self.ui = UI.UI(self.player.name, self.root_directory)
 
         # DISPLAY INTRO
         if display_intro:
@@ -56,7 +61,7 @@ class Game():
             if self.main_menu():
 
                 # LOAD LEVEL
-                self.load_level(player_name, root_directory)
+                self.load_level()
 
                 # MAIN GAMEPLAY LOOP
                 self.gameplay()
@@ -76,34 +81,36 @@ class Game():
 
         Returns:
             False for exiting the game True otherwise
+
+        Raises:
+            Value error - When ui.main_menu method returns unknown value
         """
-        choosen_option = self.ui.main_menu()
+        choosen_option = self.ui.main_menu(self.player)
 
         if choosen_option == "start":
-            pass
+            return True
 
-        if choosen_option == "quit":
+        elif choosen_option == "quit":
             return False
-        
-        return True
 
-    def load_level(self, player_name : str, root_directory : str) -> None:
+        else:
+            raise ValueError(f"ui.main_manu method returned unknown value: {choosen_option}")
+
+    def load_level(self) -> None:
         """
         Loads the game level.
 
         This method initializes the game level, updates the UI with level information,
-        and creates the player instance with initial game parameters.
-
-        Args:
-            player_name (str): The name of the player.
-            root_directory (str): Path to the main calogue f the repository for relative path operations.
+        and player atributes with initial game parameters.
         """
-        self.level = Test_Level.Level(1, root_directory)
-        self.ui.load_lvl(self.level.waves_num,self.level.current_wave)
-        self.player = Player.Player(player_name, 
-                                    self.level.gold, 
-                                    self.level.lives, 
-                                    self.level.available_towers)
+        # Initialize level
+        self.level = Test_Level.Level(1, self.root_directory)
+        # Load level data to UI
+        self.ui.load_lvl(self.player.name, self.level.waves_num, self.level.current_wave)
+        # Update player atributes based on level data
+        self.player.gold = self.level.gold
+        self.player.lives = self.level.lives
+        self.player.avialable_towers = self.level.available_towers
 
     def gameplay(self) -> None:
         """
