@@ -6,7 +6,7 @@ including input from the keyboard and mouse and drawing graphics (potentially al
 # IMPORTS
 import pygame, os, sys
 from ..Tower.Tower_Classes import Tower_Manager, Tower
-from ..Utilities import Coord, InputBox
+from ..Utilities import Coord, InputBox, load_high_scores, xor
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
 from ..Enemy.Enemy import Enemy_Manager
@@ -36,6 +36,7 @@ class UI():
         enemies_gfx (dict): Graphics for the enemies.
         number_of_waves (int): Total number of waves in the current level.
         current_wave (int): The current wave number.
+        directory (str): Path to the root directory of the repository.
 
     Methods:
         __init__(player_name: str) -> None: Initializes the UI instance and sets up the display and initial variables.
@@ -63,14 +64,13 @@ class UI():
     RESOLUTION : tuple[int, int] = 1920, 1080
 
     # Constructor
-    def __init__(self, player_name : str, root_directory : str) -> None:
+    def __init__(self, root_directory : str) -> None:
         """
         Initializes the UI class.
 
         Sets up the game window, initializes utility variables, and loads HUD elements.
 
         Args:
-            player_name (str): The name of the player.
             root_directory (str): Path to the main calogue f the repository for relative path operations.
         """
         # SET UP WONDOW AND PYGAME
@@ -96,6 +96,9 @@ class UI():
         self.font = pygame.font.SysFont("Consolas", 50)
         self.hp_font = pygame.font.SysFont("Consolas", 20)
         self.button_gfx = pygame.image.load(os.path.join(self.gfx_path, "HUD", "BLANK_BUTTON.png"))
+
+        # Save root directory to an atribute
+        self.directory = root_directory
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -212,26 +215,27 @@ class UI():
 
     def main_menu(self, player : Player) -> str:
         """
-        Displays the main menu and handles user input.
+        Displays the main menu and handles user input, 
+        that includes changing users name displaying high scores 
+        or returnin a string informing starting a game or quiting.
 
         Args:
             player (Player): Player instance for player name access.
 
         Returns:
             str:    "start" if the start button is pressed, 
-                    "quit" if the quit button is pressed,
-                    "change name" if user wants to trigger changing name.
+                    "quit" if the quit button is pressed
         """
-        # Load and display background graphic
+        # Load background graphic
         main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "main_menu.png"))
-        self.screen.blit(main_menu_graphic, (0, 0))
-
-        # Display user name
-        self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
-
 
         # Main menu loop
         while True:
+            
+            # Display background graphic
+            self.screen.blit(main_menu_graphic, (0, 0))
+            # Display player name
+            self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
 
             # HANDLE EVENTS (eg. key press)
             for event in pygame.event.get():
@@ -249,6 +253,7 @@ class UI():
             # PROCESS INTERACTION
             if self.mouse_click:
                 x, y = self.pos
+                # Play and quit buttons
                 if 700 < x < 1300:
                     # Start button pressed
                     if 325 < y < 600:
@@ -257,14 +262,19 @@ class UI():
                     # Quit button pressed
                     elif 640 < y < 880:
                         return "quit"
-                # Name change
+                
+                # Name change and High Scores
                 elif 1400 < x < 1800:
                     if 940 < y < 1015:
                         player.name = self.handle_name_change(player.name, main_menu_graphic)
-                        self.screen.blit(main_menu_graphic, (0, 0))
-                        self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
-                        self.mouse_click = False
-
+                        
+                    # High Scores
+                    elif x > 1550:
+                        if 725 < y < 875:
+                            self.high_scores()
+                
+            self.mouse_click = False
+                
             # Update pygame and clock every 60'th of a secound
             pygame.display.flip()
             self.clock.tick(self.FPS)
@@ -298,6 +308,46 @@ class UI():
 
         # Wait for a secound after writing finnished
         pygame.time.delay(1000)
+
+    def high_scores(self) -> None:
+        """
+        Displays High Scores.
+
+        Loads High Scores from file and displays them.
+        Waits for user to exit back to main menu vie ESCAPE button press.
+        """
+        # Get data
+        hs = load_high_scores(self.directory)
+        # Initialize length of displayed records
+        records_width = 45
+
+        # Blit background image
+        self.screen.blit(pygame.image.load(os.path.join(self.gfx_path, "high_scores_background.png")), (0, 0))
+
+        # Blit exit instructions
+        self.screen.blit(self.font.render("Press escape to exit High Scores", False, (50, 50, 50)), (570, 180))
+
+        # Blit records
+        x, y = 300, 260
+        for i, record in enumerate(hs[:10], 1):
+            num, num_len = (str(i) + ".  ", 3) if i != 10 else ("10. ", 4)
+            formatted_record = num + \
+                               record[0] + \
+                               '.' * (records_width - len(record[0] + str(record[1]) + str(i)) + num_len) + \
+                               str(record[1])
+            self.screen.blit(self.font.render(formatted_record, False, (255, 255, 0)), (x, y))
+            y += 70
+
+        # Update display
+        pygame.display.flip()
+
+        # Wait for user to exit High Scores using ESCAPE key
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        waiting = False
 
     # In-frame updates
     def update(self, gold : int, lives : int, enemies : list) -> None:
@@ -465,4 +515,6 @@ class UI():
                 clock.tick(30)
             
             return input.text
-        
+
+
+

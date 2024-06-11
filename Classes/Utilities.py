@@ -8,13 +8,15 @@ Classes:
     InputBox - Represents an input box in the game, provides functionality for creating an input box that can handle user input.
 
 Functions:
-    (If you have any specific functions, list them here with a brief description.)
-"""
+    xor(text : str, key : str, decrypt : bool = False) -> str: Encrypts or decrypts a given text using XOR cipher with a provided key.
+    load_high_scores(root_directory : str) -> tuple[tuple[str, int]]: Loads High Score records from a designated file.
+    save_high_score(root_directory : str, name : str, score : int) -> None: Saves a new high score record to the high score file.
+    """
 
 
 #IMPORTS
 from dataclasses import dataclass
-import typing, pygame
+import typing, pygame, os
 
 
 # CLASSES
@@ -228,8 +230,163 @@ class InputBox:
             pygame.draw.rect(screen, self.current_color, self.rect, 2)
 
 
+# FUNCTIONS
+def xor(text : str, key : str, decrypt : bool = False) -> str:
+    """
+    Encrypts or decrypts a given text using XOR cipher with a provided key.
+
+    The XOR cipher is a symmetric encryption algorithm that operates by taking 
+    the exclusive OR of each character in the input text with a character 
+    from the key.
+
+    The function operates as follows:
+    1. For each character in the input text, it computes the XOR of the ASCII 
+       value of the character with the ASCII value of the corresponding character 
+       in the key. 
+    2. The key is repeated cyclically to match the length of the text.
+    3. The resulting ASCII values are converted to hexadecimal to ensure 
+       all characters are printable.
+
+    Parameters:
+
+        text (str): The input text to be encrypted or decrypted. This can be any string of characters.
+
+        key (str):  The key used for the XOR operation. The key can be of any length; if the 
+                    key is shorter than the text, it will be repeated cyclically to match 
+                    the length of the text.
+        
+        decrypt (bool): Wheter to perform decryption process (True) or encryption (False).
+                        It's important for hexadecimal convertion. (defaults to False)
+
+    Returns:
+
+    str:    The resulting text after applying the XOR operation and encoding/decoding 
+            in hexadecimal. If the input was plaintext, the output will be ciphertext, 
+            and vice versa.
 
 
+    Notes:
+    - The XOR cipher is not secure for most practical applications, especially if 
+      the key is shorter than the text or if the same key is reused. It is generally 
+      used for simple obfuscation rather than secure encryption.
+    - The XOR operation can result in non-printable characters, which are handled 
+      by converting the result to hexadecimal format.
+    """
+    # Encode to hexadecimal
+    if decrypt:
+        text = bytes.fromhex(text).decode('utf-8')
+
+    # XOR the text
+    xor_result = ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(text))
+
+    # Decode from hexadecimal format
+    if not decrypt:
+        xor_result = xor_result.encode('utf-8').hex()
+
+    return xor_result
+
+def load_high_scores(root_directory : str) -> tuple[tuple[str, int]]:
+    """
+    Loads High Score records from a designated file.
+
+    Parameters:
+        root_directory (str): Root directory of the repository for easy relative path meneging.
+
+    Returns:
+        tuple[tuple[str, int]]: A list of tuples containing names and corresponding scores.
+
+    Raises:
+        FileNotFoundError: If the high scores file is not found.
+        HighScoreFileFormatError: If the file content is not in the expected format.
+    """
+
+    path = os.path.join(root_directory, "Assets", "menu_data", "hs.dat")
+    ENCRYPTION_KEY = "e^(i*pi) = -1" # Should not be changed to decrypt the encrypted data
+
+    # Check if the file exists
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"High Score file not found: {path}")
+    
+    # Open and read the file
+    with open(path, 'r') as file:
+        records = file.readlines()
+        print(records)
+
+        try:
+            # Decrypt the data discarding comments in the file
+            records = [xor(line, ENCRYPTION_KEY, True) for line in records if not line.startswith('#')]
+            print(records)
+            # Split the records to names and corresponding scores
+            records = [line.strip().split(',') for line in records]
+            print(records)
+            # Format the file content to a list of tuples
+            records = [(record[0].strip(), int(record[1].strip())) for record in records]
+            print(records)
+        
+        except ValueError as ve:
+            # Create custom Error class
+            class HighScoreFileFormatError(Exception):
+                def __init__(self, issue: str, file_path: str) -> None:
+                    self.issue = issue
+                    self.file_path = file_path
+                    self.message = (f"File at {self.file_path} includes formatting error: {self.issue}. "
+                                    "High Score records should be divided by a new line symbol "
+                                    "and be formatted as 'Name, Score'. "
+                                    "All other white characters at the beginning and end of records "
+                                    "will be stripped and do not affect them. "
+                                    "All lines starting with a hash symbol ('#') "
+                                    "will be omitted by the file reading function.")
+                    super().__init__(self.message)
+            
+            # Raise custom error
+            raise HighScoreFileFormatError(f"Invalid score format: {ve}", path)
+    
+    # Sort records in descending order
+    records.sort(key=(lambda x: int(x[1])), reverse=True)
+
+    return tuple(records)
+
+def save_high_score(root_directory : str, name : str, score : int) -> None:
+    """
+    Saves a new high score record to the high score file.
+
+    This function encrypts the high score data before writing it to the file to ensure that it
+    cannot be easily modified by a user.
+
+    Parameters:
+        root_directory (str): The root directory of the repository for easy relative path management.
+        name (str): The name of the player.
+        score (int): The score achieved by the player.
+
+    Raises:
+        FileNotFoundError: If the high score file is not found.
+        PermissionError: If there are insufficient permissions to write to the file.
+        IOError: If there is an input/output error during the file operation.
+        Exception: For any other unexpected exceptions.
+    """
+    # Get path to high scores data
+    path = os.path.join(root_directory, "Assets", "menu_data", "hs.dat")
+
+    # Set decryption key as the same value as when encrypting
+    DECRYPTION_KEY = "e^(i*pi) = -1"  # Should not be changed to decrypt the encrypted data
+
+    # Open the file and write new score
+    try:
+        with open(path, 'a') as file:
+            encrypted_data = xor(f"\n{name}, {score}", DECRYPTION_KEY)
+            file.write(encrypted_data)
+
+    except FileNotFoundError:
+        raise FileNotFoundError(f"High Score file not found: {path}")
+    
+    except PermissionError:
+        raise PermissionError(f"Insufficient permissions to write to the file: {path}")
+    
+    except IOError as e:
+        raise IOError(f"An I/O error occurred: {e}")
+    
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred: {e}")
 
 
 

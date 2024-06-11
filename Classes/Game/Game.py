@@ -48,7 +48,7 @@ class Game():
         self.root_directory = root_directory
 
         # INITIALIZE HELPER CLASSES
-        self.ui = UI.UI(self.player.name, self.root_directory)
+        self.ui = UI.UI(self.root_directory)
 
         # DISPLAY INTRO
         if display_intro:
