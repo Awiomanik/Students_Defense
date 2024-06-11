@@ -108,16 +108,17 @@
 # Overall Sprint Tasks
 - [x] Merge prototype to main
 - [ ] Assests (Graphics for enemies, etc..., maybe some sounds and music)
-- [ ] High Scores
-- [ ] Logging player
+- [x] High Scores
+- [x] Logging player
 - [ ] Level design
 - [ ] Refactoring and documenting existing code
 - [ ] Tower upgreades
+- [ ] Speed up button
  
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [x] Merge
-- [ ] High Scores
-- [ ] Logging Player
+- [x] High Scores
+- [x] Logging Player
 
 ### Tasks Assigned to Olaf Masłowski
 - [ ] Assets
