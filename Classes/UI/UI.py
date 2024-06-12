@@ -16,7 +16,7 @@ class UI():
     Manages interactions with the user, including input from the keyboard and mouse, and drawing graphics.
 
     Class Attributes:
-        state (dict[str, bool]): Dictionary to hold current information about UI states such as "wave", "buy tower", and "pause".
+        state (dict[str, bool]): Dictionary to hold current information about UI states such as "wave", "buy tower", "speed up" and "pause".
         FPS (int): The frame rate of the game.
         RESOLUTION (tuple[int, int]): The resolution of the game window.
 
@@ -37,6 +37,7 @@ class UI():
         number_of_waves (int): Total number of waves in the current level.
         current_wave (int): The current wave number.
         directory (str): Path to the root directory of the repository.
+        frame_counter (int): Current frame (not absolute) for speeding up the game by ommiting some frames
 
     Methods:
         __init__(player_name: str) -> None: Initializes the UI instance and sets up the display and initial variables.
@@ -57,7 +58,7 @@ class UI():
                  Loads level graphics and initializes level variables.
     """
     # Game state for adjusting what gets displayed and how
-    state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False}
+    state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False, "speed up": False}
     
     # Constant parameters
     FPS : int = 60 # framerate
@@ -160,6 +161,11 @@ class UI():
                 if 960 < y < 1080:
                     if not UI.state["wave"]:
                         UI.state["wave"] = True
+                # speed up
+                elif 840 < y < 960:
+                    UI.state["speed up"] = not UI.state["speed up"]
+                    # Set current frame to 0 for counting frames to speed up the game
+                    self.frame_counter = 0
 
             # Buying tower
             if UI.state["buy tower"]:
@@ -362,6 +368,15 @@ class UI():
             lives (int): The current number of lives the player has.
             enemies (list): A list of active enemies to display on the screen.
         """
+        # If speed up state active, ommit every three out of four frames
+        if UI.state["speed up"]:
+            self.frame_counter += 1
+            # Ommit frame three times out of four
+            if self.frame_counter < 4:
+                return
+            # Fourth frame, restart frame counter and execute the function
+            self.frame_counter = 0
+
         # DRAW ELEMENTS
         # background
         self.screen.blit(self.map_gfx, (0, 0))
@@ -416,8 +431,12 @@ class UI():
         self.screen.blit(self.button_gfx, (1200, 840))
         # button 4
         self.screen.blit(self.button_gfx, (1200, 960))
-        # button 5
+
+        # button 5 (speed up)
         self.screen.blit(self.button_gfx, (1440, 840))
+        colour = (0, 255, 0) if self.state["speed up"] else (0, 0, 0)
+        start_wave_txt = buttons_font.render("Speed up", False, colour)
+        self.screen.blit(start_wave_txt, (1475, 875))  
 
         # button 6 (start wave)
         self.screen.blit(self.button_gfx, (1440, 960))
