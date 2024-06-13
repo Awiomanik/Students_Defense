@@ -77,7 +77,10 @@ class Tower_Manager:
                     enemy.take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
                     break
-                    
+
+    #def upgrade(self,
+    #            tower_type_str : str = "test_tower"):
+    #    self.tower_type = Tower(f"{tower_type_str}_upgrade")                    
 
     @classmethod
     def update(cls):
