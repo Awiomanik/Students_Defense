@@ -310,18 +310,14 @@ def load_high_scores(root_directory : str) -> tuple[tuple[str, int]]:
     # Open and read the file
     with open(path, 'r') as file:
         records = file.readlines()
-        print(records)
 
         try:
             # Decrypt the data discarding comments in the file
             records = [xor(line, ENCRYPTION_KEY, True) for line in records if not line.startswith('#')]
-            print(records)
             # Split the records to names and corresponding scores
             records = [line.strip().split(',') for line in records]
-            print(records)
             # Format the file content to a list of tuples
             records = [(record[0].strip(), int(record[1].strip())) for record in records]
-            print(records)
         
         except ValueError as ve:
             # Create custom Error class

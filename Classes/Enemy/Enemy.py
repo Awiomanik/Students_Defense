@@ -23,7 +23,7 @@ class Enemy:
 
     """
 
-    enemy_types = {'test_enemy':{'hp': 2, 'speed' : 3}}
+    enemy_types = {'student':{'hp': 3, 'speed' : 5}}
 
     def __init__(self, enemy_type : str = 'test_enemy'):
         """
