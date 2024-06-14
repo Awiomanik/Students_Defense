@@ -26,25 +26,27 @@ class Enemy:
     enemy_types = {'test_enemy':{'hp': 2, 'speed' : 3}}
 
     def __init__(self, enemy_type : str = 'test_enemy'):
-        self.life = Enemy.enemy_types[enemy_type]['hp']
-        self.speed = Enemy.enemy_types[enemy_type]['speed']
-
         """
         Initializes the Enemy with the specified type.
 
         Arguments:
         enemy_type (str) : The type of enemy to be created (default is 'test_enemy').
         """
+        self.life : int = Enemy.enemy_types[enemy_type]['hp']
+        self.speed : Enemy = Enemy.enemy_types[enemy_type]['speed']
+
+
     
     def __str__(self):
-        return f"Enemy(life={self.life}, speed={self.speed})"
-    
-    """
+        """
         Returns a string representation of the enemy.
 
         Returns:
             A string representing the enemy's life (health) and speed.
-    """
+        """
+        return f"Enemy(life={self.life}, speed={self.speed})"
+    
+
        
 class Enemy_Manager:
     """

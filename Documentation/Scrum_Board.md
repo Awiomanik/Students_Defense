@@ -138,30 +138,85 @@
 
 
 *************************************************************************************************************************************
-## Sprint 4 ( - )
+## Sprint 4 Final !!! (14.06 - 21.06)
 
 ### Sprint Goals
 
+
+### Overall Sprint Tasks
+- [ ] Format documentation and code according to PEP standards
+- [ ] Unit tests
+- [ ] Type adnotation
+- [ ] Incorporate new assets
+- [ ] Spawn point (map file, code)
+- [ ] Map description
+- [ ] Assets
+- [ ] Intro
+- [ ] AOE
+- [ ] Fix lives
+- [ ] Level end
+- [ ] New levels design
+- [ ] Incorporate tower statistics ccontext window
+- [ ] Reset level when quit
+- [ ] Conditional shooting
+- [ ] High scores save
+- [ ] Credits
+- [ ] Attack animation
+- [ ] Tower range when clisked
+
+
+### Tasks Assigned to Wojciech Kośnik-Kowalczuk
+- [ ] Incorporate new assets
+- [ ] Spawn point (map file, code)
+- [ ] Map description
+- [ ] Level end
+- [ ] Incorporate tower statistics ccontext window
+- [ ] Reset level when quit
+- [ ] High scores save
+- [ ] Tower range when clisked
+
+### Tasks Assigned to Olaf Masłowski
+- [ ] Assets:
+    - [ ] Second map scenario
+    - [ ] Intro (drawing and brand logo (name))
+    - [ ] Main menu grphic (play, quit, high scores, name, level select, encyclopedia)
+    - [ ] Tower context window (statistics)
+    - [ ] Credits
+- [ ] Fix lives
+- [ ] New levels design
+- [ ] Conditional shooting
+- [ ] Attack animation
+
+### Tasks Assigned to Marta Stankiewicz
+- [ ] Format documentation and code according to PEP standards
+- [ ] Unit tests
+- [ ] Type adnotation
+- [ ] Intro
+- [ ] Credis
+
+### Tasks Assigned to Laura Nowak
+
+### Tasks Assigned to Mateusz Rurzyński
+- [ ] AOE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#################################################################################################################################
+### When all is ready
 ### Overall Sprint Tasks
 - [ ] Write proper README.md file
 - [ ] Parse and polish .gitignore file
 - [ ] Polish map-generator
-- [ ] Speed-up button (when new UI will be finnished by Olaf)
-
-
-### Tasks Assigned to Wojciech Kośnik-Kowalczuk
-
-
-### Tasks Assigned to Olaf Masłowski
-
-
-### Tasks Assigned to Marta Stankiewicz
-
-
-### Tasks Assigned to Laura Nowak
-
-
-### Tasks Assigned to Mateusz Rurzyński
-
-
-

@@ -1,0 +1,24 @@
+Name: Truancy
+Author: Olaf
+Date and time: 2024-06-14 15:55:13.324227
+Grid:
++---------------------------------+
+|                                 |
+|                                 |
+|                                 |
+| x         x   x x             x |
+| > > > > > > > > > > > > > > > > |
+| x         x x   x             x |
+|                                 |
+| x x x x x x x x x x x x x x x x |
+| x x x x x x x x x x x x x x x x |
++---------------------------------+
+
+Tile Size:
+Size of a tile:   120px by 120px
+Grid Size:
+Size of the grid: 16 tiles by 9 tiles
+
+Paths:
+Path 0:
+0, 4 > 1, 4 > 2, 4 > 3, 4 > 4, 4 > 5, 4 > 6, 4 > 7, 4 > 8, 4 > 9, 4 > 10, 4 > 11, 4 > 12, 4 > 13, 4 > 14, 4 > 15, 4
