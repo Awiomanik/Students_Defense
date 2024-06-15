@@ -116,6 +116,7 @@ class Level:
             return spawned_enemy
         else:
             self.spawn_cooldown -= 1
+
     def update(self):
         """
         Updates the level state by spawning enemies and managing enemy behavior.
@@ -129,6 +130,7 @@ class Level:
             if enemy.damaged_player:
                 self.lives -=1
                 enemy.damaged_player = "done"
+                
     def new_wave(self) -> None:
         """
         Advances to the next wave and updates wave-related attributes.
