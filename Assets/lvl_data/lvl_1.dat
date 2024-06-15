@@ -1,10 +1,10 @@
-Map: TEST_1
-Gold: 1000
-Lives: 20
-Wave 1: 5-test_enemy
-Wave 2: 10-test_enemy
-Wave 3: 50-test_enemy
-Available_towers: test_tower_1, test_tower_2
+Map: Truancy
+Gold: 300
+Lives: 10
+Wave 1: 5-student
+Wave 2: 10-student
+Wave 3: 50-student
+Available_towers: student
 
 standard for writing waves:
 num-type, num-type,...

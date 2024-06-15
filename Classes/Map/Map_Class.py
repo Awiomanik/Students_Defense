@@ -48,10 +48,10 @@ class Map():
                                 inform the user about the missing file but does not stop the execution; instead,
                                 it initializes the map with default or empty configurations.
         """
-        map_data_directory = os.path.join(root_directory, "Assets", "maps")
+        map_data_directory = os.path.join(root_directory, "Assets", "gfx", "maps")
 
         # Combain the file path
-        file_path = os.path.join(map_data_directory, f"{name}_map.dat")
+        file_path = os.path.join(map_data_directory, f"{name}.dat")
 
         # Initialize atributes
         self.name = name # temporary name (stays if "Name: xyz" not found in the file)

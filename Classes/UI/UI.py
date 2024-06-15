@@ -29,7 +29,7 @@ class UI():
         font (pygame.font.Font): Font used for HUD elements.
         hp_font (pygame.font.Font): Font used for enemy health points.
         player_name_gfx (pygame.Surface): Rendered graphic for the player's name.
-        button_gfx (pygame.Surface): Graphic for the buttons.
+        buttons (dict[str, pygame.Surface]): Dictionary of button images for UI. (Keys include: "exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play")
         map_gfx (pygame.Surface): Graphic for the game map.
         towers_gfx (dict): Graphics for the towers.
         bullets_gfx (dict): Graphics for the bullets.
@@ -59,6 +59,7 @@ class UI():
     """
     # Game state for adjusting what gets displayed and how
     state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False, "speed up": False}
+    """State includes: 'wave', 'buy tower', 'pause', 'speed up'"""
     
     # Constant parameters
     FPS : int = 60 # framerate
@@ -96,7 +97,18 @@ class UI():
         # SET AND LOAD HUD ELEMENTS
         self.font = pygame.font.SysFont("Consolas", 50)
         self.hp_font = pygame.font.SysFont("Consolas", 20)
-        self.button_gfx = pygame.image.load(os.path.join(self.gfx_path, "HUD", "BLANK_BUTTON.png"))
+
+        # Button graphics
+        # File names
+        file_names = ["Exit.png", "Fast_forward_NA.png", 
+                      "Fast_forward_Off.png", "Fast_forward_On.png", 
+                      "Fast_forward_On_2.png", "Pause.png", "Play.png"]
+        # Keys
+        keys = ["exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play"]
+        # Button images dict
+        self.buttons = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
+                        for key, button in zip(keys, file_names)}
+        """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
 
         # Save root directory to an atribute
         self.directory = root_directory
@@ -144,7 +156,33 @@ class UI():
 
             # Unpack mouse position
             x, y = self.pos
+            # Click at HUD (below map)
+            if y > 860:
+
+                # Exit button
+                if x > 1700:
+                    return True
+                
+                # Play/Pause button
+                if x > 1460:
+                    # If wave did not start yet, start it
+                    if not UI.state["wave"]:
+                        UI.state["wave"] = True
+                    # If wave currently marching
+                    else:
+                        # Reverse pause state
+                        UI.state["pause"] = not UI.state["pause"]
+
+                # Speed up button
+                elif x > 1220:
+                    self.state["speed up"] = not self.state["speed up"]
+                    # Set current frame to 0 for counting frames to speed up the game
+                    self.frame_counter = 0
+
+            # Old code for comparison, leave till new one will be fully completed
+            """
             if 1680 < x < 1920:
+                
                 # buy tower
                 if 960 < y < 1080:
                     if UI.state["buy tower"]:
@@ -153,7 +191,6 @@ class UI():
                         UI.state["buy tower"] = True
                 # exit
                 elif 840 < y < 960:
-                    print("Game terminated with a button")
                     return True
                 
             if 1440 < x < 1680:
@@ -178,7 +215,7 @@ class UI():
                         map.grid[tile.y][tile.x] = False
                         Tower_Manager(chosen_tower, Coord(x, y))
                         player.gold -= Tower.tower_types[chosen_tower][-1]
-
+            """
         # Reset mouse state to not clicked
         self.mouse_click = False
 
@@ -188,6 +225,9 @@ class UI():
     # Menus
     def intro(self) -> None:
         """
+
+        MARTA, JAKBYS MIALA JAKIES PYTANIA PISZ ;) WOJTEK
+
         Displays the intro screen with a title animation.
 
         Writes down the title "Hello World!" character by character in the center 
@@ -233,7 +273,7 @@ class UI():
                     "quit" if the quit button is pressed
         """
         # Load background graphic
-        main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "main_menu.png"))
+        main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "main_menu.png"))
 
         # Main menu loop
         while True:
@@ -328,7 +368,9 @@ class UI():
         records_width = 45
 
         # Blit background image
-        self.screen.blit(pygame.image.load(os.path.join(self.gfx_path, "high_scores_background.png")), (0, 0))
+        self.screen.blit(pygame.image.load(os.path.join(self.gfx_path, 
+                                                        "menu", "high_scores_background.png")), 
+                                                            (0, 0))
 
         # Blit exit instructions
         self.screen.blit(self.font.render("Press escape to exit High Scores", False, (50, 50, 50)), (570, 180))
@@ -422,16 +464,15 @@ class UI():
         self.screen.blit(self.font.render(f"Wave:    {self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (20, 1025))
         
         # Buttons
-        buttons_font = pygame.font.SysFont("Consolas", 40)
-        # button 1
-        self.screen.blit(self.button_gfx, (960, 840))
-        # button 2
-        self.screen.blit(self.button_gfx, (960, 960))
-        # button 3
-        self.screen.blit(self.button_gfx, (1200, 840))
-        # button 4
-        self.screen.blit(self.button_gfx, (1200, 960))
+        # Exit
+        self.screen.blit(self.buttons["exit"], (1710, 870))
+        # Play / Pause
+        self.screen.blit(self.buttons["play"], (1470, 870))
+        # Speed
+        self.screen.blit(self.buttons["ff"], (1230, 870))
 
+
+        """
         # button 5 (speed up)
         self.screen.blit(self.button_gfx, (1440, 840))
         colour = (0, 255, 0) if self.state["speed up"] else (0, 0, 0)
@@ -454,6 +495,7 @@ class UI():
         colour = (0, 255, 0) if self.state["buy tower"] else (0, 0, 0)
         buy_tower_txt = buttons_font.render("Buy Tower", False, colour)
         self.screen.blit(buy_tower_txt, (1700, 995))
+        """
 
     # Additional methods
     def load_lvl(self, 
@@ -480,60 +522,60 @@ class UI():
             enemies_names (dict): Dictionary of enemy names and their corresponding file names. Defaults to {"test_enemy": "enemy_placeholder.png"}.
         """
         # Load graphics
-        self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", map_name + "_map.png"))
+        self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", f"{map_name}.png"))
         self.towers_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
                            for name, file in towers_names.items()}
         self.bullets_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
                             for name, file in bullets_names.items()}  
         self.enemies_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
                             for name, file in enemies_names.items()}
+        
         self.number_of_waves = number_of_waves
         self.current_wave = current_wave + 1
         player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
         self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
 
     def handle_name_change(self, current_player_name : str, background : pygame.image) -> str:
-            """
-            Displays input box for user to input new name and updates it live while user is typing.
+        """
+        Displays input box for user to input new name and updates it live while user is typing.
 
-            Parameters:
-                current_player_name (str) : Current name of the player to display at the beggining.
+        Parameters:
+            current_player_name (str) : Current name of the player to display at the beggining.
 
-            Returns:
-                str - New user name.
-            """
-            input = InputBox(500, 955, 500, 60, 
-                             current_player_name, display_box=True, 
-                             font=self.font, activate=True)
-            clock = pygame.time.Clock()
+        Returns:
+            str - New user name.
+        """
+        input = InputBox(500, 955, 500, 60, 
+                        current_player_name, display_box=True, 
+                        font=self.font, activate=True)
+        clock = pygame.time.Clock()
 
-            typing = True
-            while typing:
-                # Exit via closing the window
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
+        typing = True
+        while typing:
+            # Exit via closing the window
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    typing = False
+
+                # Key press
+                elif event.type == pygame.KEYDOWN:
+
+                    # Exit via ESCAPE or ENTER key press
+                    if event.key == pygame.K_ESCAPE or \
+                    event.key == pygame.K_RETURN:
                         typing = False
 
-                    # Key press
-                    elif event.type == pygame.KEYDOWN:
+                input.handle_event(event)
+                # Check if box deactivated (via mouse click o carrige return key press)
+                if not input.active:
+                    typing = False
 
-                        # Exit via ESCAPE or ENTER key press
-                        if event.key == pygame.K_ESCAPE or \
-                           event.key == pygame.K_RETURN:
-                            typing = False
+            self.screen.blit(background, (0, 0))
+            self.screen.blit(self.font.render(f"Player name:", False, (100, 0, 0)), (150, 960))
+            input.draw(self.screen)
+            pygame.display.flip()
+            clock.tick(30)
 
-                    input.handle_event(event)
-                    # Check if box deactivated (via mouse click o carrige return key press)
-                    if not input.active:
-                        typing = False
-
-                self.screen.blit(background, (0, 0))
-                self.screen.blit(self.font.render(f"Player name:", False, (100, 0, 0)), (150, 960))
-                input.draw(self.screen)
-                pygame.display.flip()
-                clock.tick(30)
-            
-            return input.text
-
+        return input.text
 
 
