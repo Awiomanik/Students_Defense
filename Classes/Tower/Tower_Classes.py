@@ -41,8 +41,8 @@ class Tower:
         """
     
 
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, 0, 1),
-                   "test_tower_2" : (180, 2, 60, 1, True, 0, 1)}
+    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, 0, 1, True, 100),
+                   "test_tower_2" : (180, 2, 60, 1, True, 0, 1, False, None)}
     
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
@@ -58,7 +58,9 @@ class Tower:
         self.shot_count, \
         self.targeting, \
         self.bouncing, \
-        self.cost \
+        self.cost, \
+        self.aoe, \
+        self.aoe_range \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
 
@@ -144,13 +146,22 @@ class Tower_Manager:
                 return
             for enemy in inrange.keys():
                 if inrange[enemy] == min(inrange.values()): #defaults to attacking weakest enemies, might be choose-able later.$$
-                    enemy.take_damage(self.tower_type.dmg)
+                    target = enemy
+                    if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
+                        for victims in self.enemies:
+                            area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
+                            if area <= self.tower_type.aoe_range:
+                                enemy.take_damage(self.tower_type.dmg)
+                    else:
+                        enemy.take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
                     break
 
-    #def upgrade(self,
-    #            tower_type_str : str = "test_tower"):
-    #    self.tower_type = Tower(f"{tower_type_str}_upgrade")                    
+    #this method upgrades a chosen tower
+    #def upgrade(self, tier: int): 
+    #    if tier==1:
+            
+    #    elif tier==2: 
 
     @classmethod
     def update(cls):
