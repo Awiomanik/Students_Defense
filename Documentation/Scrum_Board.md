@@ -168,7 +168,7 @@
 ### Tasks Assigned to Wojciech Kośnik-Kowalczuk
 - [ ] Incorporate new assets
 - [ ] Spawn point (map file, code)
-- [ ] Map description
+- [x] Map description
 - [ ] Level end
 - [ ] Incorporate tower statistics ccontext window
 - [ ] Reset level when quit
