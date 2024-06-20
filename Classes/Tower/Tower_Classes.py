@@ -157,10 +157,11 @@ class Tower_Manager:
                     self.tower_type.setbasecooldown()
                     break
 
-    #def upgrade(self,
-    #            tower_type_str : str = "test_tower"):
-    #    self.tower_type = Tower(f"{tower_type_str}_upgrade") 
-    #we can implement upgrades either by moving up a tuple of possible upgrades or used set in-code names for upgraded versions, both options might fail if we decide for split upgrades                   
+    #this method upgrades a chosen tower
+    #def upgrade(self, tier: int): 
+    #    if tier==1:
+            
+    #    elif tier==2: 
 
     @classmethod
     def update(cls):
