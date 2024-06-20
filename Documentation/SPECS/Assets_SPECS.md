@@ -12,7 +12,7 @@
 
 
 ### enemies
-(Holds enemies images as png files)
+(Holds enemies images as png files 60px x 60px)
 
 
 ### HUD
