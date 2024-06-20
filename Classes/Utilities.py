@@ -40,9 +40,12 @@ class Coord:
         y (int): The y-coordinate of a point in 2D space.
 
     Methods:
-        __add__: Supports adding another Coord instance or a numeric value to this coordinate.
-        __sub__: Supports subtracting another Coord instance or a numeric value from this coordinate.
-        __repr__: Returns a string representation of the coordinate.
+        __add__(self, other : typing.Union['Coord', int, float]) -> 'Coord': Supports adding another Coord instance or a numeric value to this coordinate.
+        __sub__(self, other : typing.Union['Coord', int, float]) -> 'Coord': Supports subtracting another Coord instance or a numeric value from this coordinate.
+        __repr__(self) -> str: Returns a string representation of the coordinate.
+        __iter__(self) -> typing.Generator[int, None, None]: Creates iterator object yielding Coord coordinates (x, then y).
+        res2tile(coords : tuple[int, int], tile_size : int = 120) -> 'Coord': Returns coords converted from screen coordinates (pixels) to grid coordinates.
+        grid_middle_point(self : 'Coord', tile_size : int = 120) -> 'Coord': Takes grid position and return pixel position of middle point in tile.
     """
 
     x: int
@@ -95,7 +98,12 @@ class Coord:
             str: The string representation of the coordinate, formatted as '|x,y|'.
         """
         return f"x.{self.x}, y.{self.y}"
-    
+
+    def __iter__(self) -> typing.Generator[int, None, None]:
+        """Allow the Coord to be iterated over, yielding its x and y coordinates."""
+        yield self.x
+        yield self.y
+
     def res2tile(coords : tuple[int, int], tile_size : int = 120) -> 'Coord':
         """
         Scales coord from screen coordinates to grid coordinates using number of pixels tile_size.
@@ -109,11 +117,9 @@ class Coord:
         """
         return Coord(coords[0] // tile_size, coords[1] // tile_size)
 
-    def grid_middle_point(self : 'Coord', tile_size : int = 120) -> 'Coord':
-        """
-        Takes grid position and return pixel position of middle point in tile
-        """
-        return Coord(self.x*tile_size + tile_size/2, self.y*tile_size + tile_size/2)
+    def grid_middle_point(coords : 'Coord', tile_size : int = 120) -> 'Coord':
+        """ Takes grid position and return pixel position of middle point in tile """
+        return Coord(coords.x*tile_size + tile_size//2, coords.y*tile_size + tile_size//2)
 
 class InputBox:
     """

@@ -129,21 +129,26 @@ class Game():
             if self.ui.process_input(self.level.map, self.player):
                 running = False
 
-            # Update game elements
+            # wave is running
             if self.ui.state["wave"]:
+                # Update game elements
                 self.ui.update(self.player.gold, self.player.lives, self.level.enemies)
                 self.level.update()
                 Tower_Manager.update()
+
                 # if wave ended
                 if not self.level.remaining_enemies and not self.level.enemies:
                     self.ui.state["wave"] = False
                     self.ui.current_wave += 1
-                    # 
+                    
+                    # level not ended yet
                     if self.level.current_wave < self.level.waves_num - 1:
                         self.level.new_wave()
+
                     # Level ended ( to be changed, temporary solution for prototype )
                     else:
                         running = False
+            # Between waves
             else:
                 self.ui.update(self.player.gold, self.player.lives,[])
 

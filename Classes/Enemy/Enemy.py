@@ -4,6 +4,7 @@ This module contains Enemy Class and Enemy_Manager class.
 
 from ..Utilities import Coord
 from ..Map.Map_Class import Map
+from typing import Type, Self
 
 class Enemy:
     """"
@@ -47,7 +48,6 @@ class Enemy:
         return f"Enemy(life={self.life}, speed={self.speed})"
     
 
-       
 class Enemy_Manager:
     """
     This class take objects of the Enemy class and Map Class and defines how the enemies moves along the created path,
@@ -104,7 +104,7 @@ class Enemy_Manager:
     update():  method to update all active enemies, checking their health, movement, and attacked state every frame.
     """
 
-    present = []
+    present : list[Self] = []
     def __init__(self, map : Map, enemy_type : str = 'test_enemy'):
         """
         Initializes the Enemy_Manager with the specified map and enemy type.
@@ -113,20 +113,20 @@ class Enemy_Manager:
         map (Map): The game map on which the enemies will move.
         enemy_type (str): The type of enemy to be managed (default is 'test_enemy').
         """
-        self.name = enemy_type
+        self.name : str = enemy_type
         self.map : Map = map
-        self.path = map.paths[0]
-        self.enemy_type = Enemy(enemy_type)
-        self.speed = self.enemy_type.speed
-        self.life = self.enemy_type.life
-        self.pos : Coord = Coord(-80,self.path[0].y*120 + 60) #starts to the left of first path tile
-        self.display_pos : tuple = (self.pos.x - 30,self.pos.y - 30)
-        self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
-        self.tile = 0
-        self.hp_display = None #used in UI
-        self.attacked = False
-        self.attacked_count = None
-        self.damaged_player = False
+        self.path : str = map.paths[0]
+        self.enemy_type : Enemy = Enemy(enemy_type)
+        self.speed : int = self.enemy_type.speed
+        self.life :int = self.enemy_type.life
+        self.grid_pos : Coord = self.path[0]
+        self.display_pos : tuple = tuple(Coord.grid_middle_point(self.grid_pos))
+        self.pos : Coord = Coord(*self.display_pos)
+        self.tile : int = 0
+        self.hp_display : int = None # used in UI
+        self.attacked : bool = False
+        self.attacked_count : int = None
+        self.damaged_player :bool = False
         Enemy_Manager.present.append(self)
 
     def __repr__(self) -> str:
@@ -162,7 +162,8 @@ class Enemy_Manager:
 
     def movement(self): # Defines how enemy moves throughout the map
         """
-        Moving the enemy along the defined path on the map based on its speed. If the enemy reaches the end of the path, it continues moving right.
+        Moving the enemy along the defined path on the map based on its speed. 
+        If the enemy reaches the end of the path, it continues moving right.
         """
         if self.tile < len(self.path):
             destination : Coord = self.path[self.tile] 
@@ -174,6 +175,7 @@ class Enemy_Manager:
                 #(tile_mid.x-self.speed/2<=self.pos.x<=tile_mid.x+self.speed/2) and (tile_mid.y-self.speed/2<=self.pos.y<=tile_mid.y+self.speed/2)
                 self.tile += 1
                 self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
+
         else: #once enemy enters last tile on path, it will only move to right until removed by remove_enemy
             self.pos += Coord(self.speed,0)
             self.display_pos : tuple = (self.pos.x - 30,self.pos.y - 30)
@@ -198,9 +200,10 @@ class Enemy_Manager:
         cls.present = []
 
     @classmethod
-    def update(cls): 
+    def update(cls : Type[Self]) -> None: 
         """
-        Class method to update all active enemies, checking their health, movement, and attacked state every frame.
+        Class method to update all active enemies, checking their health, movement, 
+        and attacked state every frame.
         """
         for enemy in cls.present:
             enemy.remove_enemy()
