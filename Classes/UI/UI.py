@@ -32,6 +32,8 @@ class UI():
         buttons (dict[str, pygame.Surface]): Dictionary of button images for UI. (Keys include: "exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play")
         map_gfx (pygame.Surface): Graphic for the game map.
         towers_gfx (dict): Graphics for the towers.
+        towers_list (list): List of tower_gfx keys, ie. list of towers that player can buy in currrent level.
+        towers_HUD_gfx (dict) : Graphics for towers displayed in HUD (corresponding to towers_list and towers_gfx).
         bullets_gfx (dict): Graphics for the bullets.
         enemies_gfx (dict): Graphics for the enemies.
         number_of_waves (int): Total number of waves in the current level.
@@ -467,9 +469,23 @@ class UI():
         # Exit
         self.screen.blit(self.buttons["exit"], (1710, 870))
         # Play / Pause
-        self.screen.blit(self.buttons["play"], (1470, 870))
+        if self.state["wave"]:
+            temp_key = "pause"
+        else:
+            temp_key = "play"
+        self.screen.blit(self.buttons[temp_key], (1470, 870))
         # Speed
         self.screen.blit(self.buttons["ff"], (1230, 870))
+
+        # Towers
+        # Left
+        self.screen.blit(self.towers_HUD_gfx[self.towers_list[0]], (510, 870))
+        # Center ( PLACEHOLDER, Add new towers )
+        self.screen.blit(self.towers_HUD_gfx[self.towers_list[1]], (750, 870))
+        # Riht ( PLACEHOLDER, Add new towers)
+        self.screen.blit(self.towers_HUD_gfx[self.towers_list[2]], (990, 870))
+        
+
 
 
         """
@@ -523,12 +539,15 @@ class UI():
         """
         # Load graphics
         self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", f"{map_name}.png"))
-        self.towers_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
-                           for name, file in towers_names.items()}
-        self.bullets_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
-                            for name, file in bullets_names.items()}  
-        self.enemies_gfx = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
-                            for name, file in enemies_names.items()}
+        self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
+                                    for name, file in towers_names.items()}
+        self.towers_list : list = [name for name in self.towers_gfx.keys()]
+        self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", file)) 
+                                        for name, file in towers_names.items()}
+        self.bullets_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
+                                    for name, file in bullets_names.items()}  
+        self.enemies_gfx :dict = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
+                                    for name, file in enemies_names.items()}
         
         self.number_of_waves = number_of_waves
         self.current_wave = current_wave + 1

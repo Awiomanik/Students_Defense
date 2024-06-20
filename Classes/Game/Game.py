@@ -108,7 +108,10 @@ class Game():
         # Load level data to UI
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
-                         enemies_names={"student" : "Default_Studenciak.png"})
+                         enemies_names={"student" : "Default_Studenciak.png"},
+                         towers_names={"Default" : "Tower_default.png",
+                                       "placeholder_1": "tower_placeholder.png",
+                                       "placeholder_2" : "tower_upgrade_placeholder.png"})
         # Update player atributes based on level data
         self.player.gold = self.level.gold
         self.player.lives = self.level.lives

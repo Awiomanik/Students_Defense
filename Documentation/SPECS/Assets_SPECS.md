@@ -17,9 +17,8 @@
 
 ### HUD
 (Holds grphics used in HUD as png files with designated names)
-
-- Towers (120px x 120px):
-    - `Tower_default.png` 
+- Towers (200px x 200px):
+  (Towers corresponding to towers Assets/gfx/towers rescaled)
 - Buttons:
     - `Exit.png` (240px x 240px)
     - `Fast_forward_NA.png` (240px x 240px)
