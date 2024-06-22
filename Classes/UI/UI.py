@@ -60,10 +60,13 @@ class UI():
                  Loads level graphics and initializes level variables.
 
         reset_state(cls) -> None: Resets state dict keys to all False
+
+        skip_frames(self, num_of_frames_2_skip : int) -> bool: Determines if the frame should be displayed or skipped based on the speed up states.
     """
     # Game state for adjusting what gets displayed and how
-    state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False, "speed up" : False}
-    """State includes: 'wave', 'buy tower', 'pause', 'speed up'"""
+    state : dict[str, bool] = {key: False for key in 
+                               ["wave", "buy tower", "pause", "speed up", "speed up more"]}
+    """State includes: 'wave', 'buy tower', 'pause', 'speed up', 'speed up more'"""
     
     # Constant parameters
     FPS : int = 60 # framerate
@@ -116,6 +119,9 @@ class UI():
 
         # Save root directory to an atribute
         self.directory = root_directory
+
+        # Frame counter for speeding up the displaying the game
+        self.frame_counter = 0
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -179,9 +185,13 @@ class UI():
 
                 # Speed up button
                 elif x > 1220:
-                    self.state["speed up"] = not self.state["speed up"]
-                    # Set current frame to 0 for counting frames to speed up the game
-                    self.frame_counter = 0
+                    if self.state["speed up"]:
+                        self.state["speed up"] = False
+                        self.state["speed up more"] = True
+                    elif self.state["speed up more"]:
+                        self.state["speed up more"] = False
+                    elif self.state["wave"]:
+                        self.state["speed up"] = True
 
             # Old code for comparison, leave till new one will be fully completed
             """
@@ -414,14 +424,14 @@ class UI():
             lives (int): The current number of lives the player has.
             enemies (list): A list of active enemies to display on the screen.
         """
-        # If speed up state active, ommit every three out of four frames
+        # If speed up (speed up more) state active, ommit every three (four) out of four (five) frames
         if UI.state["speed up"]:
-            self.frame_counter += 1
-            # Ommit frame three times out of four
-            if self.frame_counter < 4:
+            if self.skip_frames(3):
+                return 
+        
+        elif UI.state["speed up more"]:
+            if self.skip_frames(8):
                 return
-            # Fourth frame, restart frame counter and execute the function
-            self.frame_counter = 0
 
         # DRAW ELEMENTS
         # background
@@ -471,13 +481,23 @@ class UI():
         # Exit
         self.screen.blit(self.buttons["exit"], (1710, 870))
         # Play / Pause
-        if self.state["wave"]:
+        if self.state["wave"] and not self.state["pause"]:
             temp_key = "pause"
         else:
             temp_key = "play"
         self.screen.blit(self.buttons[temp_key], (1470, 870))
         # Speed
-        self.screen.blit(self.buttons["ff"], (1230, 870))
+        if self.state["wave"]:
+            if self.state["speed up"]:
+                button_helper = self.buttons["ff"]
+            elif self.state["speed up more"]:
+                button_helper = self.buttons["ff_2"]
+            else:
+                button_helper = self.buttons["ff_off"]
+        else:
+            button_helper = self.buttons["ff_NA"]
+
+        self.screen.blit(button_helper, (1230, 870))
 
         # Towers
         # Left
@@ -604,3 +624,25 @@ class UI():
         """Resets state dict to all False"""
         cls.state = {key : False for key in cls.state.keys()}
 
+    def skip_frames(self, num_of_frames_2_skip : int) -> bool:
+        """
+        The method increments an internal frame counter each time it is called. If the counter is less than 
+        `num_of_frames_2_skip`, the function will return True, indicating the frame should be skipped. Once the counter 
+        reaches `num_of_frames_2_skip`, it is reset to zero and the function returns False, indicating the frame 
+        should not be skipped and processing should take place.
+
+        Parameters:
+        num_of_frames_2_skip (int): The number of frames to skip before processing a frame. This value determines
+                                    how frequently the frames are processed (e.g., if set to 3, every 4th frame 
+                                    will be processed).
+
+        Returns:
+        bool: Returns True if the current frame should be skipped, False if it should be processed.
+        """
+        self.frame_counter += 1
+        # Ommit frame three times out of four
+        if self.frame_counter < num_of_frames_2_skip:
+            return True
+        # Fourth frame, restart frame counter and execute the function
+        self.frame_counter = 0
+        return False

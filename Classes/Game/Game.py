@@ -135,11 +135,10 @@ class Game():
             # Process input
             if self.ui.process_input(self.level.map, self.player):
                 running = False
-
+            
             # wave is running
-            elif self.ui.state["wave"]:
+            elif self.ui.state["wave"] and not self.ui.state["pause"]:
                 # Update game elements
-                self.ui.update(self.player.gold, self.player.lives, self.level.enemies)
                 self.level.update()
                 Tower_Manager.update()
 
@@ -156,10 +155,8 @@ class Game():
                     else:
                         running = False
 
-            # Between waves
-            else:
-                self.ui.update(self.player.gold, self.player.lives,[])
-
+            
+            self.ui.update(self.player.gold, self.player.lives, self.level.enemies)
 
 # For testing
 if __name__ == "__main__":
