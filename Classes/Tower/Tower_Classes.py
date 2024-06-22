@@ -2,7 +2,7 @@
 """Tower meneger module"""
 
 from ..Utilities import Coord
-from ..Enemy.Enemy import Enemy, Enemy_Manager
+from ..Enemy.Enemy import Enemy, EnemyManager
 from ..Level.Test_Level import Level
 from math import ceil
 
@@ -142,7 +142,7 @@ class Tower_Manager:
     Class Attributes:
     towers (list['Tower_Manager']): attribute storing all currently placed towers.
     
-    enemies (list['Enemy']): attribute referencing the list of active enemies from the Enemy_Manager class.
+    enemies (list['Enemy']): attribute referencing the list of active enemies from the EnemyManager class.
     
     Attributes:
     tower_type (Tower): The tower instance being managed.
@@ -167,7 +167,7 @@ class Tower_Manager:
     """
 
     towers : list['Tower_Manager'] = []
-    enemies : list['Enemy_Manager'] = Enemy_Manager.present
+    enemies : list['EnemyManager'] = EnemyManager.present
 
 
     def __init__(self,
@@ -189,7 +189,7 @@ class Tower_Manager:
         self.target_criteria = 'low_hp'
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
-            self.distance : list[(int,Enemy_Manager)] = []
+            self.distance : list[(int,EnemyManager)] = []
             self.already_attacked = None
         Tower_Manager.towers.append(self)
     #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
@@ -214,7 +214,7 @@ class Tower_Manager:
                         for possible_target in self.distance:
                             if possible_target[0] <= 100 and possible_target[1] not in self.already_attacked:
                                 self.already_attacked.append(possible_target[1])
-                                next_target : Enemy_Manager  = possible_target[1]
+                                next_target : EnemyManager  = possible_target[1]
                                 next_target.take_damage(self.tower_type.dmg)
                                 self.distance.clear()
                                 break
@@ -223,7 +223,7 @@ class Tower_Manager:
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
-            inrange : dict[Enemy_Manager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
+            inrange : dict[EnemyManager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
             self.inrange = inrange
             for enemy in Tower_Manager.enemies:
                 distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.y - self.pos.y)**2)**0.5#calculates distance between tower and enemy
@@ -295,7 +295,7 @@ class Tower_Manager:
     @classmethod
     def update(cls):
         """Updates all active towers, managing their attacks every frame."""
-        cls.enemies = Enemy_Manager.present #update enemy list
+        cls.enemies = EnemyManager.present #update enemy list
         for tower in cls.towers:
             if tower.tower_type.aoe:
                 tower.attack()

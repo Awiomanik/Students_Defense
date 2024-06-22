@@ -11,7 +11,7 @@ from ..Tower.Tower_Classes import Tower_Manager, Tower
 from ..Utilities import Coord, InputBox, load_high_scores, xor
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
-from ..Enemy.Enemy import Enemy_Manager
+from ..Enemy.Enemy import EnemyManager
 
 class UI():
     """
@@ -437,7 +437,7 @@ class UI():
 
         # enemies
         if UI.state["wave"]:
-            self.enemies : list[Enemy_Manager] = enemies
+            self.enemies : list[EnemyManager] = enemies
             for enemy in self.enemies:
                 self.screen.blit(self.enemies_gfx[enemy.name], enemy.display_pos)
                 enemy.hp_display = self.hp_font.render(f"{enemy.life}", False, (255, 0, 0))

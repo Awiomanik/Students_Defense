@@ -5,7 +5,7 @@ Classes:
     Level - Handles level data, enemy spawning, and wave progression within a game level.
 """
 
-from ..Enemy.Enemy import Enemy_Manager
+from ..Enemy.Enemy import EnemyManager
 import os
 from ..Map import Map_Class
 
@@ -14,7 +14,7 @@ class Level:
     Handles level data, enemy spawning, and wave progression within a game level.
 
     Class attributes:
-        enemies (list[Enemy_Manager]): List of current enemies present in the level.
+        enemies (list[EnemyMenager]): List of current enemies present in the level.
     
     Instance atributes:
         gold (int): The initial gold amount for the player in that level.
@@ -37,7 +37,7 @@ class Level:
     """
 
     # Class atributes
-    enemies : list[Enemy_Manager] = Enemy_Manager.present
+    enemies : list[EnemyManager] = EnemyManager.present
 
     # Methods
     def __init__(self, level_number : int, root_directory : str) -> None:
@@ -108,7 +108,7 @@ class Level:
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
-            spawned_enemy = Enemy_Manager(self.map, self.current_enemy) # despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            spawned_enemy = EnemyManager(self.map, self.current_enemy) # despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
             self.current_wave_def[self.current_enemy] -= 1
             self.spawn_cooldown = 60
             self.remaining_enemies = sum(self.current_wave_def.values())
@@ -126,7 +126,7 @@ class Level:
         attacks, and checking and updating player lives.
         """
         self.spawn_enemy()
-        Enemy_Manager.update()
+        EnemyManager.update()
         for enemy in self.enemies:
             if enemy.damaged_player:
                 self.lives -=1
