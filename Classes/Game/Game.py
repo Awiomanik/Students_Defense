@@ -104,14 +104,18 @@ class Game():
         and player atributes with initial game parameters.
         """
         # Initialize level
+        Test_Level.Level.reset()
         self.level = Test_Level.Level(1, self.root_directory)
+
         # Load level data to UI
+        UI.UI.reset_state()
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
                          enemies_names={"student" : "Default_Studenciak.png"},
                          towers_names={"Default" : "Tower_default.png",
                                        "placeholder_1": "tower_placeholder.png",
                                        "placeholder_2" : "tower_upgrade_placeholder.png"})
+        
         # Update player atributes based on level data
         self.player.gold = self.level.gold
         self.player.lives = self.level.lives
@@ -133,7 +137,7 @@ class Game():
                 running = False
 
             # wave is running
-            if self.ui.state["wave"]:
+            elif self.ui.state["wave"]:
                 # Update game elements
                 self.ui.update(self.player.gold, self.player.lives, self.level.enemies)
                 self.level.update()
@@ -151,6 +155,7 @@ class Game():
                     # Level ended ( to be changed, temporary solution for prototype )
                     else:
                         running = False
+
             # Between waves
             else:
                 self.ui.update(self.player.gold, self.player.lives,[])
