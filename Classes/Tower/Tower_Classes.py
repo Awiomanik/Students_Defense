@@ -218,8 +218,6 @@ class Tower_Manager:
                                 next_target.take_damage(self.tower_type.dmg)
                                 self.distance.clear()
                                 break
-                            self.tower_type.setbasecooldown()
-                            break
                 else:
                     self.already_attacked.clear()
         else:#if tower is ready to fire, it will look for enemies in range
