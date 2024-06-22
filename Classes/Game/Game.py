@@ -11,6 +11,7 @@ from ..UI import UI
 from ..Level import Test_Level
 from ..Player.Player import Player
 from ..Tower.Tower_Classes import Tower_Manager, Tower
+from ..Enemy.Enemy import Enemy
 
 class Game():
     """
@@ -42,7 +43,7 @@ class Game():
             display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
         # Player protoplast with placeholder atributes, player is fully initialized when level start
-        self.player = Player("Guest", 0, 0, None)
+        self.player = Player("Guest", 0, 0)
 
         # Set root_directory
         self.root_directory = root_directory
@@ -111,13 +112,12 @@ class Game():
         UI.UI.reset_state()
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
-                         enemies_names={"student" : "Default_Studenciak.png"},
-                         towers_names={name : graphic[-1] for name, graphic in  Tower.tower_types.items()})
+                         enemies_names={name : name + ".png" for name in Enemy.enemy_types},
+                         towers_names={name : graphic[-2] for name, graphic in  Tower.tower_types.items()})
         
         # Update player atributes based on level data
         self.player.gold = self.level.gold
         self.player.lives = self.level.lives
-        self.player.avialable_towers = self.level.available_towers
 
     def gameplay(self) -> None:
         """
