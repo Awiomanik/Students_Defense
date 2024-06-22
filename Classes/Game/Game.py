@@ -10,7 +10,7 @@ Classes:
 from ..UI import UI
 from ..Level import Test_Level
 from ..Player.Player import Player
-from ..Tower.Tower_Classes import Tower_Manager
+from ..Tower.Tower_Classes import Tower_Manager, Tower
 
 class Game():
     """
@@ -112,9 +112,7 @@ class Game():
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
                          enemies_names={"student" : "Default_Studenciak.png"},
-                         towers_names={"Default" : "Tower_default.png",
-                                       "placeholder_1": "tower_placeholder.png",
-                                       "placeholder_2" : "tower_upgrade_placeholder.png"})
+                         towers_names={name : graphic[-1] for name, graphic in  Tower.tower_types.items()})
         
         # Update player atributes based on level data
         self.player.gold = self.level.gold
