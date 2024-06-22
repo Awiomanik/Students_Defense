@@ -256,7 +256,7 @@ class Tower_Manager:
                         break
                     elif self.tower_type.bouncing:
                         next_target = target
-                        target.take_damage(self.tower_type.dmg)
+                        enemy.take_damage(self.tower_type.dmg)
                         self.own_projectile = Projectiles(self.pos,target.pos,self.tower_type.projectile_asset)
                         self.own_projectile.create_vector
                         self.already_attacked = [next_target]
@@ -269,7 +269,7 @@ class Tower_Manager:
                         self.tower_type.setbasecooldown()
                         break
                     else:
-                        target.take_damage(self.tower_type.dmg)
+                        enemy.take_damage(self.tower_type.dmg)
                         self.tower_type.setbasecooldown()
                         break
                         #projectile = Projectiles(self.pos, enemy.pos)
