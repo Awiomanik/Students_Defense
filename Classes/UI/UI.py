@@ -210,23 +210,19 @@ class UI():
 
             # Click at map
             else:
-                pass
+                # Place tower
+                if self.state["buy tower"]:
+                    # Cast mouse position to coord type
+                    tile : Coord = Coord.res2tile(self.pos) 
 
+                    # temporary choosen tower, to be changed when more towers are developed
+                    if map.grid[tile.y][tile.x]:
+                        chosen_tower = self.towers_list[self.tower_being_bought]
+                        if chosen_tower in player.affordable_towers():
+                            map.grid[tile.y][tile.x] = False
+                            Tower_Manager(chosen_tower, Coord(x, y))
+                            player.gold -= Tower.tower_types[chosen_tower][-1]
 
-            # Old code for comparison, leave till new one will be fully completed
-            """
-            # Buying tower
-            if UI.state["buy tower"]:
-                # Cast mouse position to coord type
-                tile : Coord = Coord.res2tile(self.pos) 
-                # temporary choosen tower, to be changed when more towers are developed
-                chosen_tower = "test_tower_1"
-                if map.grid[tile.y][tile.x]:
-                    if chosen_tower in player.affordable_towers():
-                        map.grid[tile.y][tile.x] = False
-                        Tower_Manager(chosen_tower, Coord(x, y))
-                        player.gold -= Tower.tower_types[chosen_tower][-1]
-            """
         # Reset mouse state to not clicked
         self.mouse_click = False
 
