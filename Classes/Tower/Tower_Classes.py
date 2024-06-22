@@ -157,11 +157,20 @@ class Tower_Manager:
                     self.tower_type.setbasecooldown()
                     break
 
-    #this method upgrades a chosen tower
-    #def upgrade(self, tier: int): 
-    #    if tier==1:
-            
-    #    elif tier==2: 
+    def upgrade(self, tier: int, tower_name: str):
+        """This method upgrades a chosen tower""" 
+        position = self.pos
+        Tower_Manager.towers.remove(self) 
+        if tier == 1:
+          self.pos = position
+          self.tower_type = Tower(f'{tower_name}_tier_2')
+          self.display_pos = (self.pos.x - 60,self.pos.y-60)
+          Tower_Manager.towers.append(self)    
+        elif tier == 2:
+          self.pos = position
+          self.tower_type = Tower(f'{tower_name}_tier_3')
+          self.display_pos = (self.pos.x - 60,self.pos.y-60)
+          Tower_Manager.towers.append(self) 
 
     @classmethod
     def update(cls):
