@@ -121,6 +121,8 @@ class UI():
         # Button images dict
         self.buttons : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
                                 for key, button in zip(keys, file_names)}
+        self.buttons_L : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
+                                    for key, button in zip(keys, file_names)}
         """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
 
         # Save root directory to an atribute
@@ -461,7 +463,29 @@ class UI():
         Args:
             gold (int): The current amount of gold the player has.
             lives (int): The current number of lives the player has.
+            map (Map): reference to map object for checking accessibility of tiles for tower placement.
         """
+        # Update mouse position and check if mouse is hovering upon any button
+        x, y = self.pos = pygame.mouse.get_pos()
+        hover = None
+        if y > 860:
+            # Exit button
+            if x > 1700:
+                hover = "exit"
+            # Play/Pause button
+            elif x > 1460:
+                hover = "play"
+            # Speed up button
+            elif x > 1220:
+                hover = "speed up"
+            # Towers
+            elif x > 980:
+                hover = "tower 2"
+            elif x > 740:
+                hover = "tower 1"
+            elif x > 500:
+                hover = "tower 0"
+
         # Player name
         self.screen.blit(self.player_name_gfx, (20, 845))
         # Player money
@@ -473,35 +497,53 @@ class UI():
         
         # Buttons
         # Exit
-        self.screen.blit(self.buttons["exit"], (1710, 870))
+        if hover == "exit":
+            self.screen.blit(self.buttons_L["exit"], (1700, 860))
+        else:
+            self.screen.blit(self.buttons["exit"], (1710, 870))
+
         # Play / Pause
         if self.state["wave"] and not self.state["pause"]:
             temp_key = "pause"
         else:
             temp_key = "play"
-        self.screen.blit(self.buttons[temp_key], (1470, 870))
+        if hover == "play":
+            self.screen.blit(self.buttons_L[temp_key], (1460, 860))
+        else:
+            self.screen.blit(self.buttons[temp_key], (1470, 870))
+
         # Speed
+        but = self.buttons_L if hover == "speed up" else self.buttons
+        position = (1220, 860) if hover == "speed up" else (1230, 870)
         if self.state["wave"]:
             if self.state["speed up"]:
-                button_helper = self.buttons["ff"]
+                button_helper = but["ff"]
             elif self.state["speed up more"]:
-                button_helper = self.buttons["ff_2"]
+                button_helper = but["ff_2"]
             else:
-                button_helper = self.buttons["ff_off"]
+                button_helper = but["ff_off"]
         else:
-            button_helper = self.buttons["ff_NA"]
+            button_helper = but["ff_NA"]
         # Blit proper button
-        self.screen.blit(button_helper, (1230, 870))
+        self.screen.blit(button_helper, position)
 
         # Towers - HUD
         # Left
-        self.screen.blit(self.towers_HUD_gfx[self.towers_list[0]], (510, 870))
+        if hover == "tower 0":
+            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[0]], (500, 860))
+        else:
+            self.screen.blit(self.towers_HUD_gfx[self.towers_list[0]], (510, 870))
         # Center ( PLACEHOLDER, Add new towers )
-        self.screen.blit(self.towers_HUD_gfx[self.towers_list[1]], (750, 870))
+        if hover == "tower 1":
+            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[1]], (740, 860))
+        else:
+            self.screen.blit(self.towers_HUD_gfx[self.towers_list[1]], (750, 870))
         # Riht ( PLACEHOLDER, Add new towers)
-        self.screen.blit(self.towers_HUD_gfx[self.towers_list[2]], (990, 870))
-        # Towers - MAP
-
+        if hover == "tower 2":
+            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[2]], (980, 860))
+        else:
+            self.screen.blit(self.towers_HUD_gfx[self.towers_list[2]], (990, 870))
+        
         # Placing towers
         if self.state["buy tower"]:
             self.pos = pygame.mouse.get_pos()
@@ -535,8 +577,12 @@ class UI():
         self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", f"{map_name}.png"))
         self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
                                     for name, file in towers_names.items()}
+        self.towers_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", file)) 
+                                    for name, file in towers_names.items()}
         self.towers_list : list = [name for name in self.towers_gfx.keys()]
         self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", file)) 
+                                        for name, file in towers_names.items()}
+        self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", file)) 
                                         for name, file in towers_names.items()}
         self.bullets_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
                                     for name, file in bullets_names.items()}  
