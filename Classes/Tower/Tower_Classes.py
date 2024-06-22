@@ -135,19 +135,36 @@ class Tower_Manager:
 
     def attack(self):
         """Manages attacks, targeting the weakest enemy within range if the tower is ready to fire."""
+        criteria = self.tower_type.target_criteria
+
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
         else:#if tower is ready to fire, it will look for enemies in range
-            inrange : dict[Enemy,Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
+            inrange : dict[Enemy,(Enemy.life, Enemy_Manager.path)]= {}#this dict will contain enemies in range as keys and their hp as values
             self.inrange = inrange
             for enemy in Tower_Manager.enemies:
                 distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.y - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
-                    inrange[enemy] = enemy.life
+                    inrange[enemy] = (enemy.life, Enemy_Manager.path)
             if not len(inrange):#returns when list length is 0
                 return
+            
+        if criteria == 'low_hp':
+            value = inrange[enemy][0]
+            condition = min(inrange.values()[0])
+        elif criteria == 'high_hp':
+            value = inrange[enemy]
+            condition = max(inrange.values()[0])
+        elif criteria == 'front':
+            value = 
+            condition = 
+        elif criteria == 'back':
+            value =
+            condition =
+
+        
             for enemy in inrange.keys():
-                if inrange[enemy] == min(inrange.values()): #defaults to attacking weakest enemies, might be choose-able later.$$
+                if value == condition: #defaults to attacking weakest enemies, might be choose-able later.$$
                     target = enemy
                     if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
                         for victims in self.enemies:
@@ -155,19 +172,20 @@ class Tower_Manager:
                             if area <= self.tower_type.aoe_range:
                                 Enemy_Manager.take_damage(self.tower_type.dmg)
                     elif self.tower_type.bouncing:
+                        next_target = target
                         Enemy_Manager.take_damage(self.tower_type.dmg)
-                        already_attacked = [target]
+                        already_attacked = [next_target]
                         for bounce in range(self.tower_type.bouncing_count):
                             distance = []
                             for victim in self.enemies:
-                                area = ((victim.pos.x - target.pos.x)**2 + (victim.pos.y - target.pos.y)**2)**0.5
+                                area = ((victim.pos.x - next_target.pos.x)**2 + (victim.pos.y - next_target.pos.y)**2)**0.5
                                 distance.append((area, victim))
                             distance.sort()
                             for possible_target in distance:
                                 if possible_target[0] <= 100 and possible_target[1] not in already_attacked:
                                     Enemy_Manager.take_damage(self.tower_type.dmg)
                                     already_attacked.append(possible_target[1])
-                                    target = possible_target[1]
+                                    next_target = possible_target[1]
                                     distance.clear()
                                     break
                         already_attacked.clear()

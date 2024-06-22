@@ -115,7 +115,7 @@ class Enemy_Manager:
         """
         self.name : str = enemy_type
         self.map : Map = map
-        self.path : str = map.paths[0]
+        self.path : list = map.paths[0]
         self.enemy_type : Enemy = Enemy(enemy_type)
         self.speed : int = self.enemy_type.speed
         self.life :int = self.enemy_type.life
