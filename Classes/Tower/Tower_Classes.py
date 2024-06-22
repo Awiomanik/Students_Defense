@@ -40,12 +40,35 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-##########################################dmg#no of shots#bounce######cost#########aoe range#####################projectile asset
-####################################range#####cd####target######no of b.#####aoe#############tower asset##########################
-    tower_types = {"test_tower_1" :  (300, 1, 60, 1, True,  False, None, 1 , True,   100, 'tower_placeholder.png', 'bullet_projectile.png'),
-                   "test_tower_2" :  (180, 2, 60,  1, True,  True,    2, 1 , False, None, 'tower_placeholder.png', 'bullet_projectile.png'),
-                   "Algebra_basic" : (500, 2, 120 ,1, True, False, None, 10, False, None, 'Algebra_basic.png'    , 'Algebra_projectile.png')}
-    
+#######################################################dmg##no of shots#####bounce#######cost######aoe range##################################projectile asset
+##############################################range#########cd#######target######no of b.#####aoe#############tower asset##########################
+    tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "Algebra_basic"                : (400, 2, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (300, 4, 90  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT_specialist.png'        , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_specialist.png'   , 'Algebra_projectile.png'),
+                   "Analysis_basic"               : (300, 1, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 2, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
+                   "Programming_basic"            : (300, 1, 120  , 1, True,  False, None, 10,  True,    50, 'Programming_basic.png'            , 'Programming_projectile.png'),
+                   "Programming_object"           : (300, 4, 90   , 1, True,  False, None, 50,  True,   100, 'Programming_object.png'           , 'Programming_projectile.png'),
+                   "Programing_spaghetti_decoder" : (300, 1, 30   , 1, True,   True,    8, 60, False,  None, 'Programming_spaghetti_decoder.png', 'Spaghetti_projectile.png')
+                   }
+    """
+        Tower stats positions:
+        0 - range
+        1 - damage
+        2 - cooldown
+        3 - number of shots
+        4 - targeting
+        5 - bouncing
+        6 - number of bounces
+        7 - tower cost
+        8 - aoe?
+        9 - aoe range
+        10 - tower asset
+        11 - projectile asset
+    """
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes a tower with the specified type.
@@ -53,19 +76,6 @@ class Tower:
         Arguments:
         tower_type : str
             The type of tower to be created (default is "test_tower").
-        Tower stats positions:
-        1 - range
-        2 - damage
-        3 - cooldown
-        4 - number of shots
-        5 - targeting
-        6 - bouncing
-        7 - number of bounces
-        8 - tower cost
-        9 - aoe?
-        10 - aoe range
-        11 - tower asset
-        12 - projectile asset
         """
         self.range, \
         self.dmg, \
@@ -81,6 +91,7 @@ class Tower:
         self.projectile_asset \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
+        self.tower_name = tower_type
 
     def cooldown(self):
         """Decreases the attack cooldown by one frame."""
