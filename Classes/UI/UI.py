@@ -4,7 +4,9 @@ including input from the keyboard and mouse and drawing graphics (potentially al
 """
 
 # IMPORTS
-import pygame, os, sys
+import pygame
+import os
+import sys
 from ..Tower.Tower_Classes import Tower_Manager, Tower
 from ..Utilities import Coord, InputBox, load_high_scores, xor
 from ..Player.Player import Player
@@ -202,11 +204,11 @@ class UI():
 
                 # Towers (HUD)
                 elif x > 980:
-                  self.buy_tower_mode(2)
+                  self.buy_tower_mode(2, player)
                 elif x > 740:
-                    self.buy_tower_mode(1)
+                    self.buy_tower_mode(1, player)
                 elif x > 500:
-                    self.buy_tower_mode(0)
+                    self.buy_tower_mode(0, player)
 
             # Click at map
             else:
@@ -220,7 +222,7 @@ class UI():
                         chosen_tower = self.towers_list[self.tower_being_bought]
                         map.grid[tile.y][tile.x] = False
                         Tower_Manager(chosen_tower, Coord(x, y))
-                        player.gold -= Tower.tower_types[chosen_tower][-1]
+                        player.gold -= Tower.tower_types[chosen_tower][7]
 
         # Reset mouse state to not clicked
         self.mouse_click = False
@@ -431,7 +433,7 @@ class UI():
 
         # towers
         for tower in Tower_Manager.towers:
-            self.screen.blit(self.towers_gfx["test_tower"], tower.display_pos)
+            self.screen.blit(self.towers_gfx[tower.tower_type.tower_asset[:-4]], tower.display_pos)
 
         # enemies
         if UI.state["wave"]:

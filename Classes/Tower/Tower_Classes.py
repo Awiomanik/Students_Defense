@@ -40,11 +40,35 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-    
-
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100, 'low_hp', 'test_bullet'),
-                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None, 'front','test_bullet')}
-    
+#######################################################dmg##no of shots#####bounce#######cost######aoe range##################################projectile asset
+##############################################range#########cd#######target######no of b.#####aoe#############tower asset##########################
+    tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "Algebra_basic"                : (400, 2, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (300, 4, 90  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT_specialist.png'        , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_specialist.png'   , 'Algebra_projectile.png'),
+                   "Analysis_basic"               : (300, 1, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 2, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
+                   "Programming_basic"            : (300, 1, 120  , 1, True,  False, None, 10,  True,    50, 'Programming_basic.png'            , 'Programming_projectile.png'),
+                   "Programming_object"           : (300, 4, 90   , 1, True,  False, None, 50,  True,   100, 'Programming_object.png'           , 'Programming_projectile.png'),
+                   "Programing_spaghetti_decoder" : (300, 1, 30   , 1, True,   True,    8, 60, False,  None, 'Programming_spaghetti_decoder.png', 'Spaghetti_projectile.png')
+                   }
+    """
+        Tower stats positions:
+        0 - range
+        1 - damage
+        2 - cooldown
+        3 - number of shots
+        4 - targeting
+        5 - bouncing
+        6 - number of bounces
+        7 - tower cost
+        8 - aoe?
+        9 - aoe range
+        10 - tower asset
+        11 - projectile asset
+    """
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes a tower with the specified type.
@@ -63,10 +87,11 @@ class Tower:
         self.cost, \
         self.aoe, \
         self.aoe_range, \
-        self.target_criteria, \
+        self.tower_asset, \
         self.projectile_asset \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
+        self.tower_name = tower_type
 
     def cooldown(self):
         """Decreases the attack cooldown by one frame."""
@@ -161,6 +186,7 @@ class Tower_Manager:
         self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
         self.display_pos = (self.pos.x - 60,self.pos.y-60)
         self.own_projectile = None
+        self.target_criteria = 'low_hp'
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
             self.distance : list[(int,Enemy_Manager)] = []
@@ -175,7 +201,7 @@ class Tower_Manager:
 
     def attack(self):
         """Manages attacks, targeting the weakest enemy within range if the tower is ready to fire."""
-        criteria = self.tower_type.target_criteria
+        criteria = self.target_criteria
 
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
@@ -197,30 +223,31 @@ class Tower_Manager:
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
-            inrange : dict[Enemy_Manager,(Enemy.life, Enemy_Manager.path)]= {}#this dict will contain enemies in range as keys and their hp as values
+            inrange : dict[Enemy_Manager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
             self.inrange = inrange
             for enemy in Tower_Manager.enemies:
                 distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.y - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
-                    inrange[enemy] = (enemy.life, Enemy_Manager.path)
-            if not len(inrange):#returns when list length is 0
+                    inrange[enemy] = (enemy.life)
+            if not len(inrange):# returns when list length is 0
                 return
-            
-        if criteria == 'low_hp':
-            value = inrange[enemy][0]
-            condition = min(inrange.values()[0])
-        elif criteria == 'high_hp':
-            value = inrange[enemy]
-            condition = max(inrange.values()[0])
-        elif criteria == 'front':
-            value = inrange[enemy][1]
-            condition = max(inrange.values()[1])
-        elif criteria == 'back':
-            value = inrange[enemy][1]
-            condition = min(inrange.values()[1])
 
         ################################every frame, UI should 
             for enemy in inrange.keys():
+                if criteria == 'low_hp':
+                    value = self.inrange[enemy]
+                    condition = min(inrange.values())
+                elif criteria == 'high_hp':
+                    value = self.inrange[enemy]
+                    condition = max(inrange.values())
+                """
+                elif criteria == 'front':
+                    value = self.inrange[enemy][1]
+                    condition = max(inrange.values()[1])
+                elif criteria == 'back':
+                    value = self.inrange[enemy][1]
+                    condition = min(inrange.values()[1])
+                """
                 if value == condition: #defaults to attacking weakest enemies, might be choose-able later.$$
                     target = enemy
                     if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
@@ -242,7 +269,7 @@ class Tower_Manager:
                             self.distance.sort()
                     else:
                         target.take_damage(self.tower_type.dmg)
-                        projectile = projectile(self.pos, enemy.pos)
+                        #projectile = Projectiles(self.pos, enemy.pos)
 
     def upgrade(self, tier: int, tower_name: str):
         """This method upgrades a chosen tower""" 

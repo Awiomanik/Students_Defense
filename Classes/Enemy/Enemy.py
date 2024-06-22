@@ -20,7 +20,7 @@ class Enemy:
     __str__() -> str: Returns a string representation of the enemy, including its life and speed.
     """
 
-    enemy_types = {'student':{'hp': 3, 'speed': 5}}
+    enemy_types = {'Marta' : {'hp': 3, 'speed': 5}}
 
     def __init__(self, enemy_type: str = 'test_enemy'):
         """
