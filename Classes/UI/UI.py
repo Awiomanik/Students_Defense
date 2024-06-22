@@ -4,7 +4,9 @@ including input from the keyboard and mouse and drawing graphics (potentially al
 """
 
 # IMPORTS
-import pygame, os, sys
+import pygame
+import os
+import sys
 from ..Tower.Tower_Classes import Tower_Manager, Tower
 from ..Utilities import Coord, InputBox, load_high_scores, xor
 from ..Player.Player import Player
