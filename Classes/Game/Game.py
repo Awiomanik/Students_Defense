@@ -112,12 +112,11 @@ class Game():
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
                          enemies_names={"student" : "Default_Studenciak.png"},
-                         towers_names={name : graphic[-1] for name, graphic in  Tower.tower_types.items()})
+                         towers_names={name : graphic[-2] for name, graphic in  Tower.tower_types.items()})
         
         # Update player atributes based on level data
         self.player.gold = self.level.gold
         self.player.lives = self.level.lives
-        self.player.avialable_towers = self.level.available_towers
 
     def gameplay(self) -> None:
         """
