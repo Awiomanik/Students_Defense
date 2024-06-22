@@ -58,9 +58,11 @@ class UI():
                  bullets_names: dict = {"test_bullet": "bullet_placeholder.png"}, 
                  enemies_names: dict = {"test_enemy": "enemy_placeholder.png"}) -> None: 
                  Loads level graphics and initializes level variables.
+
+        reset_state(cls) -> None: Resets state dict keys to all False
     """
     # Game state for adjusting what gets displayed and how
-    state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False, "speed up": False}
+    state : dict[str, bool] = {"wave" : False, "buy tower" : False, "pause" : False, "speed up" : False}
     """State includes: 'wave', 'buy tower', 'pause', 'speed up'"""
     
     # Constant parameters
@@ -546,7 +548,7 @@ class UI():
                                         for name, file in towers_names.items()}
         self.bullets_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
                                     for name, file in bullets_names.items()}  
-        self.enemies_gfx :dict = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
+        self.enemies_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
                                     for name, file in enemies_names.items()}
         
         self.number_of_waves = number_of_waves
@@ -597,4 +599,8 @@ class UI():
 
         return input.text
 
+    @classmethod
+    def reset_state(cls) -> None:
+        """Resets state dict to all False"""
+        cls.state = {key : False for key in cls.state.keys()}
 

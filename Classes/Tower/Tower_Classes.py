@@ -41,8 +41,8 @@ class Tower:
         """
     
 
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, 0, 1, True, 100),
-                   "test_tower_2" : (180, 2, 60, 1, True, 0, 1, False, None)}
+    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100, 'low_hp'),
+                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None, 'front')}
     
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
@@ -58,9 +58,11 @@ class Tower:
         self.shot_count, \
         self.targeting, \
         self.bouncing, \
+        self.bouncing_count, \
         self.cost, \
         self.aoe, \
-        self.aoe_range \
+        self.aoe_range, \
+        self.target_criteria \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
 
@@ -151,17 +153,43 @@ class Tower_Manager:
                         for victims in self.enemies:
                             area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
                             if area <= self.tower_type.aoe_range:
-                                enemy.take_damage(self.tower_type.dmg)
+                                Enemy_Manager.take_damage(self.tower_type.dmg)
+                    elif self.tower_type.bouncing:
+                        Enemy_Manager.take_damage(self.tower_type.dmg)
+                        already_attacked = [target]
+                        for bounce in range(self.tower_type.bouncing_count):
+                            distance = []
+                            for victim in self.enemies:
+                                area = ((victim.pos.x - target.pos.x)**2 + (victim.pos.y - target.pos.y)**2)**0.5
+                                distance.append((area, victim))
+                            distance.sort()
+                            for possible_target in distance:
+                                if possible_target[0] <= 100 and possible_target[1] not in already_attacked:
+                                    Enemy_Manager.take_damage(self.tower_type.dmg)
+                                    already_attacked.append(possible_target[1])
+                                    target = possible_target[1]
+                                    distance.clear()
+                                    break
+                        already_attacked.clear()
                     else:
-                        enemy.take_damage(self.tower_type.dmg)
+                        Enemy_Manager.take_damage(self.tower_type.dmg)
                     self.tower_type.setbasecooldown()
                     break
 
-    #this method upgrades a chosen tower
-    #def upgrade(self, tier: int): 
-    #    if tier==1:
-            
-    #    elif tier==2: 
+    def upgrade(self, tier: int, tower_name: str):
+        """This method upgrades a chosen tower""" 
+        position = self.pos
+        Tower_Manager.towers.remove(self) 
+        if tier == 1:
+          self.pos = position
+          self.tower_type = Tower(f'{tower_name}_tier_2')
+          self.display_pos = (self.pos.x - 60,self.pos.y-60)
+          Tower_Manager.towers.append(self)    
+        elif tier == 2:
+          self.pos = position
+          self.tower_type = Tower(f'{tower_name}_tier_3')
+          self.display_pos = (self.pos.x - 60,self.pos.y-60)
+          Tower_Manager.towers.append(self) 
 
     @classmethod
     def update(cls):
@@ -173,7 +201,7 @@ class Tower_Manager:
     @classmethod
     def reset(cls):
         """Clears all towers, when new game starts"""
-        cls.towers = [] #clearing list
+        cls.towers = [] # clearing list
         
     def load_lvl():
         """Clears old data and resets towers, used when loading a new level."""
