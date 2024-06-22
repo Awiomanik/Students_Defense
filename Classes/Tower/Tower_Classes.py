@@ -49,7 +49,7 @@ class Tower:
                    "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_specialist.png'   , 'Algebra_projectile.png'),
                    "Analysis_basic"               : (300, 1, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
                    "Analysis_calculus_specialist" : (300, 2, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
-                   "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
+                   "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analysis_functions_specialist.png', 'Analysis_projectile.png'),
                    "Programming_basic"            : (300, 1, 120  , 1, True,  False, None, 10,  True,    50, 'Programming_basic.png'            , 'Programming_projectile.png'),
                    "Programming_object"           : (300, 4, 90   , 1, True,  False, None, 50,  True,   100, 'Programming_object.png'           , 'Programming_projectile.png'),
                    "Programing_spaghetti_decoder" : (300, 1, 30   , 1, True,   True,    8, 60, False,  None, 'Programming_spaghetti_decoder.png', 'Spaghetti_projectile.png')

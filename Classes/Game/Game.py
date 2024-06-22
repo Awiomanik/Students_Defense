@@ -104,6 +104,8 @@ class Game():
         This method initializes the game level, updates the UI with level information,
         and player atributes with initial game parameters.
         """
+        # Reset towers
+        Tower_Manager.reset()
         # Initialize level
         Test_Level.Level.reset()
         self.level = Test_Level.Level(1, self.root_directory)
