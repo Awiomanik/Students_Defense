@@ -198,6 +198,8 @@ class Tower_Manager:
     #    proj_pos : Coord = self.pos 
     #    return proj_pos
 
+    def untargetted_attack(self):
+        """Manages untargetted attacks"""
 
     def attack(self):
         """Manages attacks, targeting the weakest enemy within range if the tower is ready to fire."""
@@ -216,8 +218,6 @@ class Tower_Manager:
                                 next_target.take_damage(self.tower_type.dmg)
                                 self.distance.clear()
                                 break
-                            self.tower_type.setbasecooldown()
-                            break
                 else:
                     self.already_attacked.clear()
         else:#if tower is ready to fire, it will look for enemies in range
@@ -255,6 +255,8 @@ class Tower_Manager:
                             area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
+                        self.tower_type.setbasecooldown()
+                        break
                     elif self.tower_type.bouncing:
                         next_target = target
                         target.take_damage(self.tower_type.dmg)
@@ -267,8 +269,12 @@ class Tower_Manager:
                                 area = ((victim.pos.x - next_target.pos.x)**2 + (victim.pos.y - next_target.pos.y)**2)**0.5
                                 self.distance.append((area, victim))
                             self.distance.sort()
+                        self.tower_type.setbasecooldown()
+                        break
                     else:
                         target.take_damage(self.tower_type.dmg)
+                        self.tower_type.setbasecooldown()
+                        break
                         #projectile = Projectiles(self.pos, enemy.pos)
 
     def upgrade(self, tier: int, tower_name: str):
@@ -291,7 +297,10 @@ class Tower_Manager:
         """Updates all active towers, managing their attacks every frame."""
         cls.enemies = Enemy_Manager.present #update enemy list
         for tower in cls.towers:
-            tower.attack()
+            if tower.tower_type.aoe:
+                tower.attack()
+            else:
+                tower.untargetted_attack()
 
     @classmethod
     def reset(cls):
