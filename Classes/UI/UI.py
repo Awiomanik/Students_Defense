@@ -202,11 +202,11 @@ class UI():
 
                 # Towers (HUD)
                 elif x > 980:
-                  self.buy_tower_mode(2)
+                  self.buy_tower_mode(2, player)
                 elif x > 740:
-                    self.buy_tower_mode(1)
+                    self.buy_tower_mode(1, player)
                 elif x > 500:
-                    self.buy_tower_mode(0)
+                    self.buy_tower_mode(0, player)
 
             # Click at map
             else:
