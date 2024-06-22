@@ -42,8 +42,8 @@ class Tower:
         """
     
 
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100, 'low_hp', 'test_bullet'),
-                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None, 'front','test_bullet')}
+    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100, 'test_bullet.png'),
+                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None, 'test_bullet.png')}
     
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
@@ -63,10 +63,10 @@ class Tower:
         self.cost, \
         self.aoe, \
         self.aoe_range, \
-        self.target_criteria, \
         self.projectile_asset \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
+        self.tower_criteria = 'low_hp'
 
     def cooldown(self):
         """Decreases the attack cooldown by one frame."""
