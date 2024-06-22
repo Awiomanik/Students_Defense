@@ -33,6 +33,7 @@ class Level:
         spawn_enemy(): Spawns enemies based on the wave definitions and spawn cooldown.
         update(): Updates the level state by spawning enemies and managing enemy behavior.
         new_wave(): Advances to the next wave and updates wave-related attributes.
+        def reset(cls) -> None: Clears all enemies.
     """
 
     # Class atributes
@@ -143,7 +144,10 @@ class Level:
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
 
-
+    @classmethod
+    def reset(cls) -> None:
+        """Clears all enemies"""
+        cls.enemies.clear()
 
         
 

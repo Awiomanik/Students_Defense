@@ -201,7 +201,7 @@ class Tower_Manager:
     @classmethod
     def reset(cls):
         """Clears all towers, when new game starts"""
-        cls.towers = [] #clearing list
+        cls.towers = [] # clearing list
         
     def load_lvl():
         """Clears old data and resets towers, used when loading a new level."""

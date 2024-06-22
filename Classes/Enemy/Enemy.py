@@ -35,8 +35,6 @@ class Enemy:
         """
         self.life : int = Enemy.enemy_types[enemy_type]['hp']
         self.speed : Enemy = Enemy.enemy_types[enemy_type]['speed']
-
-
     
     def __str__(self):
         """
@@ -99,6 +97,8 @@ class Enemy_Manager:
     
 
     Class methods:
+    reset(cls) -> None: Clears all enemies.
+    
     endlevel():  method to clear all active enemies at the end of a level.
     
     update():  method to update all active enemies, checking their health, movement, and attacked state every frame.
@@ -183,7 +183,11 @@ class Enemy_Manager:
                 self.damaged_player = True
             if self.damaged_player == "done":
                 Enemy_Manager.present.remove(self)
-
+    
+    @classmethod
+    def reset(cls) -> None:
+        """Clears all enemies, when new game starts"""
+        cls.present = [] # clearing list
                 
     def remove_enemy(self): 
         """
