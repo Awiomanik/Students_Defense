@@ -40,10 +40,11 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-    
-
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100,'tower_placeholder.png', 'test_bullet.png'),
-                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None,'tower_placeholder.png', 'test_bullet.png')}
+##########################################dmg#no of shots#bounce######cost#########aoe range#####################projectile asset
+####################################range#####cd####target######no of b.#####aoe#############tower asset##########################
+    tower_types = {"test_tower_1" :  (300, 1, 60, 1, True,  False, None, 1 , True,   100, 'tower_placeholder.png', 'bullet_projectile.png'),
+                   "test_tower_2" :  (180, 2, 60,  1, True,  True,    2, 1 , False, None, 'tower_placeholder.png', 'bullet_projectile.png'),
+                   "Algebra_basic" : (500, 2, 120 ,1, True, False, None, 10, False, None, 'Algebra_basic.png'    , 'Algebra_projectile.png')}
     
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
@@ -52,6 +53,19 @@ class Tower:
         Arguments:
         tower_type : str
             The type of tower to be created (default is "test_tower").
+        Tower stats positions:
+        1 - range
+        2 - damage
+        3 - cooldown
+        4 - number of shots
+        5 - targeting
+        6 - bouncing
+        7 - number of bounces
+        8 - tower cost
+        9 - aoe?
+        10 - aoe range
+        11 - tower asset
+        12 - projectile asset
         """
         self.range, \
         self.dmg, \
@@ -63,6 +77,7 @@ class Tower:
         self.cost, \
         self.aoe, \
         self.aoe_range, \
+        self.tower_asset, \
         self.projectile_asset \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
