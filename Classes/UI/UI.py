@@ -281,7 +281,7 @@ class UI():
                     "quit" if the quit button is pressed
         """
         # Load background graphic
-        main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "main_menu.png"))
+        main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu.png"))
 
         # Main menu loop
         while True:
@@ -308,13 +308,13 @@ class UI():
             if self.mouse_click:
                 x, y = self.pos
                 # Play and quit buttons
-                if 700 < x < 1300:
-                    # Start button pressed
-                    if 325 < y < 600:
+                if 840 < x < 1080:
+                    # Demo button pressed
+                    if 180 < y < 324:
                         return "start"
                     
                     # Quit button pressed
-                    elif 640 < y < 880:
+                    elif 504 < y < 648:
                         return "quit"
                 
                 # Name change and High Scores
