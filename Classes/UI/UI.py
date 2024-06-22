@@ -202,11 +202,11 @@ class UI():
 
                 # Towers (HUD)
                 elif x > 980:
-                  self.buy_tower_mode(3)
+                  self.buy_tower_mode(2)
                 elif x > 740:
-                    self.buy_tower_mode(2)
-                elif x > 500:
                     self.buy_tower_mode(1)
+                elif x > 500:
+                    self.buy_tower_mode(0)
 
             # Click at map
             else:
@@ -218,10 +218,9 @@ class UI():
                     # temporary choosen tower, to be changed when more towers are developed
                     if map.grid[tile.y][tile.x]:
                         chosen_tower = self.towers_list[self.tower_being_bought]
-                        if chosen_tower in player.affordable_towers():
-                            map.grid[tile.y][tile.x] = False
-                            Tower_Manager(chosen_tower, Coord(x, y))
-                            player.gold -= Tower.tower_types[chosen_tower][-1]
+                        map.grid[tile.y][tile.x] = False
+                        Tower_Manager(chosen_tower, Coord(x, y))
+                        player.gold -= Tower.tower_types[chosen_tower][-1]
 
         # Reset mouse state to not clicked
         self.mouse_click = False
@@ -618,17 +617,19 @@ class UI():
         self.frame_counter = 0
         return False
     
-    def buy_tower_mode(self, tower_num : int) -> None:
+    def buy_tower_mode(self, tower_num : int, player : Player) -> None:
         """"""
         if self.state["buy tower"]:
+            # Turn off buing tower mode
             if self.tower_being_bought == tower_num:
-                # Turn off buing tower mode
                 self.state["buy tower"] = False
-            else:
-                # Change tower to buy
-                pass
-        else:
-            # Turn on buying tower mode
+
+            # Change tower to buy
+            elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
+                self.tower_being_bought = tower_num
+
+        # Turn on buying tower mode
+        elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
             self.state["buy tower"] = True
             self.tower_being_bought = tower_num
 
