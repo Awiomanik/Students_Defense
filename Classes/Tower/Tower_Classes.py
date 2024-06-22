@@ -96,7 +96,6 @@ class Tower:
     def cooldown(self):
         """Decreases the attack cooldown by one frame."""
         self.atk -= 1
-        self.atk -=1
 
     def setbasecooldown(self):
         """Resets the attack cooldown to the base cooldown value."""
@@ -230,23 +229,22 @@ class Tower_Manager:
                     inrange[enemy] = (enemy.life)
             if not len(inrange):# returns when list length is 0
                 return
-            if criteria == 'low_hp':
-                value = inrange[enemy]
-                condition = min(inrange.values())
-            elif criteria == 'high_hp':
-                value = inrange[enemy]
-                condition = max(inrange.values())
             """
             elif criteria == 'front':
-                value = self.inrange[enemy][1]
+                value = inrange[enemy][1]
                 condition = max(inrange.values()[1])
             elif criteria == 'back':
-                value = self.inrange[enemy][1]
+                value = inrange[enemy][1]
                 condition = min(inrange.values()[1])
             """
         ################################every frame, UI should 
             for enemy in inrange.keys():
-                
+                if criteria == 'low_hp':
+                    value = inrange[enemy]
+                    condition = min(inrange.values())
+                elif criteria == 'high_hp':
+                    value = inrange[enemy]
+                    condition = max(inrange.values())
                 if value == condition: #defaults to attacking weakest enemies, might be choose-able later.$$
                     target = enemy
                     if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
