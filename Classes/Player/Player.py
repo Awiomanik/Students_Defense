@@ -23,23 +23,22 @@ class Player: # Defines the player entity
 
     """
 
-    def __init__(self, name : str, gold : int, lives : int, avtw : list[str]) -> None:
+    def __init__(self, name : str, gold : int, lives : int) -> None:
         """ Initializes a player with the given name, gold, lives, and available towers.
          
             Arguments:
-            name : str, gold : int, lives : int, avtw : list[str]
+            name : str, gold : int, lives : int
           
         """
         self.name = name
         self.gold = gold
         self.lives = lives
-        self.avialable_towers = avtw
 
     def affordable_towers(self) -> list[str]:
         """Returns which of the towers available on the level are affordable"""
         affordable=[]
-        for tower in self.avialable_towers:
-            if Tower.tower_types[tower][-4] <= self.gold:
+        for tower in Tower.tower_types.keys():
+            if Tower.tower_types[tower][7] <= self.gold:
                affordable.append(tower) 
         return affordable
     
