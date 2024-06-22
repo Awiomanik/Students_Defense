@@ -42,7 +42,7 @@ class Game():
             display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
         # Player protoplast with placeholder atributes, player is fully initialized when level start
-        self.player = Player("Guest", 0, 0, None)
+        self.player = Player("Guest", 0, 0)
 
         # Set root_directory
         self.root_directory = root_directory
