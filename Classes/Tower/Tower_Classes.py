@@ -294,10 +294,7 @@ class Tower_Manager:
         """Updates all active towers, managing their attacks every frame."""
         cls.enemies = EnemyManager.present #update enemy list
         for tower in cls.towers:
-            if tower.tower_type.aoe:
-                tower.attack()
-            else:
-                tower.untargetted_attack()
+            tower.attack()
 
     @classmethod
     def reset(cls):
