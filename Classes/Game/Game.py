@@ -156,7 +156,7 @@ class Game():
                         running = False
 
             
-            self.ui.update(self.player.gold, self.player.lives, self.level.enemies)
+            self.ui.update(self.player.gold, self.player.lives, self.level.enemies, self.level.map)
 
 # For testing
 if __name__ == "__main__":
