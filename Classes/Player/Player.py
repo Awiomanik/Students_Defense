@@ -39,7 +39,7 @@ class Player: # Defines the player entity
         """Returns which of the towers available on the level are affordable"""
         affordable=[]
         for tower in self.avialable_towers:
-            if Tower.tower_types[tower][-1] <= self.gold:
+            if Tower.tower_types[tower][-4] <= self.gold:
                affordable.append(tower) 
         return affordable
     
