@@ -255,6 +255,8 @@ class Tower_Manager:
                             area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
+                        self.tower_type.setbasecooldown()
+                        break
                     elif self.tower_type.bouncing:
                         next_target = target
                         target.take_damage(self.tower_type.dmg)
@@ -267,8 +269,12 @@ class Tower_Manager:
                                 area = ((victim.pos.x - next_target.pos.x)**2 + (victim.pos.y - next_target.pos.y)**2)**0.5
                                 self.distance.append((area, victim))
                             self.distance.sort()
+                        self.tower_type.setbasecooldown()
+                        break
                     else:
                         target.take_damage(self.tower_type.dmg)
+                        self.tower_type.setbasecooldown()
+                        break
                         #projectile = Projectiles(self.pos, enemy.pos)
 
     def upgrade(self, tier: int, tower_name: str):
