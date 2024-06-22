@@ -40,14 +40,6 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-<<<<<<< HEAD
-##########################################dmg#no of shots#bounce######cost#########aoe range#####################projectile asset
-####################################range#####cd####target######no of b.#####aoe#############tower asset##########################
-    tower_types = {"test_tower_1" :  (300, 1, 60, 1, True,  False, None, 1 , True,   100, 'tower_placeholder.png', 'bullet_placeholder.png'),
-                   "test_tower_2" :  (180, 2, 60,  1, True,  True,    2, 1 , False, None, 'tower_placeholder.png', 'bullet_placeholder.png'),
-                   "Algebra_basic" : (500, 2, 120 ,1, True, False, None, 10, False, None, 'Algebra_basic.png'    , 'Algebra_projectile.png')}
-    
-=======
 #######################################################dmg##no of shots#####bounce#######cost######aoe range##################################projectile asset
 ##############################################range#########cd#######target######no of b.#####aoe#############tower asset##########################
     tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
@@ -77,7 +69,6 @@ class Tower:
         10 - tower asset
         11 - projectile asset
     """
->>>>>>> d9f85a7a9752be330f3c01d298e947e0bf8ac3e9
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes a tower with the specified type.
