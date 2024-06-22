@@ -42,8 +42,8 @@ class Tower:
         """
     
 
-    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100, 'test_bullet.png'),
-                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None, 'test_bullet.png')}
+    tower_types = {"test_tower_1" : (300, 1, 60, 1, True, False, None, 1, True, 100,'tower_placeholder.png', 'test_bullet.png'),
+                   "test_tower_2" : (180, 2, 60, 1, True, True, 2, 1, False, None,'tower_placeholder.png', 'test_bullet.png')}
     
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
@@ -66,7 +66,6 @@ class Tower:
         self.projectile_asset \
             = Tower.tower_types[tower_type]
         self.base_cooldown = Tower.tower_types[tower_type][2]
-        self.tower_criteria = 'low_hp'
 
     def cooldown(self):
         """Decreases the attack cooldown by one frame."""
@@ -161,6 +160,7 @@ class Tower_Manager:
         self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
         self.display_pos = (self.pos.x - 60,self.pos.y-60)
         self.own_projectile = None
+        self.target_criteria = 'low_hp'
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
             self.distance : list[(int,Enemy_Manager)] = []
@@ -175,7 +175,7 @@ class Tower_Manager:
 
     def attack(self):
         """Manages attacks, targeting the weakest enemy within range if the tower is ready to fire."""
-        criteria = self.tower_type.target_criteria
+        criteria = self.target_criteria
 
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
