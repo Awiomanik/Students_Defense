@@ -213,11 +213,11 @@ class Tower_Manager:
             value = inrange[enemy]
             condition = max(inrange.values()[0])
         elif criteria == 'front':
-            value = 
-            condition = 
+            value = inrange[enemy][1]
+            condition = max(inrange.values()[1])
         elif criteria == 'back':
-            value =
-            condition =
+            value = inrange[enemy][1]
+            condition = min(inrange.values()[1])
 
         ################################every frame, UI should 
             for enemy in inrange.keys():

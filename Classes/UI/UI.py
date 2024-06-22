@@ -39,7 +39,8 @@ class UI():
         number_of_waves (int): Total number of waves in the current level.
         current_wave (int): The current wave number.
         directory (str): Path to the root directory of the repository.
-        frame_counter (int): Current frame (not absolute) for speeding up the game by ommiting some frames
+        frame_counter (int): Current frame (not absolute) for speeding up the game by ommiting some frames.
+        tower_bieing_bought (int): Index of tower currently being bought (defaults to -1).
 
     Methods:
         __init__(player_name: str) -> None: Initializes the UI instance and sets up the display and initial variables.
@@ -51,7 +52,7 @@ class UI():
         outro() -> None: Placeholder for the outro sequence.
         
         update(gold: int, lives: int, enemies: list) -> None: Updates the game display each frame.
-        hud(gold: int, lives: int) -> None: Draws the HUD elements on the screen.
+        hud(gold: int, lives: int, map : mp) -> None: Draws the HUD elements on the screen.
         
         load_lvl(number_of_waves: int = 3, current_wave: int = 0, map_name: str = "TEST_1", 
                  towers_names: dict = {"test_tower": "tower_placeholder.png"}, 
@@ -62,6 +63,9 @@ class UI():
         reset_state(cls) -> None: Resets state dict keys to all False
 
         skip_frames(self, num_of_frames_2_skip : int) -> bool: Determines if the frame should be displayed or skipped based on the speed up states.
+
+        accessibility_rectangle(self, tile_size : int, map : mp) -> bool:   Checks if a position on the game map, based on the current mouse position, 
+                                                                            is suitable for placing a tower and visually indicates this with a colored rectangle.
     """
     # Game state for adjusting what gets displayed and how
     state : dict[str, bool] = {key: False for key in 
@@ -86,24 +90,24 @@ class UI():
         # initialize Pygame
         pygame.init()
         # set up the full-screen mode and resolution
-        self.screen = pygame.display.set_mode(self.RESOLUTION, pygame.FULLSCREEN)
+        self.screen : pygame.Surface = pygame.display.set_mode(self.RESOLUTION, pygame.FULLSCREEN)
         # set the title of the window
         pygame.display.set_caption("STUDENTS DEFENSE")
 
         # INITIALIZE UTILITY VARIABLES
         # variable for menaging frame rate
-        self.clock = pygame.time.Clock() 
+        self.clock : pygame.time.Clock = pygame.time.Clock() 
         # varibles for menaging user mouse input
-        self.mouse_click = False 
-        self.pos = pygame.mouse.get_pos()
+        self.mouse_click : bool = False 
+        self.pos : tuple = pygame.mouse.get_pos()
 
         # SET ASSETS PATHS
-        self.gfx_path = os.path.join(root_directory, "Assets", "gfx")
+        self.gfx_path : str = os.path.join(root_directory, "Assets", "gfx")
         # audio path (in the future)
 
         # SET AND LOAD HUD ELEMENTS
-        self.font = pygame.font.SysFont("Consolas", 50)
-        self.hp_font = pygame.font.SysFont("Consolas", 20)
+        self.font : pygame.font.Font = pygame.font.SysFont("Consolas", 50)
+        self.hp_font : pygame.font.Font = pygame.font.SysFont("Consolas", 20)
 
         # Button graphics
         # File names
@@ -113,15 +117,18 @@ class UI():
         # Keys
         keys = ["exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play"]
         # Button images dict
-        self.buttons = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
-                        for key, button in zip(keys, file_names)}
+        self.buttons : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
+                                for key, button in zip(keys, file_names)}
         """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
 
         # Save root directory to an atribute
-        self.directory = root_directory
+        self.directory : str = root_directory
 
         # Frame counter for speeding up the displaying the game
-        self.frame_counter = 0
+        self.frame_counter : int = 0
+
+        # Default value for currently being bought tower
+        self.tower_being_bought : int = -1
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -193,43 +200,28 @@ class UI():
                     elif self.state["wave"]:
                         self.state["speed up"] = True
 
-            # Old code for comparison, leave till new one will be fully completed
-            """
-            if 1680 < x < 1920:
-                
-                # buy tower
-                if 960 < y < 1080:
-                    if UI.state["buy tower"]:
-                        UI.state["buy tower"] = False
-                    else:
-                        UI.state["buy tower"] = True
-                # exit
-                elif 840 < y < 960:
-                    return True
-                
-            if 1440 < x < 1680:
-                #start wave
-                if 960 < y < 1080:
-                    if not UI.state["wave"]:
-                        UI.state["wave"] = True
-                # speed up
-                elif 840 < y < 960:
-                    UI.state["speed up"] = not UI.state["speed up"]
-                    # Set current frame to 0 for counting frames to speed up the game
-                    self.frame_counter = 0
+                # Towers (HUD)
+                elif x > 980:
+                  self.buy_tower_mode(2)
+                elif x > 740:
+                    self.buy_tower_mode(1)
+                elif x > 500:
+                    self.buy_tower_mode(0)
 
-            # Buying tower
-            if UI.state["buy tower"]:
-                # Cast mouse position to coord type
-                tile : Coord = Coord.res2tile(self.pos) 
-                # temporary choosen tower, to be changed when more towers are developed
-                chosen_tower = "test_tower_1"
-                if map.grid[tile.y][tile.x]:
-                    if chosen_tower in player.affordable_towers():
+            # Click at map
+            else:
+                # Place tower
+                if self.state["buy tower"]:
+                    # Cast mouse position to coord type
+                    tile : Coord = Coord.res2tile(self.pos) 
+
+                    # temporary choosen tower, to be changed when more towers are developed
+                    if map.grid[tile.y][tile.x]:
+                        chosen_tower = self.towers_list[self.tower_being_bought]
                         map.grid[tile.y][tile.x] = False
                         Tower_Manager(chosen_tower, Coord(x, y))
                         player.gold -= Tower.tower_types[chosen_tower][-1]
-            """
+
         # Reset mouse state to not clicked
         self.mouse_click = False
 
@@ -412,7 +404,7 @@ class UI():
                         waiting = False
 
     # In-frame updates
-    def update(self, gold : int, lives : int, enemies : list) -> None:
+    def update(self, gold : int, lives : int, enemies : list, map : mp) -> None:
         """
         Updates and renders the game state.
 
@@ -452,13 +444,13 @@ class UI():
                     self.screen.blit(self.bullets_gfx["test_bullet"], enemy.display_pos)
 
         # HUD
-        self.hud(gold, lives)
+        self.hud(gold, lives, map)
 
         # UPDATE SCREEN
         pygame.display.flip()
         self.clock.tick(self.FPS)
 
-    def hud(self, gold : int, lives : int) -> None:
+    def hud(self, gold : int, lives : int, map : mp) -> None:
         """
         Displays the HUD (heads-up display) elements on the screen.
 
@@ -496,44 +488,22 @@ class UI():
                 button_helper = self.buttons["ff_off"]
         else:
             button_helper = self.buttons["ff_NA"]
-
+        # Blit proper button
         self.screen.blit(button_helper, (1230, 870))
 
-        # Towers
+        # Towers - HUD
         # Left
         self.screen.blit(self.towers_HUD_gfx[self.towers_list[0]], (510, 870))
         # Center ( PLACEHOLDER, Add new towers )
         self.screen.blit(self.towers_HUD_gfx[self.towers_list[1]], (750, 870))
         # Riht ( PLACEHOLDER, Add new towers)
         self.screen.blit(self.towers_HUD_gfx[self.towers_list[2]], (990, 870))
-        
+        # Towers - MAP
 
-
-
-        """
-        # button 5 (speed up)
-        self.screen.blit(self.button_gfx, (1440, 840))
-        colour = (0, 255, 0) if self.state["speed up"] else (0, 0, 0)
-        start_wave_txt = buttons_font.render("Speed up", False, colour)
-        self.screen.blit(start_wave_txt, (1475, 875))  
-
-        # button 6 (start wave)
-        self.screen.blit(self.button_gfx, (1440, 960))
-        colour = (0, 255, 0) if self.state["wave"] else (0, 0, 0)
-        start_wave_txt = buttons_font.render("Start Wave", False, colour)
-        self.screen.blit(start_wave_txt, (1450, 995))
-
-        # button 7 (exit)
-        self.screen.blit(self.button_gfx, (1680, 840))
-        exit_txt = buttons_font.render("EXIT", False, (255, 0, 0))
-        self.screen.blit(exit_txt, (1755, 880))
-
-        # button 8 (buy tower)
-        self.screen.blit(self.button_gfx, (1680, 960))
-        colour = (0, 255, 0) if self.state["buy tower"] else (0, 0, 0)
-        buy_tower_txt = buttons_font.render("Buy Tower", False, colour)
-        self.screen.blit(buy_tower_txt, (1700, 995))
-        """
+        # Placing towers
+        if self.state["buy tower"]:
+            self.pos = pygame.mouse.get_pos()
+            self.accessibility_rectangle(120, map)
 
     # Additional methods
     def load_lvl(self, 
@@ -646,3 +616,70 @@ class UI():
         # Fourth frame, restart frame counter and execute the function
         self.frame_counter = 0
         return False
+    
+    def buy_tower_mode(self, tower_num : int, player : Player) -> None:
+        """"""
+        if self.state["buy tower"]:
+            # Turn off buing tower mode
+            if self.tower_being_bought == tower_num:
+                self.state["buy tower"] = False
+
+            # Change tower to buy
+            elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
+                self.tower_being_bought = tower_num
+
+        # Turn on buying tower mode
+        elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
+            self.state["buy tower"] = True
+            self.tower_being_bought = tower_num
+
+    def accessibility_rectangle(self, tile_size : int, map : mp) -> bool:
+        """
+        Checks if a position on the game map, based on the current mouse position, is suitable for placing a tower and visually indicates this with a colored rectangle.
+
+        Parameters:
+        tile_size (int): The size of each tile on the map, used to calculate the exact tile position from the mouse coordinates.
+        map (Map): The game map object that contains the tile accessibility information.
+
+        Returns:
+        bool:   Returns True if the tile at the mouse position is accessible for placing a tower, otherwise False. 
+                If the mouse position is outside the main map area, it also returns False.
+
+        Side Effects:
+        Draws a semi-transparent rectangle on the game screen at the tile position of the mouse, indicating whether a tower can be placed there. 
+        """
+        x, y = self.pos
+        # check if mouse position within map
+        if y < 860:
+            # Check if tower placement possible
+            accessible = map.tile_accessibility(Coord.res2tile(self.pos, tile_size))
+            color = (255, 0, 0, 150) if accessible else (0, 255, 0, 100)
+            x, y = x - x % tile_size, y - y % tile_size 
+
+            # Create a new temporary surface with per-pixel alpha
+            path_cut = (tile_size//8)
+            path_size = tile_size - 2 * path_cut
+            temp_surface = pygame.Surface((path_size, path_size), pygame.SRCALPHA)
+            temp_surface.fill((0, 0, 0, 0))  # Fill the surface with a fully transparent color
+
+            # Draw a rounded rectangle on the temporary surface
+            pygame.draw.rect(temp_surface, color, 
+                            pygame.Rect(0, 0, path_size, path_size), 
+                            border_radius=int(tile_size / 5))  # Adjust border radius here
+
+            # Draw the temporary surface onto the main screen at the specified position
+            self.screen.blit(temp_surface, (x + path_cut, y + path_cut))
+
+            return accessible
+
+        return False
+
+
+
+
+
+
+
+
+
+
