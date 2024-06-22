@@ -26,6 +26,9 @@ class Map():
         load_map_data(self, path: str):
             Loads and parses map data from a specified file path. This method updates the map's attributes
             based on the contents of the file including the name, grid configuration, and paths.
+
+        tile_accessibility(self, tile : Coord) -> bool:
+            Checks if given tile is blocked or accessible to place tower.
     """
 
     def __init__(self, root_directory : str, name : str = "TEST_1") -> None:
@@ -121,6 +124,18 @@ class Map():
                         temp_paths.append(tuple(temp_path))
                 # Convert list of paths into inmutable type (tuple)
                 self.paths = tuple(temp_paths)
+
+    def tile_accessibility(self, tile : Coord) -> bool:
+        """
+        Checks if given tile is blocked or accessible to place tower.
+        
+        Args:
+            tile (Coord): Grid coordinates of a tile to check.
+
+        Returns:
+            Tile accessibility: True - accessible, False - blocked
+        """
+        return not self.grid[tile.y][tile.x]
 
     def __str__(self) -> str:
         """Return a formatted string representation of the map data."""
