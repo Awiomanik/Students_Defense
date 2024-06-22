@@ -212,30 +212,31 @@ class Tower_Manager:
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
-            inrange : dict[Enemy_Manager,(Enemy.life, Enemy_Manager.path)]= {}#this dict will contain enemies in range as keys and their hp as values
+            inrange : dict[Enemy_Manager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
             self.inrange = inrange
             for enemy in Tower_Manager.enemies:
                 distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.y - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
-                    inrange[enemy] = (enemy.life, Enemy_Manager.path)
-            if not len(inrange):#returns when list length is 0
+                    inrange[enemy] = (enemy.life)
+            if not len(inrange):# returns when list length is 0
                 return
-            
-        if criteria == 'low_hp':
-            value = inrange[enemy][0]
-            condition = min(inrange.values()[0])
-        elif criteria == 'high_hp':
-            value = inrange[enemy]
-            condition = max(inrange.values()[0])
-        elif criteria == 'front':
-            value = inrange[enemy][1]
-            condition = max(inrange.values()[1])
-        elif criteria == 'back':
-            value = inrange[enemy][1]
-            condition = min(inrange.values()[1])
 
         ################################every frame, UI should 
             for enemy in inrange.keys():
+                if criteria == 'low_hp':
+                    value = self.inrange[enemy]
+                    condition = min(inrange.values())
+                elif criteria == 'high_hp':
+                    value = self.inrange[enemy]
+                    condition = max(inrange.values())
+                """
+                elif criteria == 'front':
+                    value = self.inrange[enemy][1]
+                    condition = max(inrange.values()[1])
+                elif criteria == 'back':
+                    value = self.inrange[enemy][1]
+                    condition = min(inrange.values()[1])
+                """
                 if value == condition: #defaults to attacking weakest enemies, might be choose-able later.$$
                     target = enemy
                     if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
@@ -257,7 +258,7 @@ class Tower_Manager:
                             self.distance.sort()
                     else:
                         target.take_damage(self.tower_type.dmg)
-                        projectile = projectile(self.pos, enemy.pos)
+                        #projectile = Projectiles(self.pos, enemy.pos)
 
     def upgrade(self, tier: int, tower_name: str):
         """This method upgrades a chosen tower""" 
