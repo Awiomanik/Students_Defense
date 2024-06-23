@@ -71,8 +71,8 @@ class UI():
     """
     # Game state for adjusting what gets displayed and how
     state : dict[str, bool] = {key: False for key in 
-                               ["wave", "buy tower", "pause", "speed up", "speed up more"]}
-    """State includes: 'wave', 'buy tower', 'pause', 'speed up', 'speed up more'"""
+                               ["wave", "buy tower", "pause", "speed up", "speed up more", "not enought gold"]}
+    """State includes: 'wave', 'buy tower', 'pause', 'speed up', 'speed up more', 'not enought gold'"""
     
     # Constant parameters
     FPS : int = 60 # framerate
@@ -111,20 +111,6 @@ class UI():
         self.font : pygame.font.Font = pygame.font.SysFont("Consolas", 50)
         self.hp_font : pygame.font.Font = pygame.font.SysFont("Consolas", 20)
 
-        # Button graphics
-        # File names
-        file_names = ["Exit.png", "Fast_forward_NA.png", 
-                      "Fast_forward_Off.png", "Fast_forward_On.png", 
-                      "Fast_forward_On_2.png", "Pause.png", "Play.png"]
-        # Keys
-        keys = ["exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play"]
-        # Button images dict
-        self.buttons : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
-                                for key, button in zip(keys, file_names)}
-        self.buttons_L : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
-                                    for key, button in zip(keys, file_names)}
-        """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
-
         # Save root directory to an atribute
         self.directory : str = root_directory
 
@@ -132,7 +118,46 @@ class UI():
         self.frame_counter : int = 0
 
         # Default value for currently being bought tower
-        self.tower_being_bought : int = -1
+        self.tower_being_bought : str = None
+        self.tower_being_bought_type : str = None
+
+        # Load graphics
+        self.load_gfx(root_directory)
+
+    def load_gfx(self, root_directory : str) -> None:
+        # Button graphics
+        # File names
+        file_names = ["Exit.png", "Fast_forward_NA.png", 
+                      "Fast_forward_Off.png", "Fast_forward_On.png", 
+                      "Fast_forward_On_2.png", "Pause.png", "Play.png"]
+        # Keys for buttons dictionaries
+        keys = ["exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play"]
+        # Button images dict
+        self.buttons : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
+                                for key, button in zip(keys, file_names)}
+        self.buttons_L : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
+                                    for key, button in zip(keys, file_names)}
+        """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
+        
+        # Towers graphics
+        self.tower_upgreades : tuple[tuple[str, str, str]] = Tower.tower_upgrades
+        towers_names = []
+        for tw in self.tower_upgreades:
+            towers_names.extend(list(tw))
+        self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", name + ".png")) 
+                                    for name in towers_names}
+        self.towers_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
+                                    for name in towers_names}
+        self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", name + ".png")) 
+                                        for name in towers_names}
+        self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
+                                        for name in towers_names}
+        
+        # Context windows
+        self.chalk_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 50)
+        self.not_enought_gold_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
+        message = self.chalk_font.render("NOT ENOUGHT GOLD", False, (255, 255, 255))
+        self.not_enought_gold_window.blit(message, (50, 115))
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -204,13 +229,13 @@ class UI():
                     elif self.state["wave"]:
                         self.state["speed up"] = True
 
-                # Towers (HUD)
+                # Towers (HUD) #########################################################
                 elif x > 980:
-                  self.buy_tower_mode(2, player)
+                  self.buy_tower_mode(self.tower_upgreades[2][0], player)
                 elif x > 740:
-                    self.buy_tower_mode(1, player)
+                    self.buy_tower_mode(self.tower_upgreades[1][0], player)
                 elif x > 500:
-                    self.buy_tower_mode(0, player)
+                    self.buy_tower_mode(self.tower_upgreades[0][0], player)
 
             # Click at map
             else:
@@ -218,13 +243,22 @@ class UI():
                 if self.state["buy tower"]:
                     # Cast mouse position to coord type
                     tile : Coord = Coord.res2tile(self.pos) 
-
-                    # temporary choosen tower, to be changed when more towers are developed
+                    # Set tower on the grid if tile empty
                     if map.grid[tile.y][tile.x]:
-                        chosen_tower = self.towers_list[self.tower_being_bought]
-                        map.grid[tile.y][tile.x] = False
-                        Tower_Manager(chosen_tower, Coord(x, y))
-                        player.gold -= Tower.tower_types[chosen_tower][7]
+                        # whether enought money
+                        if self.tower_being_bought in player.affordable_towers():
+                            map.grid[tile.y][tile.x] = False
+                            Tower_Manager(self.tower_being_bought, Coord(x, y))
+                            player.gold -= Tower.tower_types[self.tower_being_bought][7]
+                        # not enought money
+                        else:
+                            UI.state["not enought gold"] = True
+                
+                # Close context window
+                if self.state["not enought gold"]:
+                    if 900 < x < 1020 and 570 < y < 640:
+                        self.state["not enought gold"] = False
+
 
         # Reset mouse state to not clicked
         self.mouse_click = False
@@ -530,32 +564,34 @@ class UI():
         # Towers - HUD
         # Left
         if hover == "tower 0":
-            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[0]], (500, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[0][0]], (500, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.towers_list[0]], (510, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[0][0]], (510, 870))
         # Center ( PLACEHOLDER, Add new towers )
         if hover == "tower 1":
-            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[1]], (740, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[1][0]], (740, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.towers_list[1]], (750, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[1][0]], (750, 870))
         # Riht ( PLACEHOLDER, Add new towers)
         if hover == "tower 2":
-            self.screen.blit(self.towers_HUD_gfx_L[self.towers_list[2]], (980, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[2][0]], (980, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.towers_list[2]], (990, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[2][0]], (990, 870))
         
         # Placing towers
         if self.state["buy tower"]:
             self.pos = pygame.mouse.get_pos()
             self.accessibility_rectangle(120, map)
 
+        if self.state["not enought gold"]:
+            self.screen.blit(self.not_enought_gold_window, (644, 300))
+
     # Additional methods
     def load_lvl(self, 
                  player_name : str = "Guest",
                  number_of_waves : int = 3,
                  current_wave : int = 0 ,
-                 map_name : str = "TEST_1", 
-                 towers_names : dict = {"test_tower" : "tower_placeholder.png"},
+                 map_name : str = "TEST_1",
                  bullets_names : dict = {"test_bullet" : "bullet_placeholder.png"},
                  enemies_names : dict = {"test_enemy" : "enemy_placeholder.png"}) -> None:
         """
@@ -575,20 +611,12 @@ class UI():
         """
         # Load graphics
         self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", f"{map_name}.png"))
-        self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", file)) 
-                                    for name, file in towers_names.items()}
-        self.towers_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", file)) 
-                                    for name, file in towers_names.items()}
-        self.towers_list : list = [name for name in self.towers_gfx.keys()]
-        self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", file)) 
-                                        for name, file in towers_names.items()}
-        self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", file)) 
-                                        for name, file in towers_names.items()}
         self.bullets_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
                                     for name, file in bullets_names.items()}  
         self.enemies_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
                                     for name, file in enemies_names.items()}
         
+        # Set remaining atributes
         self.number_of_waves = number_of_waves
         self.current_wave = current_wave + 1
         player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
@@ -665,21 +693,21 @@ class UI():
         self.frame_counter = 0
         return False
     
-    def buy_tower_mode(self, tower_num : int, player : Player) -> None:
+    def buy_tower_mode(self, tower_name : str, player : Player) -> None:
         """"""
         if self.state["buy tower"]:
             # Turn off buing tower mode
-            if self.tower_being_bought == tower_num:
+            if self.tower_being_bought == tower_name:
                 self.state["buy tower"] = False
 
             # Change tower to buy
-            elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
-                self.tower_being_bought = tower_num
+            elif tower_name in player.affordable_towers():
+                self.tower_being_bought = tower_name
 
         # Turn on buying tower mode
-        elif self.towers_list[self.tower_being_bought] in player.affordable_towers():
+        elif tower_name in player.affordable_towers():
             self.state["buy tower"] = True
-            self.tower_being_bought = tower_num
+            self.tower_being_bought = tower_name
 
     def accessibility_rectangle(self, tile_size : int, map : mp) -> bool:
         """
@@ -721,7 +749,6 @@ class UI():
             return accessible
 
         return False
-
 
 
 

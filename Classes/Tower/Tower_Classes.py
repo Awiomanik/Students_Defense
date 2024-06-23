@@ -69,6 +69,9 @@ class Tower:
         10 - tower asset
         11 - projectile asset
     """
+    tower_upgrades = (("Algebra_basic", "Algebra_LT", "Algebra_complex_"),
+                      ("Analysis_basic", "Analysis_calculus_specialist", "Analytic_functions_specialist"),
+                      ("Programming_basic", "Programming_object", "Programing_spaghetti_decoder"))
     def __init__(self, tower_type : str = "test_tower") -> None:
         """
         Initializes a tower with the specified type.

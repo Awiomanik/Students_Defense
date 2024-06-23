@@ -29,7 +29,7 @@ class Level:
         remaining_enemies (int): The total number of remaining enemies in the current wave.
 
     Methods:
-        __init__(level_number: int, root_directory: str): Loads level data from file and initializes level attributes.
+        __init__(level_name : str, root_directory: str): Loads level data from file and initializes level attributes.
         spawn_enemy(): Spawns enemies based on the wave definitions and spawn cooldown.
         update(): Updates the level state by spawning enemies and managing enemy behavior.
         new_wave(): Advances to the next wave and updates wave-related attributes.
@@ -40,7 +40,7 @@ class Level:
     enemies : list[EnemyManager] = EnemyManager.present
 
     # Methods
-    def __init__(self, level_number : int, root_directory : str) -> None:
+    def __init__(self, level_name : str, root_directory : str) -> None:
         """
         Loads level data from file and initializes level attributes.
 
@@ -49,7 +49,7 @@ class Level:
             root_directory (str): The root directory of the repository for relative path operations.
         """
         # Open data file and read it
-        path = os.path.join(root_directory, "Assets", "lvl_data", f"lvl_{level_number}.dat")
+        path = os.path.join(root_directory, "Assets", "lvl_data", f"lvl_{level_name}.dat")
         try:
             with open(path, 'r') as level_data:
                 level_data = level_data.readlines()

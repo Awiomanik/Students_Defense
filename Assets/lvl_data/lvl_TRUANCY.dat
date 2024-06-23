@@ -1,0 +1,10 @@
+Map: Truancy
+Gold: 300
+Lives: 10
+Wave 1: 5-Marta
+Wave 2: 10-Marta
+Wave 3: 50-Marta
+Available_towers: Algebra_basic, Analysis_basic, Programming_basic
+
+standard for writing waves:
+num-type, num-type,...
