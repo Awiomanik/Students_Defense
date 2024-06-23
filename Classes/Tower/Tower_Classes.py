@@ -41,7 +41,7 @@ class Tower:
             Resets the attack cooldown to the base cooldown value
         """
 #######################################################dmg##no of shots#####bounce#######cost######aoe range##################################projectile asset
-##############################################range#########cd#######target######no of b.#####aoe#############tower asset##########################
+############################################## range ######### cd ####### target ###### no of b. ##### aoe ############# tower asset ##########################
     tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
                    "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
                    "Algebra_basic"                : (400, 2, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),

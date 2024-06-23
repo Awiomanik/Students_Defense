@@ -160,11 +160,46 @@ class UI():
         self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
                                         for name in towers_names}
         
-        # Context windows
+        # Context windows:
+        # Not enough gold
         self.chalk_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 50)
         self.not_enough_gold_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
         message = self.chalk_font.render("NOT enough GOLD", False, (255, 255, 255))
         self.not_enough_gold_window.blit(message, (50, 115))
+        
+        # Towers stats
+        stats_cloud = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "info_box.png"))
+        stats_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 12)
+        self.stats = {}
+        for name, stats in Tower.tower_types.items():
+            additional = []
+            if stats[4]:
+                additional.append("- Shots are targeted")
+            if stats[5]:
+                additional.append(f"- Shots are bouncing ({stats[6]} bounces)")
+            if stats[8]:
+                additional.append(f"- Splash demage with range {stats[9]}m")
+            tower_stats = [name, "",
+                            f"Cost: {stats[7]} gold",
+                            f"Range: {stats[0]}m",
+                            f"Demage: {stats[1]}",
+                            f"Cool-down: {stats[2]}",
+                            f"Num. of shots: {stats[3]}",
+                            "Special attacks:"]
+            if len(additional) > 0:
+                tower_stats.extend(additional)
+            else:
+                tower_stats.append("NONE")
+            
+            tower_stats = [stats_font.render(text, False, (0, 0, 0)) for text in tower_stats]            
+            x, y = 20, 10
+            stats_cloud_temp = stats_cloud.copy()
+            for text in tower_stats:
+                stats_cloud_temp.blit(text, (x, y))
+                y += 20
+
+            self.stats[name] = stats_cloud_temp
+
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -261,7 +296,7 @@ class UI():
                         # not enough money
                         else:
                             UI.state["not enough gold"] = True
-                            
+
                     # Reset state
                     UI.state["buy tower"] = False
                     self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
@@ -579,16 +614,19 @@ class UI():
         # Left
         if hover == "tower 0":
             self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[0]], (500, 860))
+            self.screen.blit(self.stats[self.HUD_towers_displayed[0]], (480, 600))
         else:
             self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[0]], (510, 870))
         # Center ( PLACEHOLDER, Add new towers )
         if hover == "tower 1":
             self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[1]], (740, 860))
+            self.screen.blit(self.stats[self.HUD_towers_displayed[1]], (720, 600))
         else:
             self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[1]], (750, 870))
         # Riht ( PLACEHOLDER, Add new towers)
         if hover == "tower 2":
             self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[2]], (980, 860))
+            self.screen.blit(self.stats[self.HUD_towers_displayed[2]], (960, 600))
         else:
             self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[2]], (990, 870))
         
