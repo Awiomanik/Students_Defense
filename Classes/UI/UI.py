@@ -8,7 +8,7 @@ import pygame
 import os
 import sys
 from ..Tower.Tower_Classes import Tower_Manager, Tower
-from ..Utilities import Coord, InputBox, load_high_scores, xor
+from ..Utilities import Coord, InputBox, load_high_scores
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
 from ..Enemy.Enemy import EnemyManager
@@ -71,8 +71,12 @@ class UI():
     """
     # Game state for adjusting what gets displayed and how
     state : dict[str, bool] = {key: False for key in 
-                               ["wave", "buy tower", "pause", "speed up", "speed up more", "not enought gold"]}
-    """State includes: 'wave', 'buy tower', 'pause', 'speed up', 'speed up more', 'not enought gold'"""
+                               ["wave", "buy tower", "pause", "speed up", "speed up more", 
+                                "not enough gold", "towers alg", "towers ana", "towers pro"]}
+    """
+    State includes: 
+    'wave', 'buy tower', 'pause', 'speed up', 'speed up more', 
+    'not enough gold', 'towers alg', 'towers ana', 'towers pro'"""
     
     # Constant parameters
     FPS : int = 60 # framerate
@@ -124,6 +128,11 @@ class UI():
         # Load graphics
         self.load_gfx(root_directory)
 
+        # Towers to be currently displayed in HUD
+        self.HUD_towers_displayed : list[str] = [self.tower_upgreades[0][0], 
+                                                 self.tower_upgreades[1][0],
+                                                 self.tower_upgreades[2][0]]
+
     def load_gfx(self, root_directory : str) -> None:
         # Button graphics
         # File names
@@ -146,8 +155,6 @@ class UI():
             towers_names.extend(list(tw))
         self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", name + ".png")) 
                                     for name in towers_names}
-        self.towers_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
-                                    for name in towers_names}
         self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", name + ".png")) 
                                         for name in towers_names}
         self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
@@ -155,9 +162,9 @@ class UI():
         
         # Context windows
         self.chalk_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 50)
-        self.not_enought_gold_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
-        message = self.chalk_font.render("NOT ENOUGHT GOLD", False, (255, 255, 255))
-        self.not_enought_gold_window.blit(message, (50, 115))
+        self.not_enough_gold_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
+        message = self.chalk_font.render("NOT enough GOLD", False, (255, 255, 255))
+        self.not_enough_gold_window.blit(message, (50, 115))
 
     # Input
     def process_input(self, map : mp, player : Player) -> bool:
@@ -198,7 +205,7 @@ class UI():
         # (Spaghetti code, needs restructuring when more options will be programmed)
         if self.mouse_click:
             # debugging print
-            #print(self.state)
+            #print(UI.state)
 
             # Unpack mouse position
             x, y = self.pos
@@ -214,6 +221,7 @@ class UI():
                     # If wave did not start yet, start it
                     if not UI.state["wave"]:
                         UI.state["wave"] = True
+                        print(UI.state)
                     # If wave currently marching
                     else:
                         # Reverse pause state
@@ -221,43 +229,49 @@ class UI():
 
                 # Speed up button
                 elif x > 1220:
-                    if self.state["speed up"]:
-                        self.state["speed up"] = False
-                        self.state["speed up more"] = True
-                    elif self.state["speed up more"]:
-                        self.state["speed up more"] = False
-                    elif self.state["wave"]:
-                        self.state["speed up"] = True
+                    if UI.state["speed up"]:
+                        UI.state["speed up"] = False
+                        UI.state["speed up more"] = True
+                    elif UI.state["speed up more"]:
+                        UI.state["speed up more"] = False
+                    elif UI.state["wave"]:
+                        UI.state["speed up"] = True
 
-                # Towers (HUD) #########################################################
+                # Towers (HUD)
                 elif x > 980:
-                  self.buy_tower_mode(self.tower_upgreades[2][0], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[2], player)
                 elif x > 740:
-                    self.buy_tower_mode(self.tower_upgreades[1][0], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[1], player)
                 elif x > 500:
-                    self.buy_tower_mode(self.tower_upgreades[0][0], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[0], player)
 
             # Click at map
             else:
                 # Place tower
-                if self.state["buy tower"]:
+                if UI.state["buy tower"]:
                     # Cast mouse position to coord type
                     tile : Coord = Coord.res2tile(self.pos) 
                     # Set tower on the grid if tile empty
                     if map.grid[tile.y][tile.x]:
-                        # whether enought money
+                        # whether enough money
                         if self.tower_being_bought in player.affordable_towers():
                             map.grid[tile.y][tile.x] = False
                             Tower_Manager(self.tower_being_bought, Coord(x, y))
                             player.gold -= Tower.tower_types[self.tower_being_bought][7]
-                        # not enought money
+                        # not enough money
                         else:
-                            UI.state["not enought gold"] = True
+                            UI.state["not enough gold"] = True
+                            
+                    # Reset state
+                    UI.state["buy tower"] = False
+                    self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
+                                                 self.tower_upgreades[1][0],
+                                                 self.tower_upgreades[2][0]]
                 
                 # Close context window
-                if self.state["not enought gold"]:
+                if UI.state["not enough gold"]:
                     if 900 < x < 1020 and 570 < y < 640:
-                        self.state["not enought gold"] = False
+                        UI.state["not enough gold"] = False
 
 
         # Reset mouse state to not clicked
@@ -537,7 +551,7 @@ class UI():
             self.screen.blit(self.buttons["exit"], (1710, 870))
 
         # Play / Pause
-        if self.state["wave"] and not self.state["pause"]:
+        if UI.state["wave"] and not UI.state["pause"]:
             temp_key = "pause"
         else:
             temp_key = "play"
@@ -549,10 +563,10 @@ class UI():
         # Speed
         but = self.buttons_L if hover == "speed up" else self.buttons
         position = (1220, 860) if hover == "speed up" else (1230, 870)
-        if self.state["wave"]:
-            if self.state["speed up"]:
+        if UI.state["wave"]:
+            if UI.state["speed up"]:
                 button_helper = but["ff"]
-            elif self.state["speed up more"]:
+            elif UI.state["speed up more"]:
                 button_helper = but["ff_2"]
             else:
                 button_helper = but["ff_off"]
@@ -564,27 +578,27 @@ class UI():
         # Towers - HUD
         # Left
         if hover == "tower 0":
-            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[0][0]], (500, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[0]], (500, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[0][0]], (510, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[0]], (510, 870))
         # Center ( PLACEHOLDER, Add new towers )
         if hover == "tower 1":
-            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[1][0]], (740, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[1]], (740, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[1][0]], (750, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[1]], (750, 870))
         # Riht ( PLACEHOLDER, Add new towers)
         if hover == "tower 2":
-            self.screen.blit(self.towers_HUD_gfx_L[self.tower_upgreades[2][0]], (980, 860))
+            self.screen.blit(self.towers_HUD_gfx_L[self.HUD_towers_displayed[2]], (980, 860))
         else:
-            self.screen.blit(self.towers_HUD_gfx[self.tower_upgreades[2][0]], (990, 870))
+            self.screen.blit(self.towers_HUD_gfx[self.HUD_towers_displayed[2]], (990, 870))
         
         # Placing towers
-        if self.state["buy tower"]:
+        if UI.state["buy tower"]:
             self.pos = pygame.mouse.get_pos()
             self.accessibility_rectangle(120, map)
 
-        if self.state["not enought gold"]:
-            self.screen.blit(self.not_enought_gold_window, (644, 300))
+        if UI.state["not enough gold"]:
+            self.screen.blit(self.not_enough_gold_window, (644, 300))
 
     # Additional methods
     def load_lvl(self, 
@@ -665,10 +679,12 @@ class UI():
 
         return input.text
 
-    @classmethod
-    def reset_state(cls) -> None:
-        """Resets state dict to all False"""
-        cls.state = {key : False for key in cls.state.keys()}
+    def reset_state(self) -> None:
+        """Resets state dict to all False and HUD towers displayed to basic towers"""
+        UI.state = {key : False for key in UI.state.keys()}
+        self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
+                                     self.tower_upgreades[1][0],
+                                     self.tower_upgreades[2][0]]
 
     def skip_frames(self, num_of_frames_2_skip : int) -> bool:
         """
@@ -694,20 +710,44 @@ class UI():
         return False
     
     def buy_tower_mode(self, tower_name : str, player : Player) -> None:
-        """"""
-        if self.state["buy tower"]:
-            # Turn off buing tower mode
-            if self.tower_being_bought == tower_name:
-                self.state["buy tower"] = False
+        """
+        Handles interactions with the tower HUD, managing tower selection and purchasing logic.
 
-            # Change tower to buy
+        Args:
+            tower_name (str): Name of the tower that was clicked.
+            player (Player): Player object, to check for affordability.
+        """
+
+        # Check if the tower clicked is one of the base types for showing upgrades.
+        is_base_tower = self.HUD_towers_displayed[2] == self.tower_upgreades[2][0]
+
+        # Display upgrades for the selected tower base type.
+        if is_base_tower:
+            # Find the index of the base tower to display its upgrades.
+            index = next((i for i, upgrades in enumerate(self.tower_upgreades) if tower_name == upgrades[0]), None)
+            if index is not None:
+                # Set the corresponding state to True and update the displayed towers.
+                UI.state.update({"towers alg": index == 0, "towers ana": index == 1, "towers pro": index == 2})
+                self.HUD_towers_displayed = list(self.tower_upgreades[index])
+
+        # Toggle buying mode or process buying.
+        if UI.state["buy tower"]:
+            # If already in buy mode for this tower, turn it off.
+            if self.tower_being_bought == tower_name:
+                UI.state["buy tower"] = False
+            # If the tower can be bought, set it to be bought.
             elif tower_name in player.affordable_towers():
                 self.tower_being_bought = tower_name
-
-        # Turn on buying tower mode
-        elif tower_name in player.affordable_towers():
-            self.state["buy tower"] = True
-            self.tower_being_bought = tower_name
+            else:
+                UI.state["not enough gold"] = True
+        else:
+            # If not in buy mode and the clicked tower is an upgrade, turn on buying mode.
+            if tower_name in [upgrade for sublist in self.tower_upgreades for upgrade in sublist]:
+                if tower_name in player.affordable_towers():
+                    UI.state["buy tower"] = True
+                    self.tower_being_bought = tower_name
+                else:
+                    UI.state["not enough gold"] = True
 
     def accessibility_rectangle(self, tile_size : int, map : mp) -> bool:
         """

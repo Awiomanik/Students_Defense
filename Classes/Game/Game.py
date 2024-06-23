@@ -111,7 +111,7 @@ class Game():
         self.level = Test_Level.Level("TEST", self.root_directory)
 
         # Load level data to UI
-        UI.UI.reset_state()
+        self.ui.reset_state()
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
                          enemies_names={name : name + ".png" for name in Enemy.enemy_types})
