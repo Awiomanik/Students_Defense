@@ -373,8 +373,15 @@ class UI():
             
             # Display background graphic
             self.screen.blit(main_menu_graphic, (0, 0))
+
             # Display player name
-            self.screen.blit(self.font.render(f"Player name: {player.name}", False, (100, 0, 0)), (150, 960))
+            self.name_font = pygame.font.Font(os.path.join(self.directory, "Assets", "Font", "Chalk.ttf"), 20)
+            name_text = self.name_font.render(player.name, False, (255, 255, 255))
+            # Center the rectangle beneth the profile picture
+            text_rect = name_text.get_rect()
+            text_rect.center = (80, 180)
+            # Blit the text
+            self.screen.blit(name_text, text_rect)
 
             # HANDLE EVENTS (eg. key press)
             for event in pygame.event.get():
@@ -684,9 +691,12 @@ class UI():
         Returns:
             str - New user name.
         """
-        input = InputBox(500, 955, 500, 60, 
-                        current_player_name, display_box=True, 
-                        font=self.font, activate=True)
+        input = InputBox(5, 165, 155, 40, 
+                        current_player_name, 
+                        (255, 255, 255),
+                        display_box=True,
+                        font = self.name_font,
+                        activate=True)
         clock = pygame.time.Clock()
 
         typing = True
@@ -710,7 +720,6 @@ class UI():
                     typing = False
 
             self.screen.blit(background, (0, 0))
-            self.screen.blit(self.font.render(f"Player name:", False, (100, 0, 0)), (150, 960))
             input.draw(self.screen)
             pygame.display.flip()
             clock.tick(30)
