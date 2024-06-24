@@ -572,7 +572,6 @@ class UI():
         # projectiles
         for projectile in Projectiles.displayed:
             self.screen.blit(self.projectiles_gfx[projectile.asset],projectile.display_pos)
-            print(projectile.display_pos)
 
         # HUD
         self.hud(gold, lives, map)

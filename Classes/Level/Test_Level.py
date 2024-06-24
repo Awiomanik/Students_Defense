@@ -66,8 +66,8 @@ class Level:
         temp_waves = []
         self.map = None
         self.current_wave = 0
-        self.base_spawn_cooldown = 60
-        self.spawn_cooldown = 60
+        self.base_spawn_cooldown = 40
+        self.spawn_cooldown = 40
         self.damage = False
 
         # Parse level data to set atributes
@@ -118,7 +118,8 @@ class Level:
             self.remaining_enemies = sum(self.current_wave_def.values())
             if self.current_wave_def[self.current_enemy] == 0:
                 del self.waves[self.current_wave][self.current_enemy]
-            return spawned_enemy
+                if self.current_wave_def:
+                    self.current_enemy = list(self.current_wave_def.keys())[0]
         else:
             self.spawn_cooldown -= 1
 
@@ -136,6 +137,17 @@ class Level:
                 Level.damage += 1
                 enemy.damaged_player = "done"
 
+    def gold_update(self) -> int:
+        """
+        Returns gold accumulated by killing enemies.
+
+        Used by Game to increase player gold
+        """
+        added_gold = EnemyManager.gold
+        EnemyManager.gold = 0
+        return added_gold
+
+
                 
                 
     def new_wave(self) -> None:
@@ -149,7 +161,7 @@ class Level:
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
-        self.base_spawn_cooldown = ceil(60*0.9**self.current_wave) #In later waves enemies will be spawning faster
+        self.base_spawn_cooldown = ceil(40*0.9**self.current_wave) #In later waves enemies will be spawning faster
 
     @classmethod
     def reset(cls) -> None:
@@ -168,28 +180,3 @@ class Level:
     #level1 = Level(level_number=1)
     #level1.add_wave(enemy_type=student, quantity=10, interval=5)
     #level1.start_level()
-#
-
-#A = Level(1)
-#x = 0
-#print('cooldown',A.spawn_cooldown)
-#while A.remaining_enemies:
-#    if x == 0:
-#        print('remaining enemies',A.current_wave_def)
-#        print('current enemy:',A.current_enemy)
-#        print('cooldown',A.spawn_cooldown)
-#        print('number of remaining enemies:',A.remaining_enemies)
-#    if A.remaining_enemies:
-#        A.spawn_enemy()
-#        Enemy_Manager.update()
-#        #print(A.spawn_cooldown)
-#        print(Enemy_Manager.present)
-#    if not A.spawn_cooldown or x == 0 or not A.remaining_enemies:
-#        print('remaining enemies',A.current_wave_def)
-#        print('current enemy:',A.current_enemy)
-#        print('cooldown',A.spawn_cooldown)
-#        print('number of remaining enemies:',A.remaining_enemies)
-#    x += 1
-#    if x == 20000:
-#        print('cos nie tak')
-#        break
