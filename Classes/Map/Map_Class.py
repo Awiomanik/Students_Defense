@@ -135,7 +135,7 @@ class Map():
         Returns:
             Tile accessibility: True - accessible, False - blocked
         """
-        return not self.grid[tile.y][tile.x]
+        return self.grid[tile.y][tile.x]
 
     def __str__(self) -> str:
         """Return a formatted string representation of the map data."""

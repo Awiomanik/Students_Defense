@@ -172,6 +172,9 @@ class Tower_Manager:
     
     reset():
         Clears all towers, typically used when starting a new game.
+
+    get_tower_positions(cls) -> dict[Coord, str]:
+        Returns all towers currently on the map as dict keyed by their positions and valued with corresponding tower names.
     """
 
     towers : list['Tower_Manager'] = []
@@ -331,6 +334,14 @@ class Tower_Manager:
         """Clears old data and resets towers, used when loading a new level."""
         Tower_Manager.reset()
 
+    @classmethod
+    def get_tower_positions(cls) -> dict[Coord, str]:
+        """
+        Returns all towers on the map 
+        as the dictionary keyed by tile coordinates on which there are towers
+        and valued by the corresponding tower names
+        """
+        return {Coord.res2tile(tuple(tower.pos)) : tower.tower_type.tower_name for tower in cls.towers}
         
 #level = Level(1)
 ##tower = Tower_Manager('test_tower_1')
