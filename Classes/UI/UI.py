@@ -410,8 +410,8 @@ class UI():
                         return "quit"
                 
                 # Name change and High Scores
-                elif 1400 < x < 1800:
-                    if 940 < y < 1015:
+                elif x < 170:
+                    if y < 220:
                         player.name = self.handle_name_change(player.name, main_menu_graphic)
                         
                     # High Scores
