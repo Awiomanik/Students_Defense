@@ -239,8 +239,6 @@ class UI():
         # Process mouse press
         # (Spaghetti code, needs restructuring when more options will be programmed)
         if self.mouse_click:
-            # debugging print
-            #print(UI.state)
 
             # Unpack mouse position
             x, y = self.pos
@@ -287,7 +285,7 @@ class UI():
                     # Cast mouse position to coord type
                     tile : Coord = Coord.res2tile(self.pos) 
                     # Set tower on the grid if tile empty
-                    if map.grid[tile.y][tile.x]:
+                    if map.tile_accessibility(tile):
                         # whether enough money
                         if self.tower_being_bought in player.affordable_towers():
                             map.grid[tile.y][tile.x] = False
@@ -297,12 +295,28 @@ class UI():
                         else:
                             UI.state["not enough gold"] = True
 
-                    # Reset state
-                    UI.state["buy tower"] = False
-                    self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
-                                                 self.tower_upgreades[1][0],
-                                                 self.tower_upgreades[2][0]]
-                
+                        # Reset state
+                        UI.state["buy tower"] = False
+                        self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
+                                                     self.tower_upgreades[1][0],
+                                                     self.tower_upgreades[2][0]]
+                # Upgreade tower
+                else:
+                    # Cast mouse position to coord type
+                    tile : Coord = Coord.res2tile(self.pos)
+                    # Get towers currently on the map with their positions
+                    towers = Tower_Manager.get_tower_positions()
+                    # Show upgreades if the tile has tower on it
+                    print(towers)
+                    if tile in towers.keys():
+                        tower = towers[tile]
+                        UI.state["buy tower"] = False
+                        # Set towers to be displyed
+                        for i in range(3):
+                            if tower in self.tower_upgreades[i]:
+                                self.HUD_towers_displayed = self.tower_upgreades[i]
+
+                            
                 # Close context window
                 if UI.state["not enough gold"]:
                     if 900 < x < 1020 and 570 < y < 640:
@@ -764,37 +778,18 @@ class UI():
             tower_name (str): Name of the tower that was clicked.
             player (Player): Player object, to check for affordability.
         """
+        # Manage state when a tower is selected
+        if UI.state.get("buy tower") and self.tower_being_bought == tower_name:
+            # Toggle off buy mode if already active for this tower
+            UI.state["buy tower"] = False
 
-        # Check if the tower clicked is one of the base types for showing upgrades.
-        is_base_tower = self.HUD_towers_displayed[2] == self.tower_upgreades[2][0]
-
-        # Display upgrades for the selected tower base type.
-        if is_base_tower:
-            # Find the index of the base tower to display its upgrades.
-            index = next((i for i, upgrades in enumerate(self.tower_upgreades) if tower_name == upgrades[0]), None)
-            if index is not None:
-                # Set the corresponding state to True and update the displayed towers.
-                UI.state.update({"towers alg": index == 0, "towers ana": index == 1, "towers pro": index == 2})
-                self.HUD_towers_displayed = list(self.tower_upgreades[index])
-
-        # Toggle buying mode or process buying.
-        if UI.state["buy tower"]:
-            # If already in buy mode for this tower, turn it off.
-            if self.tower_being_bought == tower_name:
-                UI.state["buy tower"] = False
-            # If the tower can be bought, set it to be bought.
-            elif tower_name in player.affordable_towers():
+        else:
+            # Enable buying mode if tower is affordable
+            if tower_name in player.affordable_towers():
+                UI.state["buy tower"] = True
                 self.tower_being_bought = tower_name
             else:
                 UI.state["not enough gold"] = True
-        else:
-            # If not in buy mode and the clicked tower is an upgrade, turn on buying mode.
-            if tower_name in [upgrade for sublist in self.tower_upgreades for upgrade in sublist]:
-                if tower_name in player.affordable_towers():
-                    UI.state["buy tower"] = True
-                    self.tower_being_bought = tower_name
-                else:
-                    UI.state["not enough gold"] = True
 
     def accessibility_rectangle(self, tile_size : int, map : mp) -> bool:
         """
@@ -816,7 +811,7 @@ class UI():
         if y < 860:
             # Check if tower placement possible
             accessible = map.tile_accessibility(Coord.res2tile(self.pos, tile_size))
-            color = (255, 0, 0, 150) if accessible else (0, 255, 0, 100)
+            color = (0, 255, 0, 100) if accessible else (255, 0, 0, 150)
             x, y = x - x % tile_size, y - y % tile_size 
 
             # Create a new temporary surface with per-pixel alpha
