@@ -236,7 +236,6 @@ class Tower_Manager:
                             self.next_target : EnemyManager  = possible_target[1]
                             self.next_target.take_damage(self.tower_type.dmg)
                             self.remaining_bounces -= 1
-                            print(previous,self.next_target)
                             self.own_projectiles.append(Projectiles(previous.pos,self.next_target.pos,self.tower_type.projectile_asset))
                             break
                 else:
