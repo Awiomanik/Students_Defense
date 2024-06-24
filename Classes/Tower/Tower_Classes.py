@@ -203,7 +203,6 @@ class Tower_Manager:
             self.distance : list[(int,EnemyManager)] = []
             self.already_attacked : list[EnemyManager] = []
             self.next_target : EnemyManager = None
-            self.projectiles_moving : int = 0
         Tower_Manager.towers.append(self)
     #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
     #    attack_vector : Coord = enemy_position - self.pos
@@ -224,7 +223,7 @@ class Tower_Manager:
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
             if self.tower_type.bouncing:
-                if self.remaining_bounces and (self.distance or self.already_attacked) and len(self.own_projectiles) < self.projectiles_moving:
+                if self.remaining_bounces and (self.distance or self.already_attacked):
                     self.distance = []
                     for victim in self.enemies:
                         area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
@@ -243,9 +242,6 @@ class Tower_Manager:
                 else:
                     self.distance.clear()
                     self.already_attacked.clear()
-            else:
-                self.already_attacked.clear()
-                self.distance.clear()
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
@@ -294,7 +290,6 @@ class Tower_Manager:
                             self.distance.append((area, victim))
                         self.distance.sort()
                         self.tower_type.setbasecooldown()
-                        self.projectiles_moving += 1
                         break
                     else:
                         enemy.take_damage(self.tower_type.dmg)
