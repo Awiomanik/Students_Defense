@@ -131,7 +131,8 @@ class Game():
                 # Update game elements
                 self.level.update()
                 Tower_Manager.update()
-                if Test_Level.Level.damage:
+                self.player.gold += self.level.gold_update()
+                if self.level.damage:
                     for hit in range(Test_Level.Level.damage):
                         self.player.deduct_lives()
                     Test_Level.Level.DamageDone()

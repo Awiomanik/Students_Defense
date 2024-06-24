@@ -37,19 +37,19 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-#######################################################dmg##no of shots#####bounce#######cost#######aoe range##################################projectile asset
-############################################## range ######### cd ####### target ##### no of b.# aoe ############# tower asset ##########################
+#######################################################dmg##no of shots#####bounce#######cost########aoe range##################################projectile asset
+############################################## range ######### cd ####### target no of b.##### aoe ############# tower asset ##########################
     tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
                    "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "Algebra_basic"                : (400, 4, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
-                   "Algebra_LT"                   : (300, 2, 90  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
-                   "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
+                   "Algebra_basic"                : (500, 2, 60 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (500, 2, 60  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (700, 4, 60  ,  1, True, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
                    "Analysis_basic"               : (300, 2, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
-                   "Analysis_calculus_specialist" : (300, 6, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 6, 45   , 1, True,  False, None, 50,  True,   100, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
                    "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
-                   "Programming_basic"            : (300, 1, 120  , 1, True,  False, None, 10,  True,    50, 'Programming_basic.png'            , 'Programming_projectile.png'),
-                   "Programming_object"           : (300, 4, 90   , 1, True,  False, None, 50,  True,   100, 'Programming_object.png'           , 'Programming_projectile.png'),
-                   "Programing_spaghetti_decoder" : (300, 1, 60   , 1, True,   True,    6, 60, False,  None, 'Programing_spaghetti_decoder.png', 'Spaghetti_projectile.png')
+                   "Programming_basic"            : (300, 2, 45   , 1, True,  False, None, 10,  True,   100, 'Programming_basic.png'            , 'Programming_projectile.png'),
+                   "Programming_object"           : (300, 4, 60   , 1, True,  False, None, 50,  True,   200, 'Programming_object.png'           , 'Programming_projectile.png'),
+                   "Programing_spaghetti_decoder" : (300, 1, 60   , 1, True,   True,    6, 60, False,  None, 'Programing_spaghetti_decoder.png' , 'Spaghetti_projectile.png')
                    }
     """
         Tower stats positions:
@@ -221,11 +221,6 @@ class Tower_Manager:
             self.tower_type.cooldown()
             if self.tower_type.bouncing:
                 if self.remaining_bounces and (self.distance or self.already_attacked):
-                    self.distance = []
-                    for victim in self.enemies:
-                        area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
-                        self.distance.append((area, victim))
-                    self.distance.sort()
                     for possible_target in self.distance:
                         if possible_target[0] <= 600 and possible_target[1] not in self.already_attacked:
                             previous : EnemyManager = self.next_target
@@ -234,6 +229,11 @@ class Tower_Manager:
                             self.next_target.take_damage(self.tower_type.dmg)
                             self.remaining_bounces -= 1
                             self.own_projectiles.append(Projectiles(previous.pos,self.next_target.pos,self.tower_type.projectile_asset))
+                            self.distance = []
+                            for victim in self.enemies:
+                                area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
+                                self.distance.append((area, victim))
+                            self.distance.sort(key = lambda victim: victim[0])
                             break
                 else:
                     self.distance.clear()
@@ -284,7 +284,7 @@ class Tower_Manager:
                         for victim in self.enemies:
                             area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
                             self.distance.append((area, victim))
-                        self.distance.sort()
+                        self.distance.sort(key = lambda victim: victim[0])
                         self.tower_type.setbasecooldown()
                         break
                     else:
@@ -334,12 +334,3 @@ class Tower_Manager:
         """
         return {Coord.res2tile(tuple(tower.pos)) : tower.tower_type.tower_name for tower in cls.towers}
         
-#level = Level(1)
-##tower = Tower_Manager('test_tower_1')
-#level.update()
-#x = 0
-#while level.enemies:
- #   print(level.enemies)
-##    level.update
-#    if tower.debug:
-#        print(tower.debug)
