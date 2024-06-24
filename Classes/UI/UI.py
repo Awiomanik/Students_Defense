@@ -72,7 +72,7 @@ class UI():
     # Game state for adjusting what gets displayed and how
     state : dict[str, bool] = {key: False for key in 
                                ["wave", "buy tower", "pause", "speed up", "speed up more", 
-                                "not enough gold", "towers alg", "towers ana", "towers pro"]}
+                                "not enough gold", "towers alg", "towers ana", "towers pro", "game over"]}
     """
     State includes: 
     'wave', 'buy tower', 'pause', 'speed up', 'speed up more', 
@@ -166,12 +166,18 @@ class UI():
                                             for proj in Tower.tower_types.values() if proj[-1] not in self.projectiles_gfx}
 
         # Context windows:
-        # Not enough gold
         self.chalk_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 50)
+
+        # Not enough gold
         self.not_enough_gold_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
         message = self.chalk_font.render("NOT enough GOLD", False, (255, 255, 255))
         self.not_enough_gold_window.blit(message, (50, 115))
-        
+
+        #Game over
+        self.game_over_window = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "Message_window.png"))
+        message = self.chalk_font.render("Game Over", False, (255, 255, 255))
+        self.game_over_window.blit(message, (165, 115))
+
         # Towers stats
         stats_cloud = pygame.image.load(os.path.join(self.gfx_path, "context_windows", "info_box.png"))
         stats_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 12)
@@ -326,6 +332,13 @@ class UI():
                 if UI.state["not enough gold"]:
                     if 900 < x < 1020 and 570 < y < 640:
                         UI.state["not enough gold"] = False
+
+                # Accept game over
+                if UI.state["game over"]:
+                    if 900 < x < 1020 and 570 < y < 640:
+                        UI.state["pause"] = False
+                        UI.state["game over"] = False
+                        return True
 
 
 
@@ -669,6 +682,10 @@ class UI():
         if UI.state["not enough gold"]:
             self.screen.blit(self.not_enough_gold_window, (644, 300))
 
+        # Losing game
+        if UI.state["game over"]:
+            self.screen.blit(self.game_over_window, (644, 300))
+
     # Additional methods
     def load_lvl(self, 
                  player_name : str = "Guest",
@@ -842,7 +859,9 @@ class UI():
 
         return False
 
-
+    def gameover(self) -> None:
+        UI.state["pause"] = True
+        UI.state["game over"] = True
 
 
 

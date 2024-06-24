@@ -131,6 +131,9 @@ class Game():
         # main update loop (iterates over frames)
         running = True
         while running:
+            # Death
+            if self.player.lives == 0:
+                self.ui.gameover()
             # Process input
             if self.ui.process_input(self.level.map, self.player):
                 running = False
@@ -158,9 +161,7 @@ class Game():
                     else:
                         running = False
 
-                # Death
-                if self.player.lives == 0:
-                    running = False
+
 
             
             self.ui.update(self.player.gold, self.player.lives, self.level.enemies, self.level.map)
