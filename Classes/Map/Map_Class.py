@@ -1,5 +1,3 @@
-"""This module provides the Map class for reading from a file, storing, and manipulating map data."""
-
 # IMPORTS
 from ..Utilities import Coord
 import os

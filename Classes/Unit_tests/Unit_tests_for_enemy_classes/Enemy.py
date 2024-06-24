@@ -1,5 +1,6 @@
-from ..Utilities import Coord
-from ..Map.Map_Class import Map
+"""This module contains Enemy Class and EnemyManager class."""
+from ...Utilities import Coord
+from ...Map.Map_Class import Map
 from typing import Type, Self
 
 
@@ -19,7 +20,7 @@ class Enemy:
     __str__() -> str: Returns a string representation of the enemy, including its life and speed.
     """
 
-    enemy_types = {'Marta': {'hp': 3, 'speed': 5}}
+    enemy_types = {'Marta' : {'hp': 3, 'speed': 5}}
 
     def __init__(self, enemy_type: str = 'test_enemy'):
         """
@@ -113,7 +114,6 @@ class EnemyManager:
         Returns:
         str: A string representing the enemy's name, health, and position.
         """
-
         return(f"{self.name} enemy with {self.life} hp and {self.pos} position")
     
     def take_damage(self, damage):
@@ -164,7 +164,7 @@ class EnemyManager:
             self.display_pos: tuple = (self.pos.x - 30,self.pos.y - 30)
             if self.pos.x >= 1980 and not self.damaged_player:
                 self.damaged_player = True
-            if self.damaged_player == "done" or self.pos.x >= 2100:
+            if self.damaged_player == "done":
                 EnemyManager.present.remove(self)
     
     @classmethod

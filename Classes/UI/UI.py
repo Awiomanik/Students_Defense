@@ -1,8 +1,3 @@
-"""
-This module contains the UI class for managing interactions with the user, 
-including input from the keyboard and mouse and drawing graphics (potentially also handling sounds in the future).
-"""
-
 # IMPORTS
 import pygame
 import os
