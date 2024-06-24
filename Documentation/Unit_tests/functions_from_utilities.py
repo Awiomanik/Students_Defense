@@ -75,5 +75,5 @@ class Coord:
         return Coord(coords[0] // tile_size, coords[1] // tile_size)
 
     def grid_middle_point(coords : 'Coord', tile_size : int = 120) -> 'Coord':
-        """ Takes grid position and return pixel position of middle point in tile """
+        """Takes grid position and return pixel position of middle point in tile."""
         return Coord(coords.x*tile_size + tile_size//2, coords.y*tile_size + tile_size//2)

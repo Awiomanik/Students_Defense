@@ -3,7 +3,6 @@ from hypothesis import given
 import pytest
 from functions_from_utilities import Coord
 
-
 @given(st.integers(), st.integers(), st.integers(), st.integers())
 def test_add_two_coords(x1, y1, x2, y2):
     coord1 = Coord(x1, y1)
@@ -27,10 +26,6 @@ def test_add_invalid_type():
     coord = Coord(1, 2)
     with pytest.raises(NotImplementedError):
         coord + "string"
-
-if __name__ == '__main__':
-    pytest.main()
-
 
 @given(st.integers(), st.integers(), st.integers(), st.integers())
 def test_sub_two_coords(x1, y1, x2, y2):
@@ -56,9 +51,6 @@ def test_add_invalid_type():
     with pytest.raises(NotImplementedError):
         coord + "string"
 
-if __name__ == '__main__':
-    pytest.main()
-
 @given(st.integers(), st.integers())
 def test_repr_of_coord(x, y):
     coord = Coord(x, y)
@@ -71,3 +63,26 @@ def test_iter(x, y):
         coord = Coord(x,y)
         iter_values = list(coord)
         assert iter_values == [x, y]
+
+def res2tile(coords : tuple[int, int], tile_size : int = 120) -> 'Coord':
+        return Coord(coords[0] // tile_size, coords[1] // tile_size)
+
+@given(st.tuples(st.integers(), st.integers()), st.integers(min_value=1))
+def test_res2tile(coord, tile_size):
+    result = res2tile(coord, tile_size)
+    assert result ==  Coord((coord[0] // tile_size, coord[1] // tile_size))
+
+
+def grid_middle_point(coords : 'Coord', tile_size : int = 120) -> 'Coord':
+        """Takes grid position and return pixel position of middle point in tile."""
+        return Coord(coords.x*tile_size + tile_size//2, coords.y*tile_size + tile_size//2)
+
+@given(st.integers(), st.integers())
+def test_grid_middle_point(x, y, tile_size):
+    coord = Coord(x, y)
+    result = grid_middle_point(coord, tile_size)
+    assert result ==  Coord(x*tile_size + tile_size//2, y*tile_size + tile_size//2)
+
+
+if __name__ == '__main__':
+    pytest.main()
