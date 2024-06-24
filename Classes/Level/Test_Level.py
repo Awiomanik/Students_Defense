@@ -8,7 +8,7 @@ Classes:
 from ..Enemy.Enemy import EnemyManager
 import os
 from ..Map import Map_Class
-from math import floor
+from math import ceil
 
 class Level:
     """
@@ -39,6 +39,7 @@ class Level:
 
     # Class atributes
     enemies : list[EnemyManager] = EnemyManager.present
+    damage = 0
 
     # Methods
     def __init__(self, level_name : str, root_directory : str) -> None:
@@ -67,6 +68,7 @@ class Level:
         self.current_wave = 0
         self.base_spawn_cooldown = 60
         self.spawn_cooldown = 60
+        self.damage = False
 
         # Parse level data to set atributes
         for line in level_data:
@@ -131,8 +133,10 @@ class Level:
         EnemyManager.update()
         for enemy in self.enemies:
             if enemy.damaged_player:
-                self.lives -=1
+                Level.damage += 1
                 enemy.damaged_player = "done"
+
+                
                 
     def new_wave(self) -> None:
         """
@@ -145,12 +149,16 @@ class Level:
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
-        self.base_spawn_cooldown = floor(60*0.9**self.current_wave) #In later waves enemies will be spawning faster
+        self.base_spawn_cooldown = ceil(60*0.9**self.current_wave) #In later waves enemies will be spawning faster
 
     @classmethod
     def reset(cls) -> None:
         """Clears all enemies"""
         cls.enemies.clear()
+    
+    @classmethod
+    def DamageDone(cls) -> None:
+        cls.damage = 0
 
         
 

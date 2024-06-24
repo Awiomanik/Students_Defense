@@ -328,6 +328,7 @@ class UI():
                         UI.state["not enough gold"] = False
 
 
+
         # Reset mouse state to not clicked
         self.mouse_click = False
 

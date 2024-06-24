@@ -140,6 +140,10 @@ class Game():
                 # Update game elements
                 self.level.update()
                 Tower_Manager.update()
+                if Test_Level.Level.damage:
+                    for hit in range(Test_Level.Level.damage):
+                        self.player.deduct_lives()
+                    Test_Level.Level.DamageDone()
 
                 # if wave ended
                 if not self.level.remaining_enemies and not self.level.enemies:
@@ -153,6 +157,10 @@ class Game():
                     # Level ended ( to be changed, temporary solution for prototype )
                     else:
                         running = False
+
+                # Death
+                if self.player.lives == 0:
+                    running = False
 
             
             self.ui.update(self.player.gold, self.player.lives, self.level.enemies, self.level.map)

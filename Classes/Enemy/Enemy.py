@@ -165,7 +165,7 @@ class EnemyManager:
             self.display_pos: tuple = (self.pos.x - 30,self.pos.y - 30)
             if self.pos.x >= 1980 and not self.damaged_player:
                 self.damaged_player = True
-            if self.damaged_player == "done":
+            if self.damaged_player == "done" or self.pos.x >= 2100:
                 EnemyManager.present.remove(self)
     
     @classmethod
