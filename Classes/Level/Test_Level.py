@@ -8,6 +8,7 @@ Classes:
 from ..Enemy.Enemy import EnemyManager
 import os
 from ..Map import Map_Class
+from math import floor
 
 class Level:
     """
@@ -64,7 +65,8 @@ class Level:
         temp_waves = []
         self.map = None
         self.current_wave = 0
-        self.spawn_cooldown = 0
+        self.base_spawn_cooldown = 60
+        self.spawn_cooldown = 60
 
         # Parse level data to set atributes
         for line in level_data:
@@ -110,7 +112,7 @@ class Level:
         elif self.spawn_cooldown == 0:
             spawned_enemy = EnemyManager(self.map, self.current_enemy) # despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
             self.current_wave_def[self.current_enemy] -= 1
-            self.spawn_cooldown = 60
+            self.spawn_cooldown = self.base_spawn_cooldown
             self.remaining_enemies = sum(self.current_wave_def.values())
             if self.current_wave_def[self.current_enemy] == 0:
                 del self.waves[self.current_wave][self.current_enemy]
@@ -143,6 +145,7 @@ class Level:
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
+        self.base_spawn_cooldown = floor(60*0.9**self.current_wave) #In later waves enemies will be spawning faster
 
     @classmethod
     def reset(cls) -> None:
