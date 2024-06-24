@@ -17,6 +17,7 @@ Functions:
 #IMPORTS
 from dataclasses import dataclass
 import typing, pygame, os
+from math import ceil
 
 
 # CLASSES
@@ -120,6 +121,9 @@ class Coord:
     def grid_middle_point(coords : 'Coord', tile_size : int = 120) -> 'Coord':
         """ Takes grid position and return pixel position of middle point in tile """
         return Coord(coords.x*tile_size + tile_size//2, coords.y*tile_size + tile_size//2)
+    
+    def ceiling(self) -> 'Coord':
+        return Coord(ceil(self.x),ceil(self.y))
 
 class InputBox:
     """

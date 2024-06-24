@@ -7,7 +7,7 @@ including input from the keyboard and mouse and drawing graphics (potentially al
 import pygame
 import os
 import sys
-from ..Tower.Tower_Classes import Tower_Manager, Tower
+from ..Tower.Tower_Classes import Tower_Manager, Tower, Projectiles
 from ..Utilities import Coord, InputBox, load_high_scores
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
@@ -160,6 +160,11 @@ class UI():
         self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
                                         for name in towers_names}
         
+        # Projectiles graphics
+        self.projectiles_gfx = dict({})
+        self.projectiles_gfx : dict = {proj[-1] : pygame.image.load(os.path.join(self.gfx_path, "bullets", proj[-1]))
+                                            for proj in Tower.tower_types.values() if proj[-1] not in self.projectiles_gfx}
+
         # Context windows:
         # Not enough gold
         self.chalk_font = pygame.font.Font(os.path.join(root_directory, "Assets", "Font", "Chalk.ttf"), 50)
@@ -529,6 +534,10 @@ class UI():
                 self.screen.blit(enemy.hp_display, enemy.display_pos)
                 if enemy.attacked:
                     self.screen.blit(self.bullets_gfx["test_bullet"], enemy.display_pos)
+        # projectiles
+        for projectile in Projectiles.displayed:
+            self.screen.blit(self.projectiles_gfx[projectile.asset],projectile.display_pos)
+            print(projectile.display_pos)
 
         # HUD
         self.hud(gold, lives, map)

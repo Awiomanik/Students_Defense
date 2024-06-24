@@ -40,19 +40,19 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-#######################################################dmg##no of shots#####bounce#######cost######aoe range##################################projectile asset
-############################################## range ######### cd ####### target ###### no of b. ##### aoe ############# tower asset ##########################
+#######################################################dmg##no of shots#####bounce#######cost#######aoe range##################################projectile asset
+############################################## range ######### cd ####### target ##### no of b.# aoe ############# tower asset ##########################
     tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
                    "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "Algebra_basic"                : (400, 2, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
-                   "Algebra_LT"                   : (300, 4, 90  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
-                   "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_.png'              , 'Algebra_projectile.png'),
-                   "Analysis_basic"               : (300, 1, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
-                   "Analysis_calculus_specialist" : (300, 2, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Algebra_basic"                : (400, 4, 120 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (300, 3, 90  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (400, 2, 60  , 12, False, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
+                   "Analysis_basic"               : (300, 2, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 6, 45   , 1, True,  False, None, 50,  True,    50, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
                    "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
                    "Programming_basic"            : (300, 1, 120  , 1, True,  False, None, 10,  True,    50, 'Programming_basic.png'            , 'Programming_projectile.png'),
                    "Programming_object"           : (300, 4, 90   , 1, True,  False, None, 50,  True,   100, 'Programming_object.png'           , 'Programming_projectile.png'),
-                   "Programing_spaghetti_decoder" : (300, 1, 30   , 1, True,   True,    8, 60, False,  None, 'Programing_spaghetti_decoder.png', 'Spaghetti_projectile.png')
+                   "Programing_spaghetti_decoder" : (300, 1, 60   , 1, True,   True,    8, 60, False,  None, 'Programing_spaghetti_decoder.png', 'Spaghetti_projectile.png')
                    }
     """
         Tower stats positions:
@@ -106,36 +106,42 @@ class Tower:
 
 class Projectiles:
     displayed : list['Projectiles']= []
-    def __init__(self,start : Coord, finish : Coord, asset : str, speed : int = 80):
+    def __init__(self,start : Coord, finish : Coord, asset : str, speed : int = 60):
         self.asset = asset
         self.start = start
-        self.pos = start
+        self.pos : Coord = start
         self.destination = finish
         self.speed = speed
-        self.display_pos = self.pos - 15
+        self.display_pos = ((self.pos - 25).x, (self.pos - 25).y)
         self.mov_vector = None
         self.vector_len = None
         self.travelled = 0
         Projectiles.displayed.append(self)
     def display_update(self):
-        self.display_pos = self.pos - 15
+        self.display_pos = ((self.pos - 25).x, (self.pos - 25).y)
     def create_vector(self):
-        base_vector = Coord(self.start.x - self.destination.x,self.start.y - self.destination.y)
+        base_vector = self.destination - self.start
         self.vector_len = (base_vector.x**2 + base_vector.y**2)**0.5
         normalized_vector = Coord(base_vector.x/self.vector_len,base_vector.y/self.vector_len)
         self.mov_vector = Coord(normalized_vector.x*self.speed,normalized_vector.y*self.speed)
     def animation (self):
-        self.pos += self.mov_vector
-        self.pos.x = ceil(self.pos.x)
-        self.pos.y = ceil(self.pos.y)
-        self.travelled += self.speed
-        self.display_update()
+        if not self.mov_vector:
+            self.create_vector()
+        if self.travelled > self.vector_len:
+            self.remove()
+        else:
+            self.pos += self.mov_vector
+            self.pos.ceiling()
+            self.travelled += self.speed
+            self.display_update()
     def remove(self):
         Projectiles.displayed.remove(self)
     @classmethod
-    def animate_all(cls):
+    def update(cls):
         for projectile in cls.displayed:
             projectile.animation()
+        if not EnemyManager.present:
+            cls.displayed = []
 
 class Tower_Manager:
     """
@@ -187,12 +193,14 @@ class Tower_Manager:
         self.tower_type = Tower(tower_type_str)
         self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
         self.display_pos = (self.pos.x - 60,self.pos.y-60)
-        self.own_projectile = None
+        self.own_projectiles : list[Projectiles] = []
         self.target_criteria = 'low_hp'
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
             self.distance : list[(int,EnemyManager)] = []
-            self.already_attacked = None
+            self.already_attacked : list[EnemyManager] = []
+            self.next_target : EnemyManager = None
+            self.projectiles_moving : int = 0
         Tower_Manager.towers.append(self)
     #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
     #    attack_vector : Coord = enemy_position - self.pos
@@ -206,22 +214,35 @@ class Tower_Manager:
     def attack(self):
         """Manages attacks, targeting the weakest enemy within range if the tower is ready to fire."""
         criteria = self.target_criteria
+        for projectile in self.own_projectiles:
+            if projectile not in Projectiles.displayed: #Removing unnecessary reference
+                self.own_projectiles.remove(projectile)
 
         if self.tower_type.atk !=0:#Passing time between attacks
             self.tower_type.cooldown()
             if self.tower_type.bouncing:
-                if self.remaining_bounces:
-                    if self.own_projectile.travelled > self.own_projectile.vector_len:
-                        self.own_projectile.remove()
-                        for possible_target in self.distance:
-                            if possible_target[0] <= 100 and possible_target[1] not in self.already_attacked:
-                                self.already_attacked.append(possible_target[1])
-                                next_target : EnemyManager  = possible_target[1]
-                                next_target.take_damage(self.tower_type.dmg)
-                                self.distance.clear()
-                                break
+                if self.remaining_bounces and (self.distance or self.already_attacked) and len(self.own_projectiles) < self.projectiles_moving:
+                    self.distance = []
+                    for victim in self.enemies:
+                        area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
+                        self.distance.append((area, victim))
+                    self.distance.sort()
+                    for possible_target in self.distance:
+                        if possible_target[0] <= 600 and possible_target[1] not in self.already_attacked:
+                            previous : EnemyManager = self.next_target
+                            self.already_attacked.append(possible_target[1])
+                            self.next_target : EnemyManager  = possible_target[1]
+                            self.next_target.take_damage(self.tower_type.dmg)
+                            self.remaining_bounces -= 1
+                            print(previous,self.next_target)
+                            self.own_projectiles.append(Projectiles(previous.pos,self.next_target.pos,self.tower_type.projectile_asset))
+                            break
                 else:
+                    self.distance.clear()
                     self.already_attacked.clear()
+            else:
+                self.already_attacked.clear()
+                self.distance.clear()
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
@@ -255,27 +276,28 @@ class Tower_Manager:
                             area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
+                        self.own_projectiles.append(Projectiles(self.pos, enemy.pos, self.tower_type.projectile_asset))
                         self.tower_type.setbasecooldown()
                         break
                     elif self.tower_type.bouncing:
-                        next_target = target
+                        self.next_target = target
                         enemy.take_damage(self.tower_type.dmg)
-                        self.own_projectile = Projectiles(self.pos,target.pos,self.tower_type.projectile_asset)
-                        self.own_projectile.create_vector
-                        self.already_attacked = [next_target]
-                        for bounce in range(self.tower_type.bouncing_count):
-                            self.distance = []
-                            for victim in self.enemies:
-                                area = ((victim.pos.x - next_target.pos.x)**2 + (victim.pos.y - next_target.pos.y)**2)**0.5
-                                self.distance.append((area, victim))
-                            self.distance.sort()
+                        self.own_projectiles.append(Projectiles(self.pos,self.next_target.pos,self.tower_type.projectile_asset))
+                        self.already_attacked = [self.next_target]
+                        #for bounce in range(self.tower_type.bouncing_count):
+                        self.distance = []
+                        for victim in self.enemies:
+                            area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
+                            self.distance.append((area, victim))
+                        self.distance.sort()
                         self.tower_type.setbasecooldown()
+                        self.projectiles_moving += 1
                         break
                     else:
                         enemy.take_damage(self.tower_type.dmg)
                         self.tower_type.setbasecooldown()
+                        self.own_projectiles.append(Projectiles(self.pos,enemy.pos,self.tower_type.projectile_asset))
                         break
-                        #projectile = Projectiles(self.pos, enemy.pos)
 
     def upgrade(self, tier: int, tower_name: str):
         """This method upgrades a chosen tower""" 
@@ -298,6 +320,7 @@ class Tower_Manager:
         cls.enemies = EnemyManager.present #update enemy list
         for tower in cls.towers:
             tower.attack()
+        Projectiles.update()
 
     @classmethod
     def reset(cls):
