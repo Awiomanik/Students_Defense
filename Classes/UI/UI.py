@@ -60,7 +60,7 @@ class UI():
     # Game state for adjusting what gets displayed and how
     state: dict[str, bool] = {key: False for key in 
                                ["wave", "buy tower", "pause", "speed up", "speed up more", 
-                                "not enough gold", "towers alg", "towers ana", "towers pro", "game over"]}
+                                "not enough gold", "towers alg", "towers ana", "towers pro", "game over", "upgrade tower"]}
     
     # Constant parameters
     FPS: int = 60 # framerate
@@ -263,12 +263,14 @@ class UI():
                         UI.state["speed up"] = True
 
                 # Towers (HUD)
-                elif x > 980:
-                    self.buy_tower_mode(self.HUD_towers_displayed[2], player, Coord.res2tile(self.pos))
+                if not UI.state["upgrade tower"]:
+                    self.upgraded_tower = None
+                if x > 980:
+                    self.buy_tower_mode(self.HUD_towers_displayed[2], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
                 elif x > 740:
-                    self.buy_tower_mode(self.HUD_towers_displayed[1], player, Coord.res2tile(self.pos))
+                    self.buy_tower_mode(self.HUD_towers_displayed[1], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
                 elif x > 500:
-                    self.buy_tower_mode(self.HUD_towers_displayed[0], player, Coord.res2tile(self.pos))
+                    self.buy_tower_mode(self.HUD_towers_displayed[0], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
 
             # Click at map
             else:
@@ -299,12 +301,23 @@ class UI():
                     # Get towers currently on the map with their positions
                     towers = Tower_Manager.get_tower_positions()
                     if tile in towers.keys():
-                        tower = towers[tile]
-                        UI.state["buy tower"] = False
-                        # Set towers to be displyed
-                        for i in range(3):
-                            if tower in self.tower_upgreades[i]:
-                                self.HUD_towers_displayed = self.tower_upgreades[i]
+                        if UI.state["upgrade tower"]:
+                            # Reset state
+                            UI.state["upgrade tower"] = False
+                            self.HUD_towers_displayed = [self.tower_upgreades[0][0],
+                                                         self.tower_upgreades[1][0],
+                                                         self.tower_upgreades[2][0]]
+                        else:
+                            for placed_tower in Tower_Manager.towers:
+                                if Coord.res2tile(tuple(placed_tower.pos)) == tile:
+                                    self.upgraded_tower = placed_tower
+                            UI.state["upgrade tower"] = True
+                            tower = towers[tile]
+                            UI.state["buy tower"] = False
+                            # Set towers to be displyed
+                            for i in range(3):
+                                if tower in self.tower_upgreades[i]:
+                                    self.HUD_towers_displayed = self.tower_upgreades[i]
 
                             
                 # Close context window
@@ -762,7 +775,7 @@ class UI():
         self.frame_counter = 0
         return False
     
-    def buy_tower_mode(self, tower_name: str, player: Player, tower_coord : Coord = None) -> None:
+    def buy_tower_mode(self, tower_name: str, player: Player, tower_coord : Coord = None, tower: Tower_Manager = None) -> None:
         """
         Handles interactions with the tower HUD, managing tower selection and purchasing logic.
 
@@ -773,8 +786,13 @@ class UI():
         """
         # Wheter upgreading or setting base tower
         # Upgreade case
-        if self.HUD_towers_displayed[1] == self.tower_upgreades[0][1]:
-            pass
+        if UI.state["upgrade tower"]:
+            tower.upgrade(tower_name)
+            player.gold -= Tower(tower_name).cost
+            UI.state["upgrade tower"] = False
+            self.HUD_towers_displayed = [self.tower_upgreades[0][0],
+                                         self.tower_upgreades[1][0],
+                                         self.tower_upgreades[2][0]]
             # Olaf tutaj <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<__________________________________>>>>>>>>>>>>>>>>>>>>>>
             # masz tu nazwę typu wieży i kafelek na którym się znajduje oraz ewentualnie playera
 

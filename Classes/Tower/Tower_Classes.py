@@ -282,20 +282,12 @@ class Tower_Manager:
                         self.own_projectiles.append(Projectiles(self.pos,enemy.pos,self.tower_type.projectile_asset))
                         break
 
-    def upgrade(self, tier: int, tower_name: str):
+    def upgrade(self, tower_name : str):
         """This method upgrades a chosen tower""" 
-        position = self.pos
-        Tower_Manager.towers.remove(self) 
-        if tier == 1:
-          self.pos = position
-          self.tower_type = Tower(f'{tower_name}_tier_2')
-          self.display_pos = (self.pos.x - 60,self.pos.y-60)
-          Tower_Manager.towers.append(self)    
-        elif tier == 2:
-          self.pos = position
-          self.tower_type = Tower(f'{tower_name}_tier_3')
-          self.display_pos = (self.pos.x - 60,self.pos.y-60)
-          Tower_Manager.towers.append(self)
+        pos = self.pos
+        new_tower = Tower_Manager(tower_name,pos)
+        Tower_Manager.towers.remove(self)
+        
 
     @classmethod
     def explosions_update(cls):
