@@ -1,6 +1,3 @@
-
-"""Tower meneger module"""
-
 from ..Utilities import Coord
 from ..Enemy.Enemy import Enemy, EnemyManager
 from ..Level.Test_Level import Level

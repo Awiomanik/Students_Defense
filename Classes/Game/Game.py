@@ -1,11 +1,3 @@
-"""
-This module manages the main game loop and integrates various components of the
-Students Defense Game project.
-
-Classes:
-    Game - Manages the entire game instance including UI, player, and level interactions.
-"""
-
 # IMPORTS
 from ..UI import UI
 from ..Level import Test_Level
@@ -30,19 +22,16 @@ class Game():
         gameplay(): Manages the main gameplay loop, updates game state, and handles wave progression.
     """
 
-    def __init__(self, root_directory : str, display_intro : bool = True, display_outro : bool = True) -> None:
+    def __init__(self, root_directory: str, display_intro: bool = True, display_outro: bool = True) -> None:
         """
         Initializes the Game instance.
 
-        This method sets up the player, UI, displays the intro if specified,
-        shows the main menu, loads the level, and starts the main gameplay loop.
-
-        Args:
+        Arguments:
             root_directory (str): Path to the main calogue f the repository for relative path operations.
             display_intro (bool): Whether to display the intro screen. Defaults to True.
             display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
-        # Player protoplast with placeholder atributes, player is fully initialized when level start
+        # Player with placeholder atributes, player is fully initialized when level start
         self.player = Player("Guest", 0, 0)
 
         # Set root_directory
@@ -78,13 +67,11 @@ class Game():
         """
         Displays the main menu.
 
-        This method calls the UI class to display the main menu screen.
-
         Returns:
-            False for exiting the game True otherwise
+            bool: True for starting the game, False for quitting.
 
         Raises:
-            Value error - When ui.main_menu method returns unknown value
+            Valueerror - If ui.main_menu method returns unknown value.
         """
         choosen_option = self.ui.main_menu(self.player)
 
@@ -101,7 +88,7 @@ class Game():
         """
         Loads the game level.
 
-        This method initializes the game level, updates the UI with level information,
+        Initializes the game level, updates the UI with level information,
         and player atributes with initial game parameters.
         """
         # Reset towers
@@ -114,7 +101,7 @@ class Game():
         self.ui.reset_state()
         self.ui.load_lvl(self.player.name, self.level.waves_num, 
                          self.level.current_wave, self.level.map.name, 
-                         enemies_names={name : name + ".png" for name in Enemy.enemy_types})
+                         enemies_names={name: name + ".png" for name in Enemy.enemy_types})
         
         # Update player atributes based on level data
         self.player.gold = self.level.gold
@@ -124,21 +111,22 @@ class Game():
         """
         Manages the main gameplay loop.
 
-        This method continuously updates the game state by processing user input,
+        Continuously updates the game state by processing user input,
         updating the UI, and advancing the game level and other game elements. 
-        It handles wave progression and tower management within the game loop.
+        Handles wave progression and tower management within the game loop.
         """
-        # main update loop (iterates over frames)
+        # Main update loop (iterates over frames)
         running = True
         while running:
-            # Death
+            # Check for player death
             if self.player.lives == 0:
                 self.ui.gameover()
-            # Process input
+
+            # Process user input
             if self.ui.process_input(self.level.map, self.player):
                 running = False
             
-            # wave is running
+            # Check if wave is running
             elif self.ui.state["wave"] and not self.ui.state["pause"]:
                 # Update game elements
                 self.level.update()
@@ -149,21 +137,18 @@ class Game():
                         self.player.deduct_lives()
                     Test_Level.Level.DamageDone()
 
-                # if wave ended
+                # Check if wafe ended
                 if not self.level.remaining_enemies and not self.level.enemies:
                     self.ui.state["wave"] = False
                     self.ui.current_wave += 1
                     
-                    # level not ended yet
+                    # Check if level is not ended
                     if self.level.current_wave < self.level.waves_num - 1:
                         self.level.new_wave()
 
-                    # Level ended ( to be changed, temporary solution for prototype )
+                    # Level ended (temporary solution)
                     else:
                         running = False
-
-
-
             
             self.ui.update(self.player.gold, self.player.lives, self.level.enemies, self.level.map)
 

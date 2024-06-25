@@ -1,5 +1,6 @@
-from ..Utilities import Coord
-from ..Map.Map_Class import Map
+"""This module contains Enemy Class and EnemyManager class."""
+from ...Utilities import Coord
+from ...Map.Map_Class import Map
 from typing import Type, Self
 
 
@@ -19,14 +20,7 @@ class Enemy:
     __str__() -> str: Returns a string representation of the enemy, including its life and speed.
     """
 
-<<<<<<< HEAD
-    enemy_types = {'Marta': {'hp': 3, 'speed': 5}}
-=======
-    enemy_types = {'Marta': {'hp': 3, 'speed': 5},
-                   'Mati': {'hp': 5, 'speed': 3},
-                   'Olaf': {'hp': 4, 'speed': 5},
-                   'Wojtek': {'hp': 6, 'speed': 6}}
->>>>>>> 907bbaab88afff2183b9fecf8dd2806e2a9ac3ae
+    enemy_types = {'Marta' : {'hp': 3, 'speed': 5}}
 
     def __init__(self, enemy_type: str = 'test_enemy'):
         """
@@ -68,8 +62,8 @@ class EnemyManager:
     grid_pos (Coord): The grid position of the enemy on the map.
     tile (int): The current tile index in the path that the enemy is moving towards.
     hp_display: Placeholder for the enemy's health display in the UI.
-    attacked (bool): Indicates if the enemy has been attacked. Used by the UI to show that enemy has been attacked (indicated by little star).
-    attacked_count (int or None): Counter for the attacked. Lasts 10 frames by default.
+    attacked (bool): Indicates if the enemy has been attacked.
+    attacked_count (int or None): Counter for the attacked.
     damaged_player (bool): Indicates if the enemy has damaged the player.
 
     Methods:
@@ -88,7 +82,6 @@ class EnemyManager:
     """
 
     present: list[Self] = []
-    gold = 0
 
     def __init__(self, map: Map, enemy_type: str = 'test_enemy'):
         """
@@ -121,7 +114,6 @@ class EnemyManager:
         Returns:
         str: A string representing the enemy's name, health, and position.
         """
-
         return(f"{self.name} enemy with {self.life} hp and {self.pos} position")
     
     def take_damage(self, damage):
@@ -172,7 +164,7 @@ class EnemyManager:
             self.display_pos: tuple = (self.pos.x - 30,self.pos.y - 30)
             if self.pos.x >= 1980 and not self.damaged_player:
                 self.damaged_player = True
-            if self.damaged_player == "done" or self.pos.x >= 2100:
+            if self.damaged_player == "done":
                 EnemyManager.present.remove(self)
     
     @classmethod
@@ -181,11 +173,9 @@ class EnemyManager:
         cls.present = [] # clearing list
                 
     def remove_enemy(self): 
-        """Remove the enemy and add gold from the present list if its life reaches zero."""
+        """Remove the enemy from the present list if its life reaches zero."""
         if self.life == 0:
             EnemyManager.present.remove(self)
-            EnemyManager.gold += 1
-
 
     @classmethod
     def endlevel(cls):

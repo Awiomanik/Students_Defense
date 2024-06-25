@@ -1,10 +1,3 @@
-"""
-This module manages level data and enemy spawning for the Students Defense Game project.
-
-Classes:
-    Level - Handles level data, enemy spawning, and wave progression within a game level.
-"""
-
 from ..Enemy.Enemy import EnemyManager
 import os
 from ..Map import Map_Class
@@ -16,7 +9,8 @@ class Level:
 
     Class attributes:
         enemies (list[EnemyMenager]): List of current enemies present in the level.
-    
+        damage (int): Variable to track damage done by enemies.
+
     Instance atributes:
         gold (int): The initial gold amount for the player in that level.
         lives (int): The number of lives the player starts with.
@@ -24,6 +18,7 @@ class Level:
         waves (list[dict[str, int]]): The list of enemy waves, each wave represented by a dictionary of enemy types and their quantities.
         map (Map_Class.Map): The map object instance representing and menaging map data of the current level.
         current_wave (int): The index of the current wave.
+        base_spawn_cooldown (int): The base cooldown period between enemy spawns.
         spawn_cooldown (int): The cooldown period between enemy spawns.
         current_wave_def (dict[str, int]): The current wave definition.
         current_enemy (str): The type of the current enemy being spawned.
@@ -38,15 +33,15 @@ class Level:
     """
 
     # Class atributes
-    enemies : list[EnemyManager] = EnemyManager.present
-    damage = 0
+    enemies: list[EnemyManager] = EnemyManager.present
+    damage: int = 0
 
     # Methods
-    def __init__(self, level_name : str, root_directory : str) -> None:
+    def __init__(self, level_name: str, root_directory: str) -> None:
         """
         Loads level data from file and initializes level attributes.
 
-        Args:
+        Arguments:
             level_number (int): The number of the level to load.
             root_directory (str): The root directory of the repository for relative path operations.
         """
@@ -59,16 +54,16 @@ class Level:
             print(f"Level data file not found: {path}")
 
         # Set default atibutes
-        self.gold : int = 0
-        self.lives : int = 1
-        self.waves_num : int = 1
-        self.waves : list[dict[str, int]]= ({"test_enemy" : 1})
-        temp_waves = []
+        self.gold: int = 0
+        self.lives: int = 1
+        self.waves_num: int = 1
+        self.waves: list[dict[str, int]]= ({"test_enemy" : 1})
+        temp_waves: list[dict[str, int]] = []
         self.map = None
-        self.current_wave = 0
-        self.base_spawn_cooldown = 40
-        self.spawn_cooldown = 40
-        self.damage = False
+        self.current_wave: int = 0
+        self.base_spawn_cooldown: int = 40
+        self.spawn_cooldown: int = 40
+        self.damage: bool = False
 
         # Parse level data to set atributes
         for line in level_data:
@@ -81,16 +76,16 @@ class Level:
                 self.lives = int(line.split("Lives:", 1)[1].strip())
             # Waves
             elif line.startswith("Wave "):
-                wave : list[tuple[str, str]] = [enemies.split('-') for enemies in line.split(':', 1)[1].split(',')]
-                temp_waves.append({key.strip() : int(element.strip()) for element, key in wave})
+                wave: list[tuple[str, str]] = [enemies.split('-') for enemies in line.split(':', 1)[1].split(',')]
+                temp_waves.append({key.strip(): int(element.strip()) for element, key in wave})
             # Map
             elif line.startswith("Map"):
                 map_name = line.split("Map:", 1)[1].strip()
                 self.map = Map_Class.Map(root_directory, map_name)
             # Available_towers
             elif line.startswith("Available_towers:"):
-                self.available_towers : list[str] = \
-                    [tower.strip() for tower in line.split("Available_towers:")[1].split(',')]
+                self.available_towers: list[str] = \
+                    [tower.strip() for tower in line.split("Available_towers: ")[1].split(',')]
                 
         # Set new waves if waves data found in file
         if temp_waves:
