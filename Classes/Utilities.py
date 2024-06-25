@@ -11,6 +11,7 @@ Functions:
     xor(text : str, key : str, decrypt : bool = False) -> str: Encrypts or decrypts a given text using XOR cipher with a provided key.
     load_high_scores(root_directory : str) -> tuple[tuple[str, int]]: Loads High Score records from a designated file.
     save_high_score(root_directory : str, name : str, score : int) -> None: Saves a new high score record to the high score file.
+    read_credits(filename: str) -> str: Reads credits file.
     """
 
 
@@ -394,7 +395,17 @@ def save_high_score(root_directory : str, name : str, score : int) -> None:
     except Exception as e:
         raise Exception(f"An unexpected error occurred: {e}")
 
-
+def read_credits(file_path: str) -> str:
+    """Reads credits file"""
+    credits = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line.endswith('*'):
+                credits.append((line[:-1].strip(), True))  # (Text, Enlarged)
+            else:
+                credits.append((line, False))
+    return credits
 
 
 

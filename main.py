@@ -7,4 +7,4 @@ import os
 if __name__ == "__main__":
     # Get current directory for easy relative paths
     scripts_directory = os.path.dirname(os.path.abspath(__file__))
-    Game(scripts_directory, False , False)
+    Game(scripts_directory, False , True)
