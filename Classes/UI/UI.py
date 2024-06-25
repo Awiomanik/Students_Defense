@@ -410,11 +410,16 @@ class UI():
                 if 840 < x < 1080:
                     # Demo button pressed
                     if 180 < y < 324:
-                        return "start"
+                        return "demo"
                     
-                    # Quit button pressed
-                    elif 504 < y < 648:
-                        return "quit"
+                    # Truancy button pressed
+
+                    if 342 < y < 486:
+                        return "truancy"
+                    
+                # Quit button pressed
+                if (880 < y < 1080) and (1640 < x < 1840):
+                    return "quit"
                 
                 # Name change
                 elif x < 170:
