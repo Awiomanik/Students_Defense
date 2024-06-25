@@ -94,16 +94,19 @@ class Level:
 
         # Set number of waves
         self.waves_num = len(self.waves)
-        self.current_wave_def = self.waves[self.current_wave]
-        self.current_enemy = list(self.current_wave_def.keys())[0]
-        self.remaining_enemies = sum(self.current_wave_def.values())
+        # Determine what current wave will contain
+        self.current_wave_def : dict[EnemyManager : int] = self.waves[self.current_wave]
+        self.current_enemy : EnemyManager = list(self.current_wave_def.keys())[0]
+        # Number of enemies to spawn
+        self.remaining_enemies : int = sum(self.current_wave_def.values())
 
     def spawn_enemy(self) -> None:
         """Spawn enemies based on the wave definitions and spawn cooldown."""
         if not self.remaining_enemies:
             pass
+        # Cooldown passed
         elif self.spawn_cooldown == 0:
-            # Despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            # Despite not being further utilised, spawned_enemy is followed by EnemyManager.present class attribute
             spawned_enemy = EnemyManager(self.map, self.current_enemy) 
             # Increased diffculty in further levels
             spawned_enemy.life = ceil(spawned_enemy.life*self.hp_increase)
@@ -116,6 +119,7 @@ class Level:
                 if self.current_wave_def:
                     self.current_enemy = list(self.current_wave_def.keys())[0]
         else:
+            # Process cooldown between enemies spawned
             self.spawn_cooldown -= 1
 
     def update(self):

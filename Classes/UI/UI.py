@@ -225,9 +225,14 @@ class UI():
             # Handle key press
             elif event.type == pygame.KEYDOWN:
 
-                # Pauses game (still in development)
+                # Cancel any action (like upgrading towers)
                 if event.key == pygame.K_ESCAPE:
-                    pass
+                    self.HUD_towers_displayed = [self.tower_upgreades[0][0],
+                                                 self.tower_upgreades[1][0],
+                                                 self.tower_upgreades[2][0]]
+                    for state in UI.state.keys():
+                        if state not in ["pause", "wave", "speed up", "speed up more", "game over"]:
+                            UI.state[state] = False
 
             # mouse press (release)
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -786,8 +791,8 @@ class UI():
             player (Player): Player object, to check for affordability.
             tower_coord (Coord): Tile coordinates of the tower to be upgreaded.
         """
-        # Wheter upgreading or setting base tower
-        # Upgreade case
+        # Wheter upgrading or setting base tower
+        # Upgrade case
         if UI.state["upgrade tower"]:
             tower.upgrade(tower_name)
             player.gold -= Tower(tower_name).cost
@@ -795,8 +800,6 @@ class UI():
             self.HUD_towers_displayed = [self.tower_upgreades[0][0],
                                          self.tower_upgreades[1][0],
                                          self.tower_upgreades[2][0]]
-            # Olaf tutaj <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<__________________________________>>>>>>>>>>>>>>>>>>>>>>
-            # masz tu nazwę typu wieży i kafelek na którym się znajduje oraz ewentualnie playera
 
         # Base tower case
         else:

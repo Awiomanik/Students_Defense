@@ -104,7 +104,7 @@ class EnemyManager:
         self.display_pos: tuple = tuple(Coord.grid_middle_point(self.grid_pos))
         self.pos: Coord = Coord(*self.display_pos)
         self.tile: int = 0
-        self.hp_display: int = None # used in UI
+        self.hp_display: int = None # Used in UI
         self.attacked: bool = False
         self.attacked_count: int = None
         self.damaged_player: bool = False
@@ -156,6 +156,7 @@ class EnemyManager:
             direction: Coord = destination - self.grid_pos
             self.pos += Coord(self.speed*direction.x,self.speed*direction.y)
             self.display_pos: tuple = (self.pos.x - 30,self.pos.y - 30)
+            # Determines if enemy should start moving towards next tile
             if (
                 destination.grid_middle_point().x - self.speed < self.pos.x < destination.grid_middle_point().x + self.speed
             ) and (
@@ -164,10 +165,13 @@ class EnemyManager:
                 self.tile += 1
                 self.grid_pos = Coord(self.pos.x//120,self.pos.y//120)
         else:
+            # Enemies move to the right after completion of path
             self.pos += Coord(self.speed,0)
             self.display_pos: tuple = (self.pos.x - 30,self.pos.y - 30)
+            # Deal damage after completing path
             if self.pos.x >= 1980 and not self.damaged_player:
                 self.damaged_player = True
+            # Ready to despawn - handled by Level class
             if self.damaged_player == "done" or self.pos.x >= 2100:
                 EnemyManager.present.remove(self)
     
@@ -198,13 +202,3 @@ class EnemyManager:
             enemy.remove_enemy()
             enemy.movement()
             enemy.remove_attacked()
-
-## TEST ##
-#x = 0
-#test = EnemyManager()
-#while len(EnemyManager.present):
-#    x+=1
-#   print('pixel position:',test.pos,'grid position:',test.grid_pos)
-#    EnemyManager.update()
-#    if x == 20000:
-#        break

@@ -47,9 +47,9 @@ class Tower:
         Tower stats positions:
         0 - range
         1 - damage
-        2 - cooldown
-        3 - number of shots - tbd
-        4 - targeting - tbd
+        2 - cooldown - later attributed to .atk
+        3 - number of shots - not implemented
+        4 - targeting - not implemented
         5 - bouncing
         6 - number of bounces
         7 - tower cost
@@ -94,43 +94,66 @@ class Tower:
         self.atk = self.base_cooldown
 
 class Projectiles:
+    """
+    Manages projectiles fired by towers
+    Takes start : Coord and finish : Coord arguments relating to position of
+    their spawn and position where they should despawn.
+    Asset : str argument defines graphic to be displayed
+    Speed : int argument defines number of pixels travelled per frame
+    Class attributes:
+    displayed: list['Projectiles'] follows all existing projectiles
+    """
     displayed: list['Projectiles']= []
     def __init__(self,start: Coord, finish: Coord, asset: str, speed: int = 60):
         self.asset = asset
         self.start = start
+        # Self.start is constant, self.pos will be changed
         self.pos: Coord = start
         self.destination = finish
         self.speed = speed
+        # Position on screen
         self.display_pos = ((self.pos - 25).x, (self.pos - 25).y)
+        # Travelled distance
+        self.travelled = 0
+        # For clarity in init, these will be defined in separate method
         self.mov_vector = None
         self.vector_len = None
-        self.travelled = 0
         Projectiles.displayed.append(self)
     def display_update(self):
+        """Makes sure screen position stays bounded to actual position"""
         self.display_pos = ((self.pos - 25).x, (self.pos - 25).y)
     def create_vector(self):
+        """Defines mov_vector and vector_len attributes"""
         base_vector = self.destination - self.start
         self.vector_len = (base_vector.x**2 + base_vector.y**2)**0.5
+        # Vector of length 1
         normalized_vector = Coord(base_vector.x/self.vector_len,base_vector.y/self.vector_len)
+        # Vector of length equal to speed
         self.mov_vector = Coord(normalized_vector.x*self.speed,normalized_vector.y*self.speed)
     def animation (self):
+        """
+        Takes care of proper initialization, removing and movement of projectiles
+        """
         if not self.mov_vector:
             self.create_vector()
         if self.travelled > self.vector_len:
             self.remove()
         else:
+            # Move projectile
             self.pos += self.mov_vector
             self.pos.ceiling()
+            # Update travelled distance
             self.travelled += self.speed
+            # Update position on screen
             self.display_update()
     def remove(self):
+        """Deletes projectile"""
         Projectiles.displayed.remove(self)
     @classmethod
     def update(cls):
+        """Animates all projectiles"""
         for projectile in cls.displayed:
             projectile.animation()
-        if not EnemyManager.present:
-            cls.displayed = []
 
 class Tower_Manager:
     """
@@ -163,8 +186,8 @@ class Tower_Manager:
 
     towers: list['Tower_Manager'] = []
     enemies: list['EnemyManager'] = EnemyManager.present
-    # list[list[tuple: explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]]
-    explosions: list[list[tuple, int, int]] = [] 
+    # list[list[tuple: explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]] - not implemented
+    #explosions: list[list[tuple, int, int]] = [] 
 
     def __init__(self,
                  tower_type_str: str = "test_tower", 
@@ -182,18 +205,16 @@ class Tower_Manager:
         self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
         self.display_pos = (self.pos.x - 60,self.pos.y-60)
         self.own_projectiles: list[Projectiles] = []
+        # Criteria for choosing attack target. Currently only attacks the weakest.
         self.target_criteria = 'low_hp'
+        # As bouncing attacks take multiple frames, they need more attributes
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
+            # List following enemies and nearby targets for next bounce
             self.distance: list[(int,EnemyManager)] = []
             self.already_attacked: list[EnemyManager] = []
             self.next_target: EnemyManager = None
         Tower_Manager.towers.append(self)
-    #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
-    #    attack_vector : Coord = enemy_position - self.pos
-    #    attack_vector20 = Coord(20*attack_vector.x/((attack_vector.x**2 + attack_vector.y**2)**0.5),20*attack_vector.y/((attack_vector.x**2 + attack_vector.y**2)**0.5))
-    #    proj_pos : Coord = self.pos 
-    #    return proj_pos
 
     def untargetted_attack(self):
         """Manages untargetted attacks"""
@@ -204,20 +225,26 @@ class Tower_Manager:
         for projectile in self.own_projectiles:
             if projectile not in Projectiles.displayed: #Removing unnecessary reference
                 self.own_projectiles.remove(projectile)
-
-        if self.tower_type.atk !=0:#Passing time between attacks
+        #Passing time between attacks
+        if self.tower_type.atk !=0:
             self.tower_type.cooldown()
+            # Processes bouncing attacks - they take more then one frame to be completed
             if self.tower_type.bouncing:
                 if self.remaining_bounces and (self.distance or self.already_attacked):
                     for possible_target in self.distance:
-                        if possible_target[0] <= 600 and possible_target[1] not in self.already_attacked:
+                        # Finds non-attacked enemies within bounce range
+                        if possible_target[0] <= 300 and possible_target[1] not in self.already_attacked:
                             previous: EnemyManager = self.next_target
+                            # Mark enemy as attacked
                             self.already_attacked.append(possible_target[1])
                             self.next_target: EnemyManager  = possible_target[1]
                             self.next_target.take_damage(self.tower_type.dmg)
                             self.remaining_bounces -= 1
+                            # Create projectile
                             self.own_projectiles.append(Projectiles(previous.pos,self.next_target.pos,self.tower_type.projectile_asset))
+                            # Clear list of nearby enemies
                             self.distance = []
+                            # Create new one
                             for victim in self.enemies:
                                 area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
                                 self.distance.append((area, victim))
@@ -226,8 +253,10 @@ class Tower_Manager:
                 else:
                     self.distance.clear()
                     self.already_attacked.clear()
-        else:#if tower is ready to fire, it will look for enemies in range
+        #if tower is ready to fire, it will look for enemies in range
+        else:
             if self.tower_type.bouncing:
+                # Restore base bounces
                 self.remaining_bounces = self.tower_type.bouncing_count
             inrange: dict[EnemyManager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
             for enemy in Tower_Manager.enemies:
@@ -236,31 +265,35 @@ class Tower_Manager:
                     inrange[enemy] = (enemy.life)
             if not len(inrange):# returns when list length is 0
                 return
-            """
-            elif criteria == 'front':
-                value = inrange[enemy][1]
-                condition = max(inrange.values()[1])
-            elif criteria == 'back':
-                value = inrange[enemy][1]
-                condition = min(inrange.values()[1])
-            """
-        ################################every frame, UI should 
+            # Find enemies matching criteria - currently only lowest hp
             for enemy in inrange.keys():
                 if criteria == 'low_hp':
                     value = inrange[enemy]
                     condition = min(inrange.values())
-                elif criteria == 'high_hp':
-                    value = inrange[enemy]
-                    condition = max(inrange.values())
-                if value == condition: #defaults to attacking weakest enemies, might be choose-able later.$$
+                # Not implemented
+                #elif criteria == 'high_hp':
+                #    value = inrange[enemy]
+                #    condition = max(inrange.values())
+                #elif criteria == 'front':
+                #    value = inrange[enemy][1]
+                #    condition = max(inrange.values()[1])
+                #elif criteria == 'back':
+                #    value = inrange[enemy][1]
+                #    condition = min(inrange.values()[1])
+                if value == condition:
                     target = enemy
-                    if self.tower_type.aoe: #checks if the tower has aoe damage and which enemies are in range of it
+                    # Determine attack type
+                    if self.tower_type.aoe: 
                         for victims in self.enemies:
+                            # Determine distance between first and surrounding targets
                             area = ((victims.pos.x - target.pos.x)**2 + (victims.pos.y - target.pos.y)**2)**0.5
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
+                        # Create projectiles
                         self.own_projectiles.append(Projectiles(self.pos, enemy.pos, self.tower_type.projectile_asset))
-                        Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.y - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
+                        # Explosion animation - not implemented
+                        #Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.y - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
+                        # Restore cooldown
                         self.tower_type.setbasecooldown()
                         break
                     elif self.tower_type.bouncing:
@@ -270,6 +303,7 @@ class Tower_Manager:
                         self.already_attacked = [self.next_target]
                         #for bounce in range(self.tower_type.bouncing_count):
                         self.distance = []
+                        # Explained in first if in Attack()
                         for victim in self.enemies:
                             area = ((victim.pos.x - self.next_target.pos.x)**2 + (victim.pos.y - self.next_target.pos.y)**2)**0.5
                             self.distance.append((area, victim))
@@ -283,7 +317,7 @@ class Tower_Manager:
                         break
 
     def upgrade(self, tower_name : str):
-        """This method upgrades a chosen tower""" 
+        """This method upgrades a chosen tower by deleting old an placing new""" 
         pos = self.pos
         new_tower = Tower_Manager(tower_name,pos)
         Tower_Manager.towers.remove(self)
