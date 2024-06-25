@@ -880,14 +880,23 @@ class UI():
         # Blit background
         self.screen.blit(background, (0, 0))
         # Get shadow offsets
+        shadow_offset_x = (mouse_pos[0] - self.RESOLUTION[0] // 2) // 20
+        shadow_offset_y = (mouse_pos[1] - self.RESOLUTION[1] // 2) // 20
+
         # Blit text
         for text, is_enlarged in credits:
             if is_enlarged:
-                text_surface = large_font.render(text, True, (255, 255, 255))
+                text_surface = large_font.render(text, False, (255, 255, 255))
+                shadow_surface = large_font.render(text, False, (100, 100, 100))
             else:
-                text_surface = font.render(text, True, (255, 255, 255))
+                text_surface = font.render(text, False, (255, 255, 255))
+                shadow_surface = font.render(text, False, (100, 100, 100))
             
             text_rect = text_surface.get_rect(center=(UI.RESOLUTION[0] / 2, start_y))
+            shadow_rect = text_rect.copy()  # Create a copy of the text rect to use for the shadow
+            shadow_rect.x -= shadow_offset_x  # Adjust x coordinate for the shadow
+            shadow_rect.y -= shadow_offset_y  # Adjust y coordinate for the shadow
+            self.screen.blit(shadow_surface, shadow_rect)
             self.screen.blit(text_surface, text_rect)
             start_y += text_surface.get_height() + line_spacing
         
