@@ -9,22 +9,14 @@ class Tower:
         Class Attibutes:
         tower_types (dict): A class-level dictionary defining different types of towers and their properties.
 
-
         Instance Attributes:
         range (int): The tower's attack range in pixels.
-        
         dmg (int): The damage the tower deals when attacking an enemy.
-        
         atk (int): The time between subsequent attacks in frames.
-        
         shot_count (int): The number of projectiles fired by the tower.
-        
         targeting (bool): Indicates if the tower targets a specific enemy or fires projectiles in defined directions.
-        
         bouncing (int): Indicates if the projectiles will bounce towards other nearby enemies after the initial attack.
-        
         cost (int): The cost of the tower.
-        
         base_cooldown (int): The base cooldown time between attacks.
 
         Methods:
@@ -69,7 +61,7 @@ class Tower:
     tower_upgrades = (("Algebra_basic", "Algebra_LT", "Algebra_complex_"),
                       ("Analysis_basic", "Analysis_calculus_specialist", "Analytic_functions_specialist"),
                       ("Programming_basic", "Programming_object", "Programing_spaghetti_decoder"))
-    def __init__(self, tower_type : str = "test_tower") -> None:
+    def __init__(self, tower_type: str = "test_tower") -> None:
         """
         Initializes a tower with the specified type.
 
@@ -102,11 +94,11 @@ class Tower:
         self.atk = self.base_cooldown
 
 class Projectiles:
-    displayed : list['Projectiles']= []
-    def __init__(self,start : Coord, finish : Coord, asset : str, speed : int = 60):
+    displayed: list['Projectiles']= []
+    def __init__(self,start: Coord, finish: Coord, asset: str, speed: int = 60):
         self.asset = asset
         self.start = start
-        self.pos : Coord = start
+        self.pos: Coord = start
         self.destination = finish
         self.speed = speed
         self.display_pos = ((self.pos - 25).x, (self.pos - 25).y)
@@ -145,63 +137,57 @@ class Tower_Manager:
     Manages tower instances, handling their placement, attacks, and interactions with enemies.
 
     Class Attributes:
-    towers (list['Tower_Manager']): attribute storing all currently placed towers.
-    
-    enemies (list['Enemy']): attribute referencing the list of active enemies from the EnemyManager class.
+    towers (list['Tower_Manager']): Attribute storing all currently placed towers.
+    enemies (list['Enemy']): Attribute referencing the list of active enemies from the EnemyManager class.
+    explosions (list[list[tuple, int, int]]) : List of ongoing explosions.
     
     Attributes:
     tower_type (Tower): The tower instance being managed.
-    
     pos (Coord): The position of the tower on the map.
-    
     display_pos (tuple): The display position of the tower for UI purposes.
 
     Methods:
     __init__(tower_type_str: str = "test_tower", pos: Coord = Coord(0, 0)) -> None:
         Initializes a tower at the specified position with the specified type.
-
     attack():
         Manages the tower's attacks, targeting the weakest enemy within range if the tower is ready to fire.
     
     Class methods:
     update():
         Updates all active towers, managing their attacks every frame.
-    
     reset():
         Clears all towers, typically used when starting a new game.
-
     get_tower_positions(cls) -> dict[Coord, str]:
         Returns all towers currently on the map as dict keyed by their positions and valued with corresponding tower names.
     """
 
-    towers : list['Tower_Manager'] = []
-    enemies : list['EnemyManager'] = EnemyManager.present
-    #list of ongoing explosions - list[list[tuple : explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]]
-    explosions : list[list[tuple, int, int]] = [] 
-
+    towers: list['Tower_Manager'] = []
+    enemies: list['EnemyManager'] = EnemyManager.present
+    # list[list[tuple: explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]]
+    explosions: list[list[tuple, int, int]] = [] 
 
     def __init__(self,
-                 tower_type_str : str = "test_tower", 
-                 pos : Coord = Coord(0, 0)) -> None:
+                 tower_type_str: str = "test_tower", 
+                 pos: Coord = Coord(0, 0)) -> None:
         """
         Initializes a tower at the specified position with the specified type.
 
         Arguments:
-        tower_type_str : str
+        tower_type_str (str):
             The type of tower to be created (default is "test_tower").
-        pos : Coord
+        pos (Coord):
             The position to place the tower on the map.
         """
         self.tower_type = Tower(tower_type_str)
         self.pos = Coord((pos.x//120)*120,(pos.y//120)*120) + 60
         self.display_pos = (self.pos.x - 60,self.pos.y-60)
-        self.own_projectiles : list[Projectiles] = []
+        self.own_projectiles: list[Projectiles] = []
         self.target_criteria = 'low_hp'
         if self.tower_type.bouncing:
             self.remaining_bounces = self.tower_type.bouncing_count
-            self.distance : list[(int,EnemyManager)] = []
-            self.already_attacked : list[EnemyManager] = []
-            self.next_target : EnemyManager = None
+            self.distance: list[(int,EnemyManager)] = []
+            self.already_attacked: list[EnemyManager] = []
+            self.next_target: EnemyManager = None
         Tower_Manager.towers.append(self)
     #def projectile(self,enemy_position : Coord,projectile_pos : Coord):
     #    attack_vector : Coord = enemy_position - self.pos
@@ -225,9 +211,9 @@ class Tower_Manager:
                 if self.remaining_bounces and (self.distance or self.already_attacked):
                     for possible_target in self.distance:
                         if possible_target[0] <= 600 and possible_target[1] not in self.already_attacked:
-                            previous : EnemyManager = self.next_target
+                            previous: EnemyManager = self.next_target
                             self.already_attacked.append(possible_target[1])
-                            self.next_target : EnemyManager  = possible_target[1]
+                            self.next_target: EnemyManager  = possible_target[1]
                             self.next_target.take_damage(self.tower_type.dmg)
                             self.remaining_bounces -= 1
                             self.own_projectiles.append(Projectiles(previous.pos,self.next_target.pos,self.tower_type.projectile_asset))
@@ -243,7 +229,7 @@ class Tower_Manager:
         else:#if tower is ready to fire, it will look for enemies in range
             if self.tower_type.bouncing:
                 self.remaining_bounces = self.tower_type.bouncing_count
-            inrange : dict[EnemyManager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
+            inrange: dict[EnemyManager, Enemy.life]= {}#this dict will contain enemies in range as keys and their hp as values
             for enemy in Tower_Manager.enemies:
                 distance = ((enemy.pos.x - self.pos.x)**2 + (enemy.pos.y - self.pos.y)**2)**0.5#calculates distance between tower and enemy
                 if distance <= self.tower_type.range: #lists enemies within range (idea: we could use non-carthesian spaces)$$ #############coord class required###########
@@ -321,7 +307,7 @@ class Tower_Manager:
 
     @classmethod
     def update(cls):
-        """Updates all active towers, managing their attacks every frame."""
+        """Update all active towers, managing their attacks every frame."""
         cls.enemies = EnemyManager.present #update enemy list
         for tower in cls.towers:
             tower.attack()
@@ -330,11 +316,11 @@ class Tower_Manager:
 
     @classmethod
     def reset(cls):
-        """Clears all towers, when new game starts"""
+        """Clearsall towers, when new game starts"""
         cls.towers = [] # clearing list
         
     def load_lvl():
-        """Clears old data and resets towers, used when loading a new level."""
+        """Clear old data and reset towers, used when loading a new level."""
         Tower_Manager.reset()
 
     @classmethod

@@ -41,94 +41,81 @@ class UI():
 
     Methods:
         __init__(player_name: str) -> None: Initializes the UI instance and sets up the display and initial variables.
-        
         process_input(map: mp, player: Player) -> None: Processes user input from the keyboard and mouse.
-        
         intro() -> None: Displays the intro sequence.
         main_menu() -> bool: Displays the main menu and handles menu interactions.
         outro() -> None: Placeholder for the outro sequence.
-        
         update(gold: int, lives: int, enemies: list) -> None: Updates the game display each frame.
         hud(gold: int, lives: int, map : mp) -> None: Draws the HUD elements on the screen.
-        
         load_lvl(number_of_waves: int = 3, current_wave: int = 0, map_name: str = "TEST_1", 
                  towers_names: dict = {"test_tower": "tower_placeholder.png"}, 
                  bullets_names: dict = {"test_bullet": "bullet_placeholder.png"}, 
                  enemies_names: dict = {"test_enemy": "enemy_placeholder.png"}) -> None: 
                  Loads level graphics and initializes level variables.
-
-        reset_state(cls) -> None: Resets state dict keys to all False
-
-        skip_frames(self, num_of_frames_2_skip : int) -> bool: Determines if the frame should be displayed or skipped based on the speed up states.
-
-        accessibility_rectangle(self, tile_size : int, map : mp) -> bool:   Checks if a position on the game map, based on the current mouse position, 
-                                                                            is suitable for placing a tower and visually indicates this with a colored rectangle.
+        reset_state(cls) -> None: Resets state dict keys to all False.
+        skip_frames(self, num_of_frames_2_skip: int) -> bool: Determines if the frame should be displayed or skipped based on the speed up states.
+        accessibility_rectangle(self, tile_size: int, map: mp) -> bool: Checks if a position on the game map, based on the current mouse position, 
+                                                                        is suitable for placing a tower and visually indicates this with a colored rectangle.
     """
     # Game state for adjusting what gets displayed and how
-    state : dict[str, bool] = {key: False for key in 
+    state: dict[str, bool] = {key: False for key in 
                                ["wave", "buy tower", "pause", "speed up", "speed up more", 
                                 "not enough gold", "towers alg", "towers ana", "towers pro", "game over"]}
-    """
-    State includes: 
-    'wave', 'buy tower', 'pause', 'speed up', 'speed up more', 
-    'not enough gold', 'towers alg', 'towers ana', 'towers pro'"""
     
     # Constant parameters
-    FPS : int = 60 # framerate
-    RESOLUTION : tuple[int, int] = 1920, 1080
+    FPS: int = 60 # framerate
+    RESOLUTION: tuple[int, int] = 1920, 1080
 
     # Constructor
-    def __init__(self, root_directory : str) -> None:
+    def __init__(self, root_directory: str) -> None:
         """
-        Initializes the UI class.
-
         Sets up the game window, initializes utility variables, and loads HUD elements.
 
-        Args:
+        Argumentss:
             root_directory (str): Path to the main calogue f the repository for relative path operations.
         """
         # SET UP WONDOW AND PYGAME
         # initialize Pygame
         pygame.init()
         # set up the full-screen mode and resolution
-        self.screen : pygame.Surface = pygame.display.set_mode(self.RESOLUTION, pygame.FULLSCREEN)
+        self.screen: pygame.Surface = pygame.display.set_mode(self.RESOLUTION, pygame.FULLSCREEN)
         # set the title of the window
         pygame.display.set_caption("STUDENTS DEFENSE")
 
         # INITIALIZE UTILITY VARIABLES
         # variable for menaging frame rate
-        self.clock : pygame.time.Clock = pygame.time.Clock() 
+        self.clock: pygame.time.Clock = pygame.time.Clock() 
         # varibles for menaging user mouse input
-        self.mouse_click : bool = False 
-        self.pos : tuple = pygame.mouse.get_pos()
+        self.mouse_click: bool = False 
+        self.pos: tuple = pygame.mouse.get_pos()
 
         # SET ASSETS PATHS
-        self.gfx_path : str = os.path.join(root_directory, "Assets", "gfx")
+        self.gfx_path: str = os.path.join(root_directory, "Assets", "gfx")
         # audio path (in the future)
 
         # SET AND LOAD HUD ELEMENTS
-        self.font : pygame.font.Font = pygame.font.SysFont("Consolas", 50)
-        self.hp_font : pygame.font.Font = pygame.font.SysFont("Consolas", 20)
+        self.font: pygame.font.Font = pygame.font.SysFont("Consolas", 50)
+        self.hp_font: pygame.font.Font = pygame.font.SysFont("Consolas", 20)
 
         # Save root directory to an atribute
-        self.directory : str = root_directory
+        self.directory: str = root_directory
 
         # Frame counter for speeding up the displaying the game
-        self.frame_counter : int = 0
+        self.frame_counter: int = 0
 
         # Default value for currently being bought tower
-        self.tower_being_bought : str = None
-        self.tower_being_bought_type : str = None
+        self.tower_being_bought: str = None
+        self.tower_being_bought_type: str = None
 
         # Load graphics
         self.load_gfx(root_directory)
 
         # Towers to be currently displayed in HUD
-        self.HUD_towers_displayed : list[str] = [self.tower_upgreades[0][0], 
+        self.HUD_towers_displayed: list[str] = [self.tower_upgreades[0][0], 
                                                  self.tower_upgreades[1][0],
                                                  self.tower_upgreades[2][0]]
 
-    def load_gfx(self, root_directory : str) -> None:
+    def load_gfx(self, root_directory: str) -> None:
         # Button graphics
         # File names
         file_names = ["Exit.png", "Fast_forward_NA.png", 
@@ -137,32 +124,32 @@ class UI():
         # Keys for buttons dictionaries
         keys = ["exit", "ff_NA", "ff_off", "ff", "ff_2", "pause", "play"]
         # Button images dict
-        self.buttons : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
+        self.buttons: dict = {key: pygame.image.load(os.path.join(self.gfx_path, "HUD", button))
                                 for key, button in zip(keys, file_names)}
-        self.buttons_L : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
+        self.buttons_L: dict = {key: pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
                                     for key, button in zip(keys, file_names)}
         """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
         # Interface icons
-        self.icons : dict = {"heart": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Heart.png")),
+        self.icons: dict = {"heart": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Heart.png")),
                              "coin": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Coin.png")),
                              "player": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Player.png")),
                              "wave": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Wave.png"))}
         
         # Towers graphics
-        self.tower_upgreades : tuple[tuple[str, str, str]] = Tower.tower_upgrades
+        self.tower_upgreades: tuple[tuple[str, str, str]] = Tower.tower_upgrades
         towers_names = []
         for tw in self.tower_upgreades:
             towers_names.extend(list(tw))
-        self.towers_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "towers", name + ".png")) 
+        self.towers_gfx: dict = {name: pygame.image.load(os.path.join(self.gfx_path, "towers", name + ".png")) 
                                     for name in towers_names}
-        self.towers_HUD_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", name + ".png")) 
+        self.towers_HUD_gfx: dict = {name: pygame.image.load(os.path.join(self.gfx_path, "HUD", name + ".png")) 
                                         for name in towers_names}
-        self.towers_HUD_gfx_L : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
+        self.towers_HUD_gfx_L: dict = {name: pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", name + ".png")) 
                                         for name in towers_names}
         
         # Projectiles graphics
         self.projectiles_gfx = dict({})
-        self.projectiles_gfx : dict = {proj[-1] : pygame.image.load(os.path.join(self.gfx_path, "bullets", proj[-1]))
+        self.projectiles_gfx: dict = {proj[-1] : pygame.image.load(os.path.join(self.gfx_path, "bullets", proj[-1]))
                                             for proj in Tower.tower_types.values() if proj[-1] not in self.projectiles_gfx}
 
         # Context windows:
@@ -213,14 +200,15 @@ class UI():
 
 
     # Input
-    def process_input(self, map : mp, player : Player) -> bool:
+    def process_input(self, map: mp, player: Player) -> bool:
         """
         Processes user input from the keyboard and mouse.
 
         Handles events such as quitting the game, pausing the game, and mouse clicks 
         for interactions like starting a wave, buying a tower, and exiting the game.
 
-        Args:
+        Argument
+        s:
             map (mp): The current game map.
             player (Player): The player instance.
 
@@ -247,19 +235,15 @@ class UI():
                 self.mouse_click = True
                 self.pos = pygame.mouse.get_pos()
 
-        # Process mouse press
-        # (Spaghetti code, needs restructuring when more options will be programmed)
+     
         if self.mouse_click:
-
             # Unpack mouse position
             x, y = self.pos
             # Click at HUD (below map)
             if y > 860:
-
                 # Exit button
                 if x > 1700:
                     return True
-                
                 # Play/Pause button
                 if x > 1460:
                     # If wave did not start yet, start it
@@ -294,7 +278,7 @@ class UI():
                 # Place tower
                 if UI.state["buy tower"]:
                     # Cast mouse position to coord type
-                    tile : Coord = Coord.res2tile(self.pos) 
+                    tile: Coord = Coord.res2tile(self.pos) 
                     # Set tower on the grid if tile empty
                     if map.tile_accessibility(tile):
                         # whether enough money
@@ -314,7 +298,7 @@ class UI():
                 # Upgreade tower
                 else:
                     # Cast mouse position to coord type
-                    tile : Coord = Coord.res2tile(self.pos)
+                    tile: Coord = Coord.res2tile(self.pos)
                     # Get towers currently on the map with their positions
                     towers = Tower_Manager.get_tower_positions()
                     # Show upgreades if the tile has tower on it
@@ -350,17 +334,7 @@ class UI():
 
     # Menus
     def intro(self) -> None:
-        """
-
-        MARTA, JAKBYS MIALA JAKIES PYTANIA PISZ ;) WOJTEK
-
-        Displays the intro screen with a title animation.
-
-        Writes down the title "Hello World!" character by character in the center 
-        of the screen with a delay for a visual effect.
-
-        --- Temporary intro to test functionality ---
-        """
+        """Display the intro screen with a title animation."""
         # Write down title character by character on the center of the screen
         font = pygame.font.SysFont('Consolas', 200)
         title = "Hello World!"
@@ -395,8 +369,8 @@ class UI():
             player (Player): Player instance for player name access.
 
         Returns:
-            str:    "start" if the start button is pressed, 
-                    "quit" if the quit button is pressed
+            str: "start" if the start button is pressed, 
+                  "quit" if the quit button is pressed
         """
         # Load background graphic
         main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu.png"))
@@ -459,11 +433,7 @@ class UI():
             self.clock.tick(self.FPS)
 
     def outro(self) -> None:
-        """
-        Displays the outro screen.
-
-        Placeholder for the outro screen functionality.
-        """
+        """Display the outro screen."""
         # Write down title character by character on the center of the screen
         font = pygame.font.SysFont('Consolas', 200)
         title = "Have a nice day!"
@@ -490,8 +460,6 @@ class UI():
 
     def high_scores(self) -> None:
         """
-        Displays High Scores.
-
         Loads High Scores from file and displays them.
         Waits for user to exit back to main menu vie ESCAPE button press.
         """
@@ -533,12 +501,9 @@ class UI():
     # In-frame updates
     def update(self, gold : int, lives : int, enemies : list, map : mp) -> None:
         """
-        Updates and renders the game state.
+        Updates and renders the game state(game background, towers, enemies, and HUD elements on the screen)
 
-        Draws the game background, towers, enemies, and HUD elements on the screen.
-        Updates the display with the current game state.
-
-        Args:
+        Arguments:
             gold (int): The current amount of gold the player has.
             lives (int): The current number of lives the player has.
             enemies (list): A list of active enemies to display on the screen.
@@ -556,11 +521,9 @@ class UI():
         # background
         self.screen.blit(self.map_gfx, (0, 0))
 
-        # towers
         for tower in Tower_Manager.towers:
             self.screen.blit(self.towers_gfx[tower.tower_type.tower_asset[:-4]], tower.display_pos)
 
-        # enemies
         if UI.state["wave"]:
             self.enemies : list[EnemyManager] = enemies
             for enemy in self.enemies:
@@ -583,8 +546,6 @@ class UI():
     def hud(self, gold : int, lives : int, map : mp) -> None:
         """
         Displays the HUD (heads-up display) elements on the screen.
-
-        Renders the player's name, gold, lives, wave number, and action buttons on the HUD.
 
         Args:
             gold (int): The current amount of gold the player has.
@@ -714,9 +675,9 @@ class UI():
         """
         # Load graphics
         self.map_gfx = pygame.image.load(os.path.join(self.gfx_path, "maps", f"{map_name}.png"))
-        self.bullets_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
+        self.bullets_gfx: dict = {name: pygame.image.load(os.path.join(self.gfx_path, "bullets", file))
                                     for name, file in bullets_names.items()}  
-        self.enemies_gfx : dict = {name : pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
+        self.enemies_gfx : dict = {name: pygame.image.load(os.path.join(self.gfx_path, "enemies", file))
                                     for name, file in enemies_names.items()}
         
         # Set remaining atributes
@@ -725,12 +686,12 @@ class UI():
         self.player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
         self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
 
-    def handle_name_change(self, current_player_name : str, background : pygame.image) -> str:
+    def handle_name_change(self, current_player_name: str, background: pygame.image) -> str:
         """
         Displays input box for user to input new name and updates it live while user is typing.
 
         Parameters:
-            current_player_name (str) : Current name of the player to display at the beggining.
+            current_player_name (str): Current name of the player to display at the beggining.
 
         Returns:
             str - New user name.
@@ -772,25 +733,25 @@ class UI():
 
     def reset_state(self) -> None:
         """Resets state dict to all False and HUD towers displayed to basic towers"""
-        UI.state = {key : False for key in UI.state.keys()}
+        UI.state = {key: False for key in UI.state.keys()}
         self.HUD_towers_displayed = [self.tower_upgreades[0][0], 
                                      self.tower_upgreades[1][0],
                                      self.tower_upgreades[2][0]]
 
-    def skip_frames(self, num_of_frames_2_skip : int) -> bool:
+    def skip_frames(self, num_of_frames_2_skip: int) -> bool:
         """
-        The method increments an internal frame counter each time it is called. If the counter is less than 
+        Increments an internal frame counter each time it is called. If the counter is less than 
         `num_of_frames_2_skip`, the function will return True, indicating the frame should be skipped. Once the counter 
         reaches `num_of_frames_2_skip`, it is reset to zero and the function returns False, indicating the frame 
         should not be skipped and processing should take place.
 
-        Parameters:
-        num_of_frames_2_skip (int): The number of frames to skip before processing a frame. This value determines
+        Parametrs:
+            num_of_frames_2_skip (int): The number of frames to skip before processing a frame. This value determines
                                     how frequently the frames are processed (e.g., if set to 3, every 4th frame 
                                     will be processed).
 
         Returns:
-        bool: Returns True if the current frame should be skipped, False if it should be processed.
+            bool: Returns True if the current frame should be skipped, False if it should be processed.
         """
         self.frame_counter += 1
         # Ommit frame three times out of four
@@ -800,11 +761,11 @@ class UI():
         self.frame_counter = 0
         return False
     
-    def buy_tower_mode(self, tower_name : str, player : Player) -> None:
+    def buy_tower_mode(self, tower_name: str, player: Player) -> None:
         """
         Handles interactions with the tower HUD, managing tower selection and purchasing logic.
 
-        Args:
+        Arguments:
             tower_name (str): Name of the tower that was clicked.
             player (Player): Player object, to check for affordability.
         """
@@ -826,11 +787,11 @@ class UI():
         Checks if a position on the game map, based on the current mouse position, is suitable for placing a tower and visually indicates this with a colored rectangle.
 
         Parameters:
-        tile_size (int): The size of each tile on the map, used to calculate the exact tile position from the mouse coordinates.
-        map (Map): The game map object that contains the tile accessibility information.
+            tile_size (int): The size of each tile on the map, used to calculate the exact tile position from the mouse coordinates.
+            map (Map): The game map object that contains the tile accessibility information.
 
         Returns:
-        bool:   Returns True if the tile at the mouse position is accessible for placing a tower, otherwise False. 
+            bool: Returns True if the tile at the mouse position is accessible for placing a tower, otherwise False. 
                 If the mouse position is outside the main map area, it also returns False.
 
         Side Effects:

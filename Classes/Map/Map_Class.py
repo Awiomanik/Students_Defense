@@ -1,12 +1,9 @@
-# IMPORTS
 from ..Utilities import Coord
 import os
 
 class Map():
     """
-    A class to manage and interact with map data. This class allows for 
-    the loading, parsing, and representation of map data which includes grid-based accessibility of tiles, 
-    paths for entities within the game and map name.
+    Manages and interacts with map data (loading, parsing, and representing map data).
 
     Attributes:
         name (str): The name of the map.
@@ -20,16 +17,14 @@ class Map():
         __init__(self, name: str = "TEST_1", map_data_directory: str = None):
             Initializes a Map instance with a specified name and data directory. Loads the map data from the
             corresponding file within the provided or default directory.
-
         load_map_data(self, path: str):
             Loads and parses map data from a specified file path. This method updates the map's attributes
             based on the contents of the file including the name, grid configuration, and paths.
-
-        tile_accessibility(self, tile : Coord) -> bool:
+        tile_accessibility(self, tile: Coord) -> bool:
             Checks if given tile is blocked or accessible to place tower.
     """
 
-    def __init__(self, root_directory : str, name : str = "TEST_1") -> None:
+    def __init__(self, root_directory: str, name: str = "TEST_1") -> None:
         """
         Initializes a new instance of the Map class, loading map data from a specified file within a directory.
 
@@ -38,10 +33,10 @@ class Map():
         it defaults to a 'maps' subdirectory located relative to this module's path. The initialization process involves
         parsing the map's metadata, grid data for accessibility, and paths if available.
 
-        Args:
+        Arguments:
             name (str): The default name of the map if not specified otherwise, used to locate the corresponding map data file.
                         Defaults to "TEST_1", implying that the file "TEST_1_map.dat" should exist in the specified directory.
-            root_directory (str, optional): The root directory of the repository for relative path operations.
+            root_directory (str): The root directory of the repository for relative path operations.
                                             If not provided, it defaults to a 'maps' directory relative to the location of this module's file.
 
         Raises:
@@ -51,35 +46,30 @@ class Map():
         """
         map_data_directory = os.path.join(root_directory, "Assets", "gfx", "maps")
 
-        # Combain the file path
         file_path = os.path.join(map_data_directory, f"{name}.dat")
 
-        # Initialize atributes
-        self.name = name # temporary name (stays if "Name: xyz" not found in the file)
-        self.paths = ()
-        self.grid = []
+        self.name: str = name
+        self.paths: tuple = ()
+        self.grid: list = []
 
-        # Parse the data
         self.load_map_data(file_path)
 
-    def load_map_data(self, path : str) -> None:
+    def load_map_data(self, path: str) -> None:
         """
-        Load and parse the map data from a file.
+        Loads and parses the map data from a file.
 
-        Args:
+        Arguments:
             path (str): The file path from which to load the map data.
         
         This method parses the map data file, updating the attributes of the map object
         based on the contents of the file. It reads the map's name, grid configuration, and enemies paths.
         """
-        # Open file
         try:
             with open(path, 'r') as file:
                 data = file.readlines()
         except FileNotFoundError:
             print(f"Map data file not found: {path}")
-            
-        # Parse each line
+
         for i, line in enumerate(data):
             line = line.strip()
 
@@ -123,7 +113,7 @@ class Map():
                 # Convert list of paths into inmutable type (tuple)
                 self.paths = tuple(temp_paths)
 
-    def tile_accessibility(self, tile : Coord) -> bool:
+    def tile_accessibility(self, tile: Coord) -> bool:
         """
         Checks if given tile is blocked or accessible to place tower.
         

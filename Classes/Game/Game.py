@@ -1,4 +1,3 @@
-# IMPORTS
 from ..UI import UI
 from ..Level import Test_Level
 from ..Player.Player import Player
@@ -31,16 +30,11 @@ class Game():
             display_intro (bool): Whether to display the intro screen. Defaults to True.
             display_outro (bool): Whether to display the outro screen. Defaults to True.
         """
-        # Player with placeholder atributes, player is fully initialized when level start
+        
         self.player = Player("Guest", 0, 0)
-
-        # Set root_directory
         self.root_directory = root_directory
-
-        # INITIALIZE HELPER CLASSES
         self.ui = UI.UI(self.root_directory)
 
-        # DISPLAY INTRO
         if display_intro:
             self.ui.intro()
 

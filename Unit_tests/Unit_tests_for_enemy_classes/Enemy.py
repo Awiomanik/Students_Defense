@@ -1,6 +1,5 @@
-"""This module contains Enemy Class and EnemyManager class."""
-from ...Utilities import Coord
-from ...Map.Map_Class import Map
+from ..Utilities import Coord
+from ..Map.Map_Class import Map
 from typing import Type, Self
 
 
