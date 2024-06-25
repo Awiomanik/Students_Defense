@@ -45,7 +45,7 @@ class Game():
             if self.main_menu():
 
                 # LOAD LEVEL
-                self.load_level()
+                self.load_level(self.main_menu())
 
                 # MAIN GAMEPLAY LOOP
                 self.gameplay()
@@ -69,8 +69,11 @@ class Game():
         """
         choosen_option = self.ui.main_menu(self.player)
 
-        if choosen_option == "start":
-            return True
+        if choosen_option == "demo":
+            return "TEST"
+        
+        elif choosen_option == "truancy":
+            return "TRUANCY"
 
         elif choosen_option == "quit":
             return False
@@ -78,7 +81,7 @@ class Game():
         else:
             raise ValueError(f"ui.main_manu method returned unknown value: {choosen_option}")
 
-    def load_level(self) -> None:
+    def load_level(self, level : str = "TEST") -> None:
         """
         Loads the game level.
 
@@ -89,7 +92,7 @@ class Game():
         Tower_Manager.reset()
         # Initialize level
         Test_Level.Level.reset()
-        self.level = Test_Level.Level("TEST", self.root_directory)
+        self.level = Test_Level.Level(level, self.root_directory)
 
         # Load level data to UI
         self.ui.reset_state()
