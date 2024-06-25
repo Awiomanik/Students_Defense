@@ -147,6 +147,11 @@ class UI():
         self.buttons_L : dict = {key : pygame.image.load(os.path.join(self.gfx_path, "HUD", "HUD_L", button))
                                     for key, button in zip(keys, file_names)}
         """Buttons include: 'exit', 'ff_NA', 'ff_off', 'ff', 'ff_2', 'pause', 'play'"""
+        # Interface icons
+        self.icons : dict = {"heart": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Heart.png")),
+                             "coin": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Coin.png")),
+                             "player": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Player.png")),
+                             "wave": pygame.image.load(os.path.join(self.gfx_path, "HUD", "Wave.png"))}
         
         # Towers graphics
         self.tower_upgreades : tuple[tuple[str, str, str]] = Tower.tower_upgrades
@@ -613,13 +618,17 @@ class UI():
                 hover = "tower 0"
 
         # Player name
-        self.screen.blit(self.player_name_gfx, (20, 845))
+        self.screen.blit(self.icons["player"],(20,845))
+        self.screen.blit(self.font.render(f"{self.player_name}", False, (0, 0, 0)), (100, 855))
         # Player money
-        self.screen.blit(self.font.render(f"Gold:    {gold}", False, (0, 0, 0)), (20, 905))
+        self.screen.blit(self.icons["coin"],(20,905))
+        self.screen.blit(self.font.render(f"{gold}", False, (0, 0, 0)), (100, 915))
         # Lives
-        self.screen.blit(self.font.render(f"Lives:   {lives}", False, (0, 0, 0)), (20, 965))
+        self.screen.blit(self.icons["heart"],(20,965))
+        self.screen.blit(self.font.render(f"{lives}", False, (0, 0, 0)), (100, 975))
         # Wave number
-        self.screen.blit(self.font.render(f"Wave:    {self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (20, 1025))
+        self.screen.blit(self.icons["wave"],(20,1025))
+        self.screen.blit(self.font.render(f"{self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (100, 1035))
         
         # Buttons
         # Exit
@@ -718,7 +727,7 @@ class UI():
         # Set remaining atributes
         self.number_of_waves = number_of_waves
         self.current_wave = current_wave + 1
-        player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
+        self.player_name = player_name if len(player_name) < 20 else player_name[:17] + "..."
         self.player_name_gfx = self.font.render("Player:  " + player_name, False, (0, 0, 0))
 
     def handle_name_change(self, current_player_name : str, background : pygame.image) -> str:
