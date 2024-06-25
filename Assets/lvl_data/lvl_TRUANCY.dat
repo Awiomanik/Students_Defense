@@ -1,9 +1,16 @@
 Map: Truancy
-Gold: 300
-Lives: 10
+Gold: 10
+Lives: 20
 Wave 1: 5-Marta
 Wave 2: 10-Marta
-Wave 3: 50-Marta
+Wave 3: 20-Marta
+Wave 4: 15-Marta, 10-Mati
+Wave 5: 10-Mati, 10-Marta, 10-Mati, 15-Marta
+Wave 6: 5-Mati, 5-Marta, 10-Mati, 10-Marta, 5-Mati, 10-Olaf
+Wave 7: 60-Olaf
+Wave 8: 10-Mati, 10-Marta, 40-Olaf, 10-Wojtek, 10-Olaf, 10-Wojtek
+Wave 9: 20-Mati, 20-Marta, 20-Mati, 20-Marta, 20-Wojtek, 20-Olaf, 30-Wojtek
+Wave 10: 50-Mati, 50-Marta, 50-Olaf, 100-Wojtek
 Available_towers: Algebra_basic, Analysis_basic, Programming_basic
 
 standard for writing waves:

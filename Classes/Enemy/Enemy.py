@@ -20,9 +20,9 @@ class Enemy:
     """
 
     enemy_types = {'Marta': {'hp': 3, 'speed': 5},
-                   'Mati': {'hp': 5, 'speed': 3},
-                   'Olaf': {'hp': 4, 'speed': 5},
-                   'Wojtek': {'hp': 6, 'speed': 6}}
+                   'Mati': {'hp': 6, 'speed': 3},
+                   'Olaf': {'hp': 4, 'speed': 7},
+                   'Wojtek': {'hp': 6, 'speed': 8}}
 
     def __init__(self, enemy_type: str = 'test_enemy'):
         """

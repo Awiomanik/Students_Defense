@@ -614,16 +614,16 @@ class UI():
 
         # Player name
         self.screen.blit(self.icons["player"],(20,845))
-        self.screen.blit(self.font.render(f"{self.player_name}", False, (0, 0, 0)), (100, 855))
+        self.screen.blit(self.font.render(f"{self.player_name}", False, (0, 0, 0)), (100, 845))
         # Player money
         self.screen.blit(self.icons["coin"],(20,905))
-        self.screen.blit(self.font.render(f"{gold}", False, (0, 0, 0)), (100, 915))
+        self.screen.blit(self.font.render(f"{gold}", False, (0, 0, 0)), (100, 905))
         # Lives
         self.screen.blit(self.icons["heart"],(20,965))
-        self.screen.blit(self.font.render(f"{lives}", False, (0, 0, 0)), (100, 975))
+        self.screen.blit(self.font.render(f"{lives}", False, (0, 0, 0)), (100, 965))
         # Wave number
         self.screen.blit(self.icons["wave"],(20,1025))
-        self.screen.blit(self.font.render(f"{self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (100, 1035))
+        self.screen.blit(self.font.render(f"{self.current_wave}/{self.number_of_waves}", False, (0, 0, 0)), (100, 1030))
         
         # Buttons
         # Exit

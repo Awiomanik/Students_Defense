@@ -37,27 +37,27 @@ class Tower:
         setbasecooldown():
             Resets the attack cooldown to the base cooldown value
         """
-#######################################################dmg##no of shots#####bounce#######cost########aoe range##################################projectile asset
-############################################## range ######### cd ####### target no of b.##### aoe ############# tower asset ##########################
-    tower_types = {"test_tower_1"                 : (300, 1, 60  ,  1, True , False, None, 1 ,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "test_tower_2"                 : (180, 2, 60  ,  1, True ,  True,    2, 1 , False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "Algebra_basic"                : (500, 2, 60 ,  1, True , False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
-                   "Algebra_LT"                   : (500, 2, 60  ,  1, True ,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
-                   "Algebra_complex_"             : (700, 4, 60  ,  1, True, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
-                   "Analysis_basic"               : (300, 2, 45   , 1, True,  False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
-                   "Analysis_calculus_specialist" : (300, 6, 45   , 1, True,  False, None, 50,  True,   100, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
-                   "Analytic_functions_specialist": (300, 2, 15   , 1, True,  False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
-                   "Programming_basic"            : (300, 2, 45   , 1, True,  False, None, 10,  True,   100, 'Programming_basic.png'            , 'Programming_projectile.png'),
-                   "Programming_object"           : (300, 4, 60   , 1, True,  False, None, 50,  True,   200, 'Programming_object.png'           , 'Programming_projectile.png'),
-                   "Programing_spaghetti_decoder" : (300, 1, 60   , 1, True,   True,    6, 60, False,  None, 'Programing_spaghetti_decoder.png' , 'Spaghetti_projectile.png')
+######################################################## dmg #no of shots## bounce #### cost #######aoe range######################################projectile asset
+################################################### range ## cd #### target #### no of b.##### aoe ############# tower asset ######################################
+    tower_types = {"test_tower_1"                 : (300, 1, 60  , 1, True, False, None,  1,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "test_tower_2"                 : (180, 2, 60  , 1, True,  True,    2,  1, False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "Algebra_basic"                : (500, 2, 60  , 1, True, False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (500, 2, 60  , 1, True,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (700, 4, 60  , 1, True, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
+                   "Analysis_basic"               : (300, 2, 45  , 1, True, False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 6, 45  , 1, True, False, None, 50,  True,   100, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Analytic_functions_specialist": (300, 2, 15  , 1, True, False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
+                   "Programming_basic"            : (300, 2, 45  , 1, True, False, None, 10,  True,   100, 'Programming_basic.png'            , 'Programming_projectile.png'),
+                   "Programming_object"           : (300, 4, 60  , 1, True, False, None, 50,  True,   200, 'Programming_object.png'           , 'Programming_projectile.png'),
+                   "Programing_spaghetti_decoder" : (300, 1, 60  , 1, True,  True,   10,100, False,  None, 'Programing_spaghetti_decoder.png' , 'Spaghetti_projectile.png')
                    }
     """
         Tower stats positions:
         0 - range
         1 - damage
         2 - cooldown
-        3 - number of shots
-        4 - targeting
+        3 - number of shots - tbd
+        4 - targeting - tbd
         5 - bouncing
         6 - number of bounces
         7 - tower cost
@@ -176,6 +176,8 @@ class Tower_Manager:
 
     towers : list['Tower_Manager'] = []
     enemies : list['EnemyManager'] = EnemyManager.present
+    #list of ongoing explosions - list[list[tuple : explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]]
+    explosions : list[list[tuple, int, int]] = [] 
 
 
     def __init__(self,
@@ -272,6 +274,7 @@ class Tower_Manager:
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
                         self.own_projectiles.append(Projectiles(self.pos, enemy.pos, self.tower_type.projectile_asset))
+                        Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range/2,enemy.pos.xy - self.tower_type.aoe_range/2),self.tower_type.aoe_range,10])
                         self.tower_type.setbasecooldown()
                         break
                     elif self.tower_type.bouncing:
@@ -306,7 +309,15 @@ class Tower_Manager:
           self.pos = position
           self.tower_type = Tower(f'{tower_name}_tier_3')
           self.display_pos = (self.pos.x - 60,self.pos.y-60)
-          Tower_Manager.towers.append(self) 
+          Tower_Manager.towers.append(self)
+
+    @classmethod
+    def explosions_update(cls):
+        for explosion in cls.explosions:
+            if explosion[2] == 0:
+                cls.explosions.remove(explosion)
+        for explosion in cls.explosions:
+            explosion[2] -= 1
 
     @classmethod
     def update(cls):
@@ -315,6 +326,7 @@ class Tower_Manager:
         for tower in cls.towers:
             tower.attack()
         Projectiles.update()
+        cls.explosions_update()
 
     @classmethod
     def reset(cls):
