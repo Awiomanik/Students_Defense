@@ -349,30 +349,16 @@ class UI():
 
     # Menus
     def intro(self) -> None:
-        """Display the intro screen with a title animation."""
-        # Write down title character by character on the center of the screen
-        font = pygame.font.SysFont('Consolas', 200)
-        title = "Hello World!"
-        # Iterate ovr charachters
-        for i in range(len(title)):
-            # Do not devote time for spaces
-            if (title[i] == ' '):
-                continue
-            # Fill screen with black
-            self.screen.fill((0, 0, 0))
-            # Render text up to i'th character
-            text = font.render(title[:i + 1], True, (0, 255, 0))
-            # Center the rectangle on the screen
-            text_rect = text.get_rect()
-            text_rect.center = (self.RESOLUTION[0] // 2, self.RESOLUTION[1] // 2)
-            # Blit the text
-            self.screen.blit(text, text_rect)
-            # Update pygame and clock every 0.5s
-            pygame.display.update()
-            self.clock.tick(self.FPS//30)
+        """Display the intro screen."""
+        background = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu_background.png"))
+        main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu.png")).convert_alpha()
 
-        # Wait for a secound after writing finnished
-        pygame.time.delay(1000)
+        self.screen.blit(background, (0, 0))
+        for i in range(40):
+            main_menu_graphic.set_alpha(i)
+            self.screen.blit(main_menu_graphic, (0, 0))
+            pygame.display.update()
+            self.clock.tick(self.FPS//5)
 
     def main_menu(self, player : Player) -> str:
         """
@@ -488,8 +474,6 @@ class UI():
         self.screen.blit(final, (0, 0))
         pygame.display.update()
         pygame.time.delay(2000)
-
-
 
     def high_scores(self) -> None:
         """
