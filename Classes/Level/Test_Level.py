@@ -29,7 +29,7 @@ class Level:
         spawn_enemy(): Spawns enemies based on the wave definitions and spawn cooldown.
         update(): Updates the level state by spawning enemies and managing enemy behavior.
         new_wave(): Advances to the next wave and updates wave-related attributes.
-        def reset(cls) -> None: Clears all enemies.
+        reset(cls) -> None: Clears all enemies.
     """
 
     # Class atributes
@@ -75,7 +75,7 @@ class Level:
             elif line.startswith("Lives"):
                 self.lives = int(line.split("Lives:", 1)[1].strip())
             # Waves
-            elif line.startswith("Wave "):
+            elif line.startswith("Wave"):
                 wave: list[tuple[str, str]] = [enemies.split('-') for enemies in line.split(':', 1)[1].split(',')]
                 temp_waves.append({key.strip(): int(element.strip()) for element, key in wave})
             # Map
@@ -98,12 +98,7 @@ class Level:
         self.remaining_enemies = sum(self.current_wave_def.values())
 
     def spawn_enemy(self) -> None:
-        """
-        Spawns enemies based on the wave definitions and spawn cooldown.
-
-        Returns:
-            Enemy_Manager: The spawned enemy instance, if an enemy is spawned; otherwise, None.
-        """
+        """Spawn enemies based on the wave definitions and spawn cooldown."""
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
@@ -160,11 +155,12 @@ class Level:
 
     @classmethod
     def reset(cls) -> None:
-        """Clears all enemies"""
+        """Clear all enemies"""
         cls.enemies.clear()
     
     @classmethod
     def DamageDone(cls) -> None:
+        """Reset the damage done by enemies to zero."""
         cls.damage = 0
 
         
