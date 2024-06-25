@@ -20,9 +20,9 @@ class Enemy:
     """
 
     enemy_types = {'Marta': {'hp': 3, 'speed': 5},
-                   'Mati': {'hp': 6, 'speed': 3},
-                   'Olaf': {'hp': 4, 'speed': 7},
-                   'Wojtek': {'hp': 6, 'speed': 8}}
+                   'Mati': {'hp': 8, 'speed': 3},
+                   'Olaf': {'hp': 7, 'speed': 7},
+                   'Wojtek': {'hp': 10, 'speed': 8}}
 
     def __init__(self, enemy_type: str = 'test_enemy'):
         """
@@ -132,7 +132,7 @@ class EnemyManager:
         if self.life < 0:
             self.life = 0
         self.attacked = True
-        self.attacked_count = 10
+        self.attacked_count = 15
 
     def remove_attacked(self):
         """

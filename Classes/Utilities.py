@@ -92,6 +92,15 @@ class Coord:
         
         else:
             raise NotImplementedError()
+    def __eq__(self, other: 'Coord') -> bool:
+        """Defines equality as having same .x and .y"""
+        if isinstance(other, Coord):
+            if self.x == other.x and self.y == other.y:
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def __repr__(self) -> str:
         """Return a string representation of the coordinate.
