@@ -1,6 +1,6 @@
 #IMPORTS
 from dataclasses import dataclass
-import typing, pygame, os
+import typing
 
 
 # CLASSES
