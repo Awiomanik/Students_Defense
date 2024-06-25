@@ -270,7 +270,9 @@ class UI():
                 elif x > 740:
                     self.buy_tower_mode(self.HUD_towers_displayed[1], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
                 elif x > 500:
-                    self.buy_tower_mode(self.HUD_towers_displayed[0], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
+                    # Avoid "upgrading" tower into itself
+                    if not UI.state["upgrade tower"]:
+                        self.buy_tower_mode(self.HUD_towers_displayed[0], player, Coord.res2tile(self.pos), tower = self.upgraded_tower)
 
             # Click at map
             else:
