@@ -274,7 +274,7 @@ class Tower_Manager:
                             if area <= self.tower_type.aoe_range:
                                 victims.take_damage(self.tower_type.dmg)
                         self.own_projectiles.append(Projectiles(self.pos, enemy.pos, self.tower_type.projectile_asset))
-                        Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.xy - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
+                        Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.y - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
                         self.tower_type.setbasecooldown()
                         break
                     elif self.tower_type.bouncing:
