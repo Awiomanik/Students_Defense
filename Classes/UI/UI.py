@@ -2,8 +2,10 @@
 import pygame
 import os
 import sys
+
+import pygame.locals
 from ..Tower.Tower_Classes import Tower_Manager, Tower, Projectiles
-from ..Utilities import Coord, InputBox, load_high_scores
+from ..Utilities import Coord, InputBox, load_high_scores, read_credits
 from ..Player.Player import Player
 from ..Map.Map_Class import Map as mp
 from ..Enemy.Enemy import EnemyManager
@@ -454,30 +456,40 @@ class UI():
             self.clock.tick(self.FPS)
 
     def outro(self) -> None:
-        """Display the outro screen."""
-        # Write down title character by character on the center of the screen
-        font = pygame.font.SysFont('Consolas', 200)
-        title = "Have a nice day!"
-        # Iterate ovr charachters
-        for i in range(len(title)):
-            # Do not devote time for spaces
-            if (title[i] == ' '):
-                continue
-            # Fill screen with black
-            self.screen.fill((0, 0, 0))
-            # Render text up to i'th character
-            text = font.render(title[:i + 1], True, (0, 255, 0))
-            # Center the rectangle on the screen
-            text_rect = text.get_rect()
-            text_rect.center = (self.RESOLUTION[0] // 2, self.RESOLUTION[1] // 2)
-            # Blit the text
-            self.screen.blit(text, text_rect)
-            # Update pygame and clock every 0.5s
-            pygame.display.update()
-            self.clock.tick(self.FPS//30)
+        """Display the outro screen (roll credits and display end grphic)."""
+        # Get background image
+        background = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu_background.png"))
+        # Get fonts
+        small_font = pygame.font.Font(os.path.join(self.directory, "Assets", "Font", "Chalk.ttf"), 45)
+        large_font = pygame.font.Font(os.path.join(self.directory, "Assets", "Font", "Chalk.ttf"), 100)
+        # Get final screen graphic
+        final = pygame.image.load(os.path.join(self.gfx_path, "menu", "the_end.png"))
 
-        # Wait for a secound after writing finnished
-        pygame.time.delay(1000)
+        # Main credit loop
+        rolling = True
+        y = self.RESOLUTION[1]
+        while rolling:
+            # Parse events
+            for event in pygame.event.get():
+                # Game closed
+                if event.type == pygame.QUIT:
+                    rolling = False
+                # User skipped outro
+                if event.type == pygame.KEYDOWN:
+                    rolling = False
+
+            if self.render_credits(background, small_font, large_font, y, 8, pygame.mouse.get_pos()):
+                y -= 4
+
+            else:
+                rolling = False
+
+        # Final screen
+        self.screen.blit(final, (0, 0))
+        pygame.display.update()
+        pygame.time.delay(2000)
+
+
 
     def high_scores(self) -> None:
         """
@@ -861,8 +873,40 @@ class UI():
         UI.state["pause"] = True
         UI.state["game over"] = True
 
+    def render_credits(self, 
+                       background: pygame.Surface,
+                       font: pygame.font.Font, large_font: pygame.font.Font, 
+                       start_y: int, line_spacing: int,
+                       mouse_pos: tuple[int, int]) -> bool:
+        # Get credits from file
+        credits = read_credits(os.path.join(self.directory, "Assets", "menu_data", "Credits.dat"))
+        # Blit background
+        self.screen.blit(background, (0, 0))
+        # Get shadow offsets
+        shadow_offset_x = (mouse_pos[0] - self.RESOLUTION[0] // 2) // 20
+        shadow_offset_y = (mouse_pos[1] - self.RESOLUTION[1] // 2) // 20
 
+        # Blit text
+        for text, is_enlarged in credits:
+            if is_enlarged:
+                text_surface = large_font.render(text, False, (255, 255, 255))
+                shadow_surface = large_font.render(text, False, (100, 100, 100))
+            else:
+                text_surface = font.render(text, False, (255, 255, 255))
+                shadow_surface = font.render(text, False, (100, 100, 100))
+            
+            text_rect = text_surface.get_rect(center=(UI.RESOLUTION[0] / 2, start_y))
+            shadow_rect = text_rect.copy()  # Create a copy of the text rect to use for the shadow
+            shadow_rect.x -= shadow_offset_x  # Adjust x coordinate for the shadow
+            shadow_rect.y -= shadow_offset_y  # Adjust y coordinate for the shadow
+            self.screen.blit(shadow_surface, shadow_rect)
+            self.screen.blit(text_surface, text_rect)
+            start_y += text_surface.get_height() + line_spacing
+        
+        pygame.display.update()
+        self.clock.tick(self.FPS)
 
+        return not (start_y + text_surface.get_height() < 0)
 
 
 
