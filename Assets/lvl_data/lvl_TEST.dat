@@ -4,6 +4,7 @@ Lives: 10
 Wave 1: 10-Marta
 Wave 2: 3-Marta, 3-Mati, 3-Olaf, 3-Wojtek
 Wave 3: 50-Wojtek
+wave 4: 100-Wojtek
 Available_towers: Algebra_basic, Analysis_basic, Programming_basic
 
 standard for writing waves:
