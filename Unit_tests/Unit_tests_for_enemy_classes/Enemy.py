@@ -1,5 +1,5 @@
-from ..Utilities import Coord
-from ..Map.Map_Class import Map
+from Classes.Utilities import Coord
+from Classes.Map.Map_Class import Map
 from typing import Type, Self
 
 
