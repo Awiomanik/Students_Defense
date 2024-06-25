@@ -132,7 +132,7 @@ class EnemyManager:
         if self.life < 0:
             self.life = 0
         self.attacked = True
-        self.attacked_count = 10
+        self.attacked_count = 15
 
     def remove_attacked(self):
         """
