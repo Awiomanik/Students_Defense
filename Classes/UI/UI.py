@@ -412,12 +412,6 @@ class UI():
                     if 180 < y < 324:
                         return "demo"
                     
-<<<<<<< HEAD
-                    # Quit button pressed
-                    elif 504 < y < 648:
-                        print("click quit ", x, y)
-                        return "quit"
-=======
                     # Truancy button pressed
 
                     if 342 < y < 486:
@@ -426,7 +420,6 @@ class UI():
                 # Quit button pressed
                 if (880 < y < 1080) and (1640 < x < 1840):
                     return "quit"
->>>>>>> e96f324441c4b8a610ef00a72fa9a5771b3136a4
                 
                 # Name change
                 elif x < 170:
