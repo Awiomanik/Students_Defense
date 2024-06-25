@@ -64,6 +64,7 @@ class Level:
         self.base_spawn_cooldown: int = 40
         self.spawn_cooldown: int = 40
         self.damage: bool = False
+        self.hp_increase = 1
 
         # Parse level data to set atributes
         for line in level_data:
@@ -102,10 +103,14 @@ class Level:
         if not self.remaining_enemies:
             pass
         elif self.spawn_cooldown == 0:
-            spawned_enemy = EnemyManager(self.map, self.current_enemy) # despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            # Despite not being further utilised, spawned_enemy is followed by Tower_Manager.present class attribute
+            spawned_enemy = EnemyManager(self.map, self.current_enemy) 
+            # Increased diffculty in further levels
+            spawned_enemy.life = ceil(spawned_enemy.life*self.hp_increase)
             self.current_wave_def[self.current_enemy] -= 1
             self.spawn_cooldown = self.base_spawn_cooldown
             self.remaining_enemies = sum(self.current_wave_def.values())
+            # Moving on to next enemies in wave if current "batch" has been spawned
             if self.current_wave_def[self.current_enemy] == 0:
                 del self.waves[self.current_wave][self.current_enemy]
                 if self.current_wave_def:
@@ -151,7 +156,9 @@ class Level:
         self.current_wave_def = self.waves[self.current_wave]
         self.current_enemy = list(self.current_wave_def.keys())[0]
         self.remaining_enemies = sum(self.current_wave_def.values())
-        self.base_spawn_cooldown = ceil(40*0.9**self.current_wave) #In later waves enemies will be spawning faster
+        # Increased diffculty in further levels
+        self.base_spawn_cooldown = ceil(40*0.9**self.current_wave)
+        self.hp_increase = self.hp_increase*1.1**(self.current_wave**1/4)
 
     @classmethod
     def reset(cls) -> None:

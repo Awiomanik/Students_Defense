@@ -31,17 +31,17 @@ class Tower:
         """
 ######################################################## dmg #no of shots## bounce #### cost #######aoe range######################################projectile asset
 ################################################### range ## cd #### target #### no of b.##### aoe ############# tower asset ######################################
-    tower_types = {"test_tower_1"                 : (300, 1, 60  , 1, True, False, None,  1,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "test_tower_2"                 : (180, 2, 60  , 1, True,  True,    2,  1, False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
-                   "Algebra_basic"                : (500, 2, 60  , 1, True, False, None, 10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
-                   "Algebra_LT"                   : (500, 2, 60  , 1, True,  True,    4, 50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
-                   "Algebra_complex_"             : (700, 4, 60  , 1, True, False, None, 50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
-                   "Analysis_basic"               : (300, 2, 45  , 1, True, False, None, 10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
-                   "Analysis_calculus_specialist" : (300, 6, 45  , 1, True, False, None, 50,  True,   100, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
-                   "Analytic_functions_specialist": (300, 2, 15  , 1, True, False, None, 50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
-                   "Programming_basic"            : (300, 2, 45  , 1, True, False, None, 10,  True,   100, 'Programming_basic.png'            , 'Programming_projectile.png'),
-                   "Programming_object"           : (300, 4, 60  , 1, True, False, None, 50,  True,   200, 'Programming_object.png'           , 'Programming_projectile.png'),
-                   "Programing_spaghetti_decoder" : (300, 1, 60  , 1, True,  True,   10,100, False,  None, 'Programing_spaghetti_decoder.png' , 'Spaghetti_projectile.png')
+    tower_types = {"test_tower_1"                 : (300, 1, 60  , 1, True, False, None,   1,  True,   100, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "test_tower_2"                 : (180, 2, 60  , 1, True,  True,    2,   1, False,  None, 'tower_placeholder.png'            , 'bullet_placeholder.png'),
+                   "Algebra_basic"                : (500, 2, 30  , 1, True, False, None,  10, False,  None, 'Algebra_basic.png'                , 'Algebra_projectile.png'),
+                   "Algebra_LT"                   : (500, 2, 30  , 1, True,  True,    4,  50, False,  None, 'Algebra_LT.png'                   , 'Algebra_projectile.png'),
+                   "Algebra_complex_"             : (700, 4, 30  , 1, True, False, None,  50, False,  None, 'Algebra_complex_.png'             , 'Algebra_projectile.png'),
+                   "Analysis_basic"               : (300, 2, 20  , 1, True, False, None,  10, False,  None, 'Analysis_basic.png'               , 'Analysis_projectile.png'),
+                   "Analysis_calculus_specialist" : (300, 6, 20  , 1, True, False, None,  50,  True,   100, 'Analysis_calculus_specialist.png' , 'Analysis_projectile.png'),
+                   "Analytic_functions_specialist": (300, 2,  8  , 1, True, False, None,  50, False,  None, 'Analytic_functions_specialist.png', 'Analysis_projectile.png'),
+                   "Programming_basic"            : (300, 2, 20  , 1, True, False, None,  10,  True,   100, 'Programming_basic.png'            , 'Programming_projectile.png'),
+                   "Programming_object"           : (300, 4, 30  , 1, True, False, None,  50,  True,   200, 'Programming_object.png'           , 'Programming_projectile.png'),
+                   "Programing_spaghetti_decoder" : (300, 1, 60  , 1, True,  True,   10, 100, False,  None, 'Programing_spaghetti_decoder.png' , 'Spaghetti_projectile.png')
                    }
     """
         Tower stats positions:
