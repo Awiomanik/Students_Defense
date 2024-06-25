@@ -249,7 +249,6 @@ class UI():
                     # If wave did not start yet, start it
                     if not UI.state["wave"]:
                         UI.state["wave"] = True
-                        print(UI.state)
                     # If wave currently marching
                     else:
                         # Reverse pause state
@@ -301,8 +300,6 @@ class UI():
                     tile: Coord = Coord.res2tile(self.pos)
                     # Get towers currently on the map with their positions
                     towers = Tower_Manager.get_tower_positions()
-                    # Show upgreades if the tile has tower on it
-                    print(towers)
                     if tile in towers.keys():
                         tower = towers[tile]
                         UI.state["buy tower"] = False
@@ -375,6 +372,9 @@ class UI():
         # Load background graphic
         main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu.png"))
 
+        pygame.event.clear()
+        self.mouse_click = False
+
         # Main menu loop
         while True:
             
@@ -414,6 +414,7 @@ class UI():
                     
                     # Quit button pressed
                     elif 504 < y < 648:
+                        print("click quit ", x, y)
                         return "quit"
                 
                 # Name change
