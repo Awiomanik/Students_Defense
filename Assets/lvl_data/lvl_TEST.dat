@@ -1,7 +1,7 @@
 Map: Truancy
 Gold: 10000
 Lives: 10
-Wave 1: 5-Marta
+Wave 1: 10-Marta
 Wave 2: 3-Marta, 3-Mati, 3-Olaf, 3-Wojtek
 Wave 3: 50-Wojtek
 Available_towers: Algebra_basic, Analysis_basic, Programming_basic

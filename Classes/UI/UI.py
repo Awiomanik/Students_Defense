@@ -198,7 +198,6 @@ class UI():
 
             self.stats[name] = stats_cloud_temp
 
-
     # Input
     def process_input(self, map: mp, player: Player) -> bool:
         """
@@ -235,7 +234,6 @@ class UI():
                 self.mouse_click = True
                 self.pos = pygame.mouse.get_pos()
 
-     
         if self.mouse_click:
             # Unpack mouse position
             x, y = self.pos
@@ -249,7 +247,6 @@ class UI():
                     # If wave did not start yet, start it
                     if not UI.state["wave"]:
                         UI.state["wave"] = True
-                        print(UI.state)
                     # If wave currently marching
                     else:
                         # Reverse pause state
@@ -267,11 +264,11 @@ class UI():
 
                 # Towers (HUD)
                 elif x > 980:
-                    self.buy_tower_mode(self.HUD_towers_displayed[2], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[2], player, Coord.res2tile(self.pos))
                 elif x > 740:
-                    self.buy_tower_mode(self.HUD_towers_displayed[1], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[1], player, Coord.res2tile(self.pos))
                 elif x > 500:
-                    self.buy_tower_mode(self.HUD_towers_displayed[0], player)
+                    self.buy_tower_mode(self.HUD_towers_displayed[0], player, Coord.res2tile(self.pos))
 
             # Click at map
             else:
@@ -301,8 +298,6 @@ class UI():
                     tile: Coord = Coord.res2tile(self.pos)
                     # Get towers currently on the map with their positions
                     towers = Tower_Manager.get_tower_positions()
-                    # Show upgreades if the tile has tower on it
-                    print(towers)
                     if tile in towers.keys():
                         tower = towers[tile]
                         UI.state["buy tower"] = False
@@ -323,8 +318,6 @@ class UI():
                         UI.state["pause"] = False
                         UI.state["game over"] = False
                         return True
-
-
 
         # Reset mouse state to not clicked
         self.mouse_click = False
@@ -374,6 +367,9 @@ class UI():
         """
         # Load background graphic
         main_menu_graphic = pygame.image.load(os.path.join(self.gfx_path, "menu", "Menu.png"))
+
+        pygame.event.clear()
+        self.mouse_click = False
 
         # Main menu loop
         while True:
@@ -766,26 +762,36 @@ class UI():
         self.frame_counter = 0
         return False
     
-    def buy_tower_mode(self, tower_name: str, player: Player) -> None:
+    def buy_tower_mode(self, tower_name: str, player: Player, tower_coord : Coord = None) -> None:
         """
         Handles interactions with the tower HUD, managing tower selection and purchasing logic.
 
         Arguments:
             tower_name (str): Name of the tower that was clicked.
             player (Player): Player object, to check for affordability.
+            tower_coord (Coord): Tile coordinates of the tower to be upgreaded.
         """
-        # Manage state when a tower is selected
-        if UI.state.get("buy tower") and self.tower_being_bought == tower_name:
-            # Toggle off buy mode if already active for this tower
-            UI.state["buy tower"] = False
+        # Wheter upgreading or setting base tower
+        # Upgreade case
+        if self.HUD_towers_displayed[1] == self.tower_upgreades[0][1]:
+            pass
+            # Olaf tutaj <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<__________________________________>>>>>>>>>>>>>>>>>>>>>>
+            # masz tu nazwę typu wieży i kafelek na którym się znajduje oraz ewentualnie playera
 
+        # Base tower case
         else:
-            # Enable buying mode if tower is affordable
-            if tower_name in player.affordable_towers():
-                UI.state["buy tower"] = True
-                self.tower_being_bought = tower_name
+            # Manage state when a tower is selected
+            if UI.state.get("buy tower") and self.tower_being_bought == tower_name:
+                # Toggle off buy mode if already active for this tower
+                UI.state["buy tower"] = False
+
             else:
-                UI.state["not enough gold"] = True
+                # Enable buying mode if tower is affordable
+                if tower_name in player.affordable_towers():
+                    UI.state["buy tower"] = True
+                    self.tower_being_bought = tower_name
+                else:
+                    UI.state["not enough gold"] = True
 
     def accessibility_rectangle(self, tile_size : int, map : mp) -> bool:
         """
