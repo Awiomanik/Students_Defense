@@ -154,6 +154,8 @@ class Projectiles:
         """Animates all projectiles"""
         for projectile in cls.displayed:
             projectile.animation()
+        if not EnemyManager.present:
+            cls.displayed = []
 
 class Tower_Manager:
     """
@@ -187,7 +189,7 @@ class Tower_Manager:
     towers: list['Tower_Manager'] = []
     enemies: list['EnemyManager'] = EnemyManager.present
     # list[list[tuple: explosion display position, int - aoe_range, int - remaining frames of displaying - 10 at the start]] - not implemented
-    #explosions: list[list[tuple, int, int]] = [] 
+    explosions: list[list[tuple, int, int]] = [] 
 
     def __init__(self,
                  tower_type_str: str = "test_tower", 
@@ -292,7 +294,7 @@ class Tower_Manager:
                         # Create projectiles
                         self.own_projectiles.append(Projectiles(self.pos, enemy.pos, self.tower_type.projectile_asset))
                         # Explosion animation - not implemented
-                        #Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.y - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
+                        Tower_Manager.explosions.append([(enemy.pos.x - self.tower_type.aoe_range,enemy.pos.y - self.tower_type.aoe_range),self.tower_type.aoe_range,10])
                         # Restore cooldown
                         self.tower_type.setbasecooldown()
                         break
